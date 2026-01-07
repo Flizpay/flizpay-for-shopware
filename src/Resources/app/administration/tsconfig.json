@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "allowJs": true,
+
+    /* Interop Constraints */
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Type Checking */
+    "noEmit": true,
+    "strict": true,
+    "checkJs": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "strictNullChecks": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "FlizpayForShopware/*": ["./src/*"],
+      "src/*": [
+        "./node_modules/administration/src/*",
+        "./../../../../../../../vendor/shopware/administration/Resources/app/administration/src/*",
+      ],
+      "*": [
+        "./node_modules/*",
+        "./node_modules/administration/node_modules/*",
+        "./../../../../../../../vendor/shopware/administration/Resources/app/administration/node_modules/*",
+      ],
+    },
+  },
+  "files": [
+    "./../../../../../../../vendor/shopware/administration/Resources/app/administration/src/global.types.ts",
+  ],
+  "include": ["./src/**/*"],
+}

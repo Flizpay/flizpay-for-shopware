@@ -1,0 +1,36 @@
+{
+  "name": "flizpay/flizpay-payment",
+  "description": "FLIZpay payment gateway for Shopware",
+  "version": "1.0.0",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "FLIZpay GmbH"
+    }
+  ],
+  "require": {
+    "shopware/core": "^6.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Flizpay\\Payment\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "Flizpay\\Payment\\FlizpayPayment",
+    "label": {
+      "de-DE": "FLIZpay Zahlungsgateway",
+      "en-GB": "FLIZpay Payment Gateway"
+    },
+    "description": {
+      "de-DE": "FLIZpay Zahlungsgateway für Shopware 6",
+      "en-GB": "FLIZpay payment gateway for Shopware 6"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "symfony/runtime": true
+    }
+  }
+}

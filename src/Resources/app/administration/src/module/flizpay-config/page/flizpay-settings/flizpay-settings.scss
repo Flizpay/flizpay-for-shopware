@@ -1,0 +1,111 @@
+.flizpay-settings {
+    .flizpay-settings__welcome-card {
+        .flizpay-welcome-content {
+            padding: 16px 0;
+        }
+
+        .flizpay-logo {
+            text-align: center;
+            margin-bottom: 24px;
+
+            .flizpay-logo-image {
+                max-width: 200px;
+                height: auto;
+            }
+        }
+
+        .flizpay-instructions-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #52667a;
+        }
+
+        .flizpay-instructions-list {
+            margin: 0 0 24px 0;
+            padding-left: 24px;
+
+            li {
+                margin-bottom: 12px;
+                line-height: 1.6;
+                color: #52667a;
+
+                a {
+                    color: #00D094;
+                    text-decoration: none;
+                    font-weight: 500;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        .flizpay-links {
+            padding-top: 16px;
+            border-top: 1px solid #d1d9e0;
+
+            p {
+                margin-bottom: 8px;
+                color: #52667a;
+
+                a {
+                    color: #00D094;
+                    text-decoration: none;
+                    font-weight: 500;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+
+    .flizpay-settings__api-card,
+    .flizpay-settings__options-card {
+        .sw-field {
+            margin-bottom: 0;
+        }
+    }
+
+    .flizpay-test-connection {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding-top: 8px;
+
+        &__button {
+            align-self: flex-start;
+            min-width: 180px;
+        }
+
+        &__result {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        &__loader {
+            margin-left: 8px;
+        }
+
+        &__established {
+            margin-top: 8px;
+        }
+    }
+
+    .flizpay-settings__save-button {
+        min-width: 120px;
+    }
+}
+
+// Override for links in instructions
+.flizpay-settings a {
+    color: #00D094;
+
+    &:hover {
+        color: #00b882;
+    }
+}

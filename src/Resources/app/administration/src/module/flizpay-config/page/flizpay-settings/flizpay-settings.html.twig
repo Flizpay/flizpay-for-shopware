@@ -1,0 +1,152 @@
+{% block flizpay_settings %}
+<sw-page class="flizpay-settings">
+    {% block flizpay_settings_header %}
+    <template #smart-bar-header>
+        <h2>{{ $tc('flizpay-config.general.title') }}</h2>
+    </template>
+    {% endblock %}
+
+    {% block flizpay_settings_actions %}
+    <template #smart-bar-actions>
+        <sw-button-process
+            class="flizpay-settings__save-button"
+            :isLoading="isSaving"
+            :processSuccess="false"
+            :disabled="isLoading || isSaving"
+            variant="primary"
+            @click="saveConfig">
+            {{ $tc('flizpay-config.actions.save') }}
+        </sw-button-process>
+    </template>
+    {% endblock %}
+
+    {% block flizpay_settings_content %}
+    <template #content>
+        <sw-card-view>
+            {% block flizpay_settings_welcome_card %}
+            <sw-card
+                :title="$tc('flizpay-config.welcome.title')"
+                class="flizpay-settings__welcome-card">
+
+                <div class="flizpay-welcome-content">
+                    <div class="flizpay-logo">
+                        <img src="https://flizpay.de/logo.svg" alt="FLIZpay" class="flizpay-logo-image" />
+                    </div>
+
+                    <h3 class="flizpay-instructions-title">
+                        {{ $tc('flizpay-config.instructions.title') }}
+                    </h3>
+
+                    <ol class="flizpay-instructions-list">
+                        <li v-html="$tc('flizpay-config.instructions.step1')"></li>
+                        <li v-html="$tc('flizpay-config.instructions.step2')"></li>
+                        <li>{{ $tc('flizpay-config.instructions.step3') }}</li>
+                        <li>{{ $tc('flizpay-config.instructions.step4') }}</li>
+                        <li>{{ $tc('flizpay-config.instructions.step5') }}</li>
+                        <li v-html="$tc('flizpay-config.instructions.step6')"></li>
+                    </ol>
+
+                    <div class="flizpay-links">
+                        <p v-html="$tc('flizpay-config.links.faq')"></p>
+                        <p v-html="$tc('flizpay-config.links.docs')"></p>
+                    </div>
+                </div>
+            </sw-card>
+            {% endblock %}
+
+            {% block flizpay_settings_api_card %}
+            <sw-card
+                :title="$tc('flizpay-config.api.title')"
+                :isLoading="isLoading"
+                class="flizpay-settings__api-card">
+
+                <sw-container columns="1fr" gap="16px">
+                    {% block flizpay_settings_api_key %}
+                    <sw-text-field
+                        v-model="config.apiKey"
+                        :label="$tc('flizpay-config.api.apiKeyLabel')"
+                        :placeholder="$tc('flizpay-config.api.apiKeyPlaceholder')"
+                        :helpText="$tc('flizpay-config.api.apiKeyHelpText')"
+                        :disabled="isLoading">
+                    </sw-text-field>
+                    {% endblock %}
+
+                    {% block flizpay_settings_sandbox_mode %}
+                    <sw-switch-field
+                        v-model="config.sandboxMode"
+                        :label="$tc('flizpay-config.api.sandboxModeLabel')"
+                        :helpText="$tc('flizpay-config.api.sandboxModeHelpText')"
+                        :disabled="isLoading">
+                    </sw-switch-field>
+                    {% endblock %}
+
+                    {% block flizpay_settings_webhook_url %}
+                    <sw-text-field
+                        v-model="config.webhookUrl"
+                        :label="$tc('flizpay-config.api.webhookUrlLabel')"
+                        :helpText="$tc('flizpay-config.api.webhookUrlHelpText')"
+                        :disabled="true"
+                        :copyable="true">
+                    </sw-text-field>
+                    {% endblock %}
+
+                    {% block flizpay_settings_connection_status %}
+                    <div class="flizpay-connection-status">
+                        <sw-alert
+                            v-if="connectionStatus"
+                            :variant="connectionStatus.type"
+                            class="flizpay-connection-status__alert">
+                            {{ connectionStatus.message }}
+                            <sw-loader
+                                v-if="isWaitingForWebhook"
+                                size="16px"
+                                class="flizpay-connection-status__loader">
+                            </sw-loader>
+                        </sw-alert>
+
+                        <sw-alert
+                            v-if="isConnectionEstablished"
+                            variant="success"
+                            class="flizpay-connection-status__established">
+                            {{ $tc('flizpay-config.connection.established') }}
+                        </sw-alert>
+                    </div>
+                    {% endblock %}
+                </sw-container>
+            </sw-card>
+            {% endblock %}
+
+            {% block flizpay_settings_options_card %}
+            <sw-card
+                :title="$tc('flizpay-config.options.title')"
+                :isLoading="isLoading"
+                class="flizpay-settings__options-card">
+
+                <sw-container columns="1fr" gap="16px">
+                    {% block flizpay_settings_payment_flow %}
+                    <sw-single-select
+                        v-model="config.paymentFlow"
+                        :options="paymentFlowOptions"
+                        :label="$tc('flizpay-config.options.paymentFlowLabel')"
+                        :helpText="$tc('flizpay-config.options.paymentFlowHelpText')"
+                        :disabled="isLoading">
+                    </sw-single-select>
+                    {% endblock %}
+
+                    {% block flizpay_settings_enable_logging %}
+                    <sw-switch-field
+                        v-model="config.enableLogging"
+                        :label="$tc('flizpay-config.options.enableLoggingLabel')"
+                        :helpText="$tc('flizpay-config.options.enableLoggingHelpText')"
+                        :disabled="isLoading">
+                    </sw-switch-field>
+                    {% endblock %}
+                </sw-container>
+            </sw-card>
+            {% endblock %}
+
+        </sw-card-view>
+    </template>
+    {% endblock %}
+</sw-page>
+{% endblock %}

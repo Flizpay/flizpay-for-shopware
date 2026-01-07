@@ -1,0 +1,18 @@
+# FLIZpay Payment Gateway for Shopware 6
+
+Official FLIZpay payment plugin for Shopware 6.7+
+
+## Requirements
+
+- Shopware 6.7 or higher
+- PHP 8.2 or higher
+
+## Installation
+
+### Via Composer (Recommended)
+
+```bash
+composer require flizpay/flizpay-payment
+bin/console plugin:refresh
+bin/console plugin:install --activate FlizpayPayment
+bin/console cache:clear

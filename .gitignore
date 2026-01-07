@@ -1,0 +1,59 @@
+###> Composer ###
+/vendor/
+composer.lock
+
+###> Node.js / NPM ###
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+###> Build artifacts ###
+/src/Resources/public/
+/src/Resources/app/administration/.vite/
+/src/Resources/app/administration/dist/
+/src/Resources/app/administration/node_modules/
+/src/Resources/app/storefront/dist/
+/src/Resources/app/storefront/node_modules/
+
+###> IDE ###
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+###> Testing ###
+.phpunit.result.cache
+/phpunit.xml
+/coverage/
+/.phpunit.cache/
+/build/
+/tests/_output/
+
+###> Logs ###
+*.log
+/logs/
+
+###> Environment ###
+.env
+.env.local
+.env.*.local
+
+###> Temporary files ###
+*.tmp
+*.temp
+*.cache
+.cache/
+
+###> Distribution ###
+*.zip
+*.tar
+*.tar.gz
+!vendor/**/*.zip
+
+###> OS ###
+Thumbs.db
+.DS_Store

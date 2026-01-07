@@ -1,0 +1,113 @@
+{
+  "flizpay-config": {
+    "general": {
+      "mainMenuItemGeneral": "FLIZpay",
+      "title": "FLIZpay Settings",
+      "description": "Configure FLIZpay payment gateway"
+    },
+    "welcome": {
+      "title": "Welcome to FLIZpay!"
+    },
+    "instructions": {
+      "title": "Getting Started",
+      "step1": "If you haven't signed up for a FLIZ company account, please <a href='https://app.flizpay.de/auth/signup' target='_blank'>click here</a> and sign up.",
+      "step2": "Once you have signed up, please generate a new API Key in your FLIZ company account and paste it in the \"API Key\" field below. You will find the API Key in the \"Installation\" section of your company account.",
+      "step3": "Click the \"Test Connection\" button to verify your API key.",
+      "step4": "Wait about 5 seconds and the page will reload automatically.",
+      "step5": "After the page reloads, a green box will appear indicating the successful configuration. You are now ready to receive fee-free payments!",
+      "step6": "We advise you to activate cashback for your customers. With cashback, you change your customers' payment behavior to ensure they use fee-free FLIZ. <a href='https://app.flizpay.de/cashback' target='_blank'>Activate cashback here.</a>"
+    },
+    "links": {
+      "faq": "Still have questions? <a href='https://flizpay.de/#faq' target='_blank'>Check out our FAQ page</a>.",
+      "docs": "Need more details? <a href='https://www.docs.flizpay.de/docs/intro' target='_blank'>Read our documentation.</a>"
+    },
+    "api": {
+      "title": "API Configuration",
+      "apiKeyLabel": "API Key",
+      "apiKeyPlaceholder": "Enter your FLIZpay API key...",
+      "apiKeyHelpText": "Your FLIZpay API key for authentication. Get this from your FLIZpay merchant dashboard.",
+      "apiBaseUrlLabel": "API Base URL",
+      "apiBaseUrlPlaceholder": "https://api.flizpay.de",
+      "apiBaseUrlHelpText": "Leave empty to use production URL. For testing, enter custom endpoint.",
+      "sandboxModeLabel": "Sandbox Mode",
+      "sandboxModeHelpText": "Enable this to test payment processing in the sandbox environment.",
+      "webhookUrlLabel": "Webhook URL",
+      "webhookUrlHelpText": "Automatically configured webhook URL (read-only).",
+      "webhookAliveLabel": "Connection Status",
+      "webhookAliveYes": "✓ Webhook connection verified - Payment method is active",
+      "webhookAliveNo": "⚠ Waiting for webhook verification - Payment method is disabled",
+      "webhookAliveHelpText": "FLIZpay must successfully send a test webhook before payments can be processed."
+    },
+    "options": {
+      "title": "Payment Options",
+      "paymentFlowLabel": "Payment Flow",
+      "paymentFlowHelpText": "Choose how customers interact with the payment process.",
+      "enableLoggingLabel": "Enable Debug Logging",
+      "enableLoggingHelpText": "Enable detailed logging for troubleshooting (disable in production)."
+    },
+    "paymentFlow": {
+      "redirect": "Redirect to FLIZpay",
+      "embedded": "Embedded Checkout"
+    },
+    "actions": {
+      "save": "Save",
+      "testConnection": "Test Connection"
+    },
+    "connection": {
+      "success": "Connected! Waiting for webhook confirmation. Page will reload automatically in 5 seconds...",
+      "failed": "Connection failed. Please check your API key and try again.",
+      "pending": "Connected! Waiting for webhook confirmation. Page will reload automatically in 5 seconds...",
+      "established": "Connection established! Our servers have successfully communicated with your site. You're now ready to accept fee-free payments!",
+      "webhookVerified": "Webhook verified! Payment method is now active."
+    },
+    "displayOptions": {
+      "title": "Display Options",
+      "displayLogoLabel": "Show FLIZpay Logo",
+      "displayLogoHelpText": "Display FLIZpay logo on the payment method in checkout.",
+      "displayHeadlineLabel": "Show Cashback Headline",
+      "displayHeadlineHelpText": "Show cashback percentage in payment method title.",
+      "displayDescriptionLabel": "Show Description",
+      "displayDescriptionHelpText": "Show payment method description in checkout."
+    },
+    "advancedSettings": {
+      "title": "Advanced Settings",
+      "orderStatusLabel": "Initial Order Status",
+      "orderStatusPending": "Pending",
+      "orderStatusDraft": "Draft",
+      "orderStatusHelpText": "Initial order status when payment is created.",
+      "sentryEnabledLabel": "Error Reporting",
+      "sentryEnabledHelpText": "Send anonymous error reports to help improve plugin quality."
+    },
+    "expressCheckout": {
+      "title": "Express Checkout",
+      "enabledLabel": "Enable Express Checkout",
+      "enabledHelpText": "Allow customers to skip the cart and checkout directly from product pages.",
+      "pagesLabel": "Show on Pages",
+      "pageProduct": "Product Page",
+      "pageCart": "Cart Page",
+      "themeLabel": "Button Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark"
+    },
+    "cashbackInfo": {
+      "title": "Cashback Information",
+      "firstPurchaseLabel": "First Purchase Cashback",
+      "standardLabel": "Standard Cashback",
+      "notConfigured": "No cashback configured",
+      "refreshButton": "Refresh Cashback Data"
+    },
+    "reconfiguration": {
+      "warning": "You already have an integration set up. By reconfiguring, you will invalidate all current ongoing payment responses. Proceed?",
+      "title": "Confirm Reconfiguration"
+    },
+    "notifications": {
+      "saveSuccess": "Settings saved successfully.",
+      "connectionSuccess": "Successfully connected to FLIZpay API."
+    },
+    "errors": {
+      "loadFailed": "Failed to load settings.",
+      "saveFailed": "Failed to save settings.",
+      "apiKeyRequired": "API key is required."
+    }
+  }
+}

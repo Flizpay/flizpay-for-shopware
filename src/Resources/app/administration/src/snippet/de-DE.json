@@ -1,0 +1,113 @@
+{
+  "flizpay-config": {
+    "general": {
+      "mainMenuItemGeneral": "FLIZpay",
+      "title": "FLIZpay Einstellungen",
+      "description": "FLIZpay Zahlungsgateway konfigurieren"
+    },
+    "welcome": {
+      "title": "Willkommen bei FLIZpay!"
+    },
+    "instructions": {
+      "title": "Erste Schritte",
+      "step1": "Wenn du noch kein FLIZ-Firmenkonto hast, <a href='https://app.flizpay.de/auth/signup' target='_blank'>klicke hier</a> und registriere dich.",
+      "step2": "Nachdem du dich registriert hast, generiere einen neuen API-Schlüssel in deinem FLIZ-Firmenkonto und füge ihn in das Feld \"API-Schlüssel\" unten ein. Du findest den API-Schlüssel im Bereich \"Installation\" deines Firmenkontos.",
+      "step3": "Klicke auf \"Verbindung testen\", um deinen API-Schlüssel zu überprüfen.",
+      "step4": "Warte etwa 5 Sekunden, bis die Seite automatisch neu lädt.",
+      "step5": "Nach dem Neuladen der Seite erscheint eine grüne Box, die die erfolgreiche Konfiguration anzeigt. Du bist jetzt bereit, gebührenfreie Zahlungen zu empfangen!",
+      "step6": "Wir empfehlen dir, Cashback für deine Kunden zu aktivieren. Mit Cashback änderst du das Zahlungsverhalten deiner Kunden, damit sie gebührenfreies FLIZ nutzen. <a href='https://app.flizpay.de/cashback' target='_blank'>Cashback hier aktivieren.</a>"
+    },
+    "links": {
+      "faq": "Noch Fragen? <a href='https://flizpay.de/#faq' target='_blank'>Schau dir unsere FAQ-Seite an</a>.",
+      "docs": "Mehr Details benötigt? <a href='https://www.docs.flizpay.de/docs/intro' target='_blank'>Lies unsere Dokumentation.</a>"
+    },
+    "api": {
+      "title": "API-Konfiguration",
+      "apiKeyLabel": "API-Schlüssel",
+      "apiKeyPlaceholder": "Gib deinen FLIZpay API-Schlüssel ein...",
+      "apiKeyHelpText": "Dein FLIZpay API-Schlüssel zur Authentifizierung. Erhalte diesen in deinem FLIZpay-Händler-Dashboard.",
+      "apiBaseUrlLabel": "API-Basis-URL",
+      "apiBaseUrlPlaceholder": "https://api.flizpay.de",
+      "apiBaseUrlHelpText": "Leer lassen für Produktions-URL. Für Tests, benutzerdefinierte Endpunkt eingeben.",
+      "sandboxModeLabel": "Sandbox-Modus",
+      "sandboxModeHelpText": "Aktiviere dies, um die Zahlungsabwicklung in der Sandbox-Umgebung zu testen.",
+      "webhookUrlLabel": "Webhook-URL",
+      "webhookUrlHelpText": "Automatisch konfigurierte Webhook-URL (nur lesen).",
+      "webhookAliveLabel": "Verbindungsstatus",
+      "webhookAliveYes": "✓ Webhook-Verbindung verifiziert - Zahlungsmethode ist aktiv",
+      "webhookAliveNo": "⚠ Warte auf Webhook-Verifizierung - Zahlungsmethode ist deaktiviert",
+      "webhookAliveHelpText": "FLIZpay muss erfolgreich einen Test-Webhook senden, bevor Zahlungen verarbeitet werden können."
+    },
+    "options": {
+      "title": "Zahlungsoptionen",
+      "paymentFlowLabel": "Zahlungsablauf",
+      "paymentFlowHelpText": "Wähle aus, wie Kunden mit dem Zahlungsprozess interagieren.",
+      "enableLoggingLabel": "Debug-Protokollierung aktivieren",
+      "enableLoggingHelpText": "Aktiviere detaillierte Protokollierung zur Fehlerbehebung (in Produktion deaktivieren)."
+    },
+    "paymentFlow": {
+      "redirect": "Weiterleitung zu FLIZpay",
+      "embedded": "Eingebettete Kasse"
+    },
+    "actions": {
+      "save": "Speichern",
+      "testConnection": "Verbindung testen"
+    },
+    "connection": {
+      "success": "Verbunden! Warte auf Webhook-Bestätigung. Die Seite wird in 5 Sekunden automatisch neu geladen...",
+      "failed": "Verbindung fehlgeschlagen. Bitte überprüfe deinen API-Schlüssel und versuche es erneut.",
+      "pending": "Verbunden! Warte auf Webhook-Bestätigung. Die Seite wird in 5 Sekunden automatisch neu geladen...",
+      "established": "Verbindung hergestellt! Unsere Server haben erfolgreich mit deiner Website kommuniziert. Du kannst jetzt gebührenfreie Zahlungen empfangen!",
+      "webhookVerified": "Webhook verifiziert! Zahlungsmethode ist jetzt aktiv."
+    },
+    "displayOptions": {
+      "title": "Anzeige-Optionen",
+      "displayLogoLabel": "FLIZpay-Logo anzeigen",
+      "displayLogoHelpText": "FLIZpay-Logo bei der Zahlungsmethode im Checkout anzeigen.",
+      "displayHeadlineLabel": "Cashback-Überschrift anzeigen",
+      "displayHeadlineHelpText": "Cashback-Prozentsatz im Titel der Zahlungsmethode anzeigen.",
+      "displayDescriptionLabel": "Beschreibung anzeigen",
+      "displayDescriptionHelpText": "Zahlungsmethoden-Beschreibung im Checkout anzeigen."
+    },
+    "advancedSettings": {
+      "title": "Erweiterte Einstellungen",
+      "orderStatusLabel": "Anfänglicher Bestellstatus",
+      "orderStatusPending": "Ausstehend",
+      "orderStatusDraft": "Entwurf",
+      "orderStatusHelpText": "Anfänglicher Bestellstatus beim Erstellen der Zahlung.",
+      "sentryEnabledLabel": "Fehlerberichterstattung",
+      "sentryEnabledHelpText": "Anonyme Fehlerberichte senden, um die Plugin-Qualität zu verbessern."
+    },
+    "expressCheckout": {
+      "title": "Express-Checkout",
+      "enabledLabel": "Express-Checkout aktivieren",
+      "enabledHelpText": "Kunden ermöglichen, den Warenkorb zu überspringen und direkt von Produktseiten zur Kasse zu gehen.",
+      "pagesLabel": "Anzeigen auf Seiten",
+      "pageProduct": "Produktseite",
+      "pageCart": "Warenkorbseite",
+      "themeLabel": "Button-Design",
+      "themeLight": "Hell",
+      "themeDark": "Dunkel"
+    },
+    "cashbackInfo": {
+      "title": "Cashback-Informationen",
+      "firstPurchaseLabel": "Erstkauf-Cashback",
+      "standardLabel": "Standard-Cashback",
+      "notConfigured": "Kein Cashback konfiguriert",
+      "refreshButton": "Cashback-Daten aktualisieren"
+    },
+    "reconfiguration": {
+      "warning": "Du hast bereits eine Integration eingerichtet. Durch die Neukonfiguration werden alle aktuellen laufenden Zahlungsantworten ungültig. Fortfahren?",
+      "title": "Neukonfiguration bestätigen"
+    },
+    "notifications": {
+      "saveSuccess": "Einstellungen erfolgreich gespeichert.",
+      "connectionSuccess": "Erfolgreich mit FLIZpay API verbunden."
+    },
+    "errors": {
+      "loadFailed": "Einstellungen konnten nicht geladen werden.",
+      "saveFailed": "Einstellungen konnten nicht gespeichert werden.",
+      "apiKeyRequired": "API-Schlüssel ist erforderlich."
+    }
+  }
+}

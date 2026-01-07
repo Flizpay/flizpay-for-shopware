@@ -1,0 +1,119 @@
+<?xml version="1.0" ?>
+<container
+    xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd"
+>
+
+    <services>
+        <!-- Payment Method Installer -->
+        <service id="Flizpay\Payment\Service\PaymentMethodInstaller">
+            <argument type="service" id="payment_method.repository" />
+            <argument
+                type="service"
+                id="Shopware\Core\Framework\Plugin\Util\PluginIdProvider"
+            />
+        </service>
+
+        <!-- API Client Instance -->
+        <service id="Flizpay\Payment\Service\FlizpayApi">
+            <argument
+                type="service"
+                id="Shopware\Core\System\SystemConfig\SystemConfigService"
+            />
+            <argument type="service" id="monolog.logger" />
+        </service>
+
+        <!-- API Service -->
+        <service id="Flizpay\Payment\Service\FlizpayApiService">
+            <argument type="service" id="Flizpay\Payment\Service\FlizpayApi" />
+            <argument type="service" id="router" />
+        </service>
+
+        <!-- Webhook Service -->
+        <service id="Flizpay\Payment\Service\FlizpayWebhookService">
+            <argument
+                type="service"
+                id="Shopware\Core\System\SystemConfig\SystemConfigService"
+            />
+            <argument type="service" id="order.repository" />
+            <argument
+                type="service"
+                id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"
+            />
+            <argument type="service" id="monolog.logger" />
+        </service>
+
+        <!-- Webhook Controller -->
+        <service
+            id="Flizpay\Payment\Storefront\Controller\FlizpayWebhookController"
+            public="true"
+        >
+            <argument
+                type="service"
+                id="Flizpay\Payment\Service\FlizpayWebhookService"
+            />
+            <argument type="service" id="monolog.logger" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
+        <!-- Payment Handler -->
+        <service id="Flizpay\Payment\Handler\FlizpayPaymentHandler">
+            <argument
+                type="service"
+                id="Flizpay\Payment\Service\FlizpayApiService"
+            />
+            <argument
+                type="service"
+                id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"
+            />
+            <argument type="service" id="monolog.logger" />
+            <argument
+                type="service"
+                id="Shopware\Core\System\SystemConfig\SystemConfigService"
+            />
+            <argument type="service" id="order_transaction.repository" />
+            <tag name="shopware.payment.method" />
+        </service>
+
+        <!-- Admin API Controller -->
+        <service
+            id="Flizpay\Payment\Core\Api\FlizpayConfigController"
+            public="true"
+        >
+            <argument
+                type="service"
+                id="Shopware\Core\System\SystemConfig\SystemConfigService"
+            />
+            <argument
+                type="service"
+                id="Flizpay\Payment\Service\FlizpayApiService"
+            />
+            <argument type="service" id="monolog.logger" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+            <tag name="controller.service_arguments" />
+        </service>
+
+        <!-- Payment Method Validation Logger (Debug) -->
+        <service id="Flizpay\Payment\Subscriber\PaymentMethodValidationLogger">
+            <argument type="service" id="monolog.logger" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- Cart Validator - checks FLIZpay availability before checkout -->
+        <service
+            id="Flizpay\Payment\Checkout\Cart\Validation\FlizpayCartValidator"
+        >
+            <argument
+                type="service"
+                id="Shopware\Core\System\SystemConfig\SystemConfigService"
+            />
+            <argument type="service" id="monolog.logger" />
+            <tag name="shopware.cart.validator" />
+        </service>
+    </services>
+</container>
