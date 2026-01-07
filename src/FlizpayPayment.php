@@ -103,7 +103,9 @@ class FlizpayPayment extends Plugin
 
             /** @var SystemConfigService $systemConfig */
             $systemConfig = $this->container->get(SystemConfigService::class);
-            $apiKey = $systemConfig->getString("FlizpayPayment.config.apiKey");
+            $apiKey = $systemConfig->getString(
+                "FlizpayForShopware.config.apiKey",
+            );
 
             if (!$apiKey) {
                 return; // Not configured yet
@@ -156,7 +158,7 @@ class FlizpayPayment extends Plugin
             $connection = $this->container->get(Connection::class);
             $connection->executeStatement(
                 "DELETE FROM system_config
-                 WHERE configuration_key LIKE 'FlizpayPayment.config.%'",
+                 WHERE configuration_key LIKE 'FlizpayForShopware.config.%'",
             );
         } catch (\Exception $e) {
             /** @var LoggerInterface $logger */

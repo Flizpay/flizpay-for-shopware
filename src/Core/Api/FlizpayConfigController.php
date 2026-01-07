@@ -71,7 +71,7 @@ class FlizpayConfigController extends AbstractController
             // Temporarily save API key for API calls
             $this->logger->info("Saving API key to config");
             $this->systemConfigService->set(
-                "FlizpayPayment.config.apiKey",
+                "FlizpayForShopware.config.apiKey",
                 $apiKey,
                 $salesChannelId,
             );
@@ -79,7 +79,7 @@ class FlizpayConfigController extends AbstractController
             // Reset webhook status - safety measure like WordPress
             $this->logger->info("Resetting webhookAlive to false");
             $this->systemConfigService->set(
-                "FlizpayPayment.config.webhookAlive",
+                "FlizpayForShopware.config.webhookAlive",
                 false,
                 $salesChannelId,
             );
@@ -106,7 +106,7 @@ class FlizpayConfigController extends AbstractController
                     "webhookUrl" => $webhookUrl,
                 ]);
                 $this->systemConfigService->set(
-                    "FlizpayPayment.config.webhookUrl",
+                    "FlizpayForShopware.config.webhookUrl",
                     $webhookUrl,
                     $salesChannelId,
                 );
@@ -128,7 +128,7 @@ class FlizpayConfigController extends AbstractController
 
                 // Clear API key on failure
                 $this->systemConfigService->set(
-                    "FlizpayPayment.config.apiKey",
+                    "FlizpayForShopware.config.apiKey",
                     "",
                     $salesChannelId,
                 );
@@ -164,7 +164,7 @@ class FlizpayConfigController extends AbstractController
 
                 $this->logger->info("Saving webhook key to config");
                 $this->systemConfigService->set(
-                    "FlizpayPayment.config.webhookKey",
+                    "FlizpayForShopware.config.webhookKey",
                     $webhookKey,
                     $salesChannelId,
                 );
@@ -181,7 +181,7 @@ class FlizpayConfigController extends AbstractController
 
                 // Clear API key on failure
                 $this->systemConfigService->set(
-                    "FlizpayPayment.config.apiKey",
+                    "FlizpayForShopware.config.apiKey",
                     "",
                     $salesChannelId,
                 );
@@ -217,7 +217,7 @@ class FlizpayConfigController extends AbstractController
                     ]);
 
                     $this->systemConfigService->set(
-                        "FlizpayPayment.config.cashbackData",
+                        "FlizpayForShopware.config.cashbackData",
                         json_encode($parsedCashback),
                         $salesChannelId,
                     );
@@ -270,7 +270,7 @@ class FlizpayConfigController extends AbstractController
 
             // Clear API key on unexpected failure
             $this->systemConfigService->set(
-                "FlizpayPayment.config.apiKey",
+                "FlizpayForShopware.config.apiKey",
                 "",
                 $salesChannelId ?? null,
             );

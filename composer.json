@@ -14,11 +14,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Flizpay\\Payment\\": "src/"
+      "FLIZpay\\FlizpayForShopware\\": "src/"
     }
   },
   "extra": {
-    "shopware-plugin-class": "Flizpay\\Payment\\FlizpayPayment",
+    "shopware-plugin-class": "FLIZpay\\FlizpayForShopware\\FlizpayPayment",
     "label": {
       "de-DE": "FLIZpay Zahlungsgateway",
       "en-GB": "FLIZpay Payment Gateway"

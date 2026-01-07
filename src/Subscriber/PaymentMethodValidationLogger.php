@@ -11,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaymentMethodValidationLogger implements EventSubscriberInterface
 {
-    private const FLIZPAY_HANDLER = "Flizpay\\Payment\\Handler\\FlizpayPaymentHandler";
+    private const FLIZPAY_HANDLER = "FLIZpay\\FlizpayForShopware\\Handler\\FlizpayPaymentHandler";
 
     public function __construct(private readonly LoggerInterface $logger) {}
 

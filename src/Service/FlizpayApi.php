@@ -54,7 +54,7 @@ class FlizpayApi
     {
         if ($this->api_key === null) {
             $this->api_key = $this->systemConfigService->get(
-                "FlizpayPayment.config.apiKey",
+                "FlizpayForShopware.config.apiKey",
                 $this->salesChannelId,
             );
         }

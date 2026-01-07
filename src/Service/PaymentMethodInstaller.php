@@ -29,7 +29,7 @@ class PaymentMethodInstaller
         }
 
         $pluginId = $this->pluginIdProvider->getPluginIdByBaseClass(
-            \Flizpay\Payment\FlizpayPayment::class,
+            \FLIZpay\FlizpayForShopware\FlizpayPayment::class,
             $context,
         );
 

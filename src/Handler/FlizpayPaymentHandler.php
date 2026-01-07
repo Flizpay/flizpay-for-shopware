@@ -64,11 +64,11 @@ class FlizpayPaymentHandler extends AbstractPaymentHandler
 
             // Safety fallback validation (primary validation is in FlizpayCartValidator)
             $webhookAlive = $this->systemConfigService->getBool(
-                "FlizpayPayment.config.webhookAlive",
+                "FlizpayForShopware.config.webhookAlive",
             );
 
             $apiKey = $this->systemConfigService->getString(
-                "FlizpayPayment.config.apiKey",
+                "FlizpayForShopware.config.apiKey",
             );
 
             if (!$webhookAlive || !$apiKey) {

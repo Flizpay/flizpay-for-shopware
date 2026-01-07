@@ -128,24 +128,26 @@ Component.register("flizpay-settings", {
       try {
         const values: SystemConfigValues =
           await this.systemConfigApiService.getValues(
-            "FlizpayPayment.config",
+            "FlizpayForShopware.config",
             this.currentSalesChannelId,
           );
 
         this.config.apiKey =
-          (values["FlizpayPayment.config.apiKey"] as string) || "";
+          (values["FlizpayForShopware.config.apiKey"] as string) || "";
         this.config.sandboxMode =
-          (values["FlizpayPayment.config.sandboxMode"] as boolean) ?? true;
+          (values["FlizpayForShopware.config.sandboxMode"] as boolean) ?? true;
         this.config.webhookUrl =
-          (values["FlizpayPayment.config.webhookUrl"] as string) || "";
+          (values["FlizpayForShopware.config.webhookUrl"] as string) || "";
         this.config.webhookAlive =
-          (values["FlizpayPayment.config.webhookAlive"] as boolean) || false;
+          (values["FlizpayForShopware.config.webhookAlive"] as boolean) ||
+          false;
         this.config.paymentFlow =
-          (values["FlizpayPayment.config.paymentFlow"] as
+          (values["FlizpayForShopware.config.paymentFlow"] as
             | "redirect"
             | "embedded") || "redirect";
         this.config.enableLogging =
-          (values["FlizpayPayment.config.enableLogging"] as boolean) || false;
+          (values["FlizpayForShopware.config.enableLogging"] as boolean) ||
+          false;
 
         this.initialApiKey = this.config.apiKey;
       } catch {
@@ -183,10 +185,11 @@ Component.register("flizpay-settings", {
         // Step 1: Save basic config first
         await this.systemConfigApiService.saveValues(
           {
-            "FlizpayPayment.config.apiKey": this.config.apiKey,
-            "FlizpayPayment.config.sandboxMode": this.config.sandboxMode,
-            "FlizpayPayment.config.paymentFlow": this.config.paymentFlow,
-            "FlizpayPayment.config.enableLogging": this.config.enableLogging,
+            "FlizpayForShopware.config.apiKey": this.config.apiKey,
+            "FlizpayForShopware.config.sandboxMode": this.config.sandboxMode,
+            "FlizpayForShopware.config.paymentFlow": this.config.paymentFlow,
+            "FlizpayForShopware.config.enableLogging":
+              this.config.enableLogging,
           },
           this.currentSalesChannelId,
         );
@@ -269,12 +272,12 @@ Component.register("flizpay-settings", {
           // Reload config to check webhook status
           const values: SystemConfigValues =
             await this.systemConfigApiService.getValues(
-              "FlizpayPayment.config",
+              "FlizpayForShopware.config",
               this.currentSalesChannelId,
             );
 
           const webhookAlive = values[
-            "FlizpayPayment.config.webhookAlive"
+            "FlizpayForShopware.config.webhookAlive"
           ] as boolean;
 
           if (webhookAlive) {

@@ -46,12 +46,12 @@ class FlizpayCartValidator implements CartValidatorInterface
 
         // Check if webhook is alive (verified connection)
         $webhookAlive = $this->systemConfigService->getBool(
-            "FlizpayPayment.config.webhookAlive",
+            "FlizpayForShopware.config.webhookAlive",
         );
 
         // Check if API key is configured
         $apiKey = $this->systemConfigService->getString(
-            "FlizpayPayment.config.apiKey",
+            "FlizpayForShopware.config.apiKey",
         );
 
         $this->logger->critical("=== FLIZPAY CART VALIDATOR CONFIG ===", [

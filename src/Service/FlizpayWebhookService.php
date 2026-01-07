@@ -113,7 +113,7 @@ class FlizpayWebhookService
         }
 
         $webhookKey = $this->systemConfig->getString(
-            "FlizpayPayment.config.webhookKey",
+            "FlizpayForShopware.config.webhookKey",
         );
 
         if (!$webhookKey) {
@@ -158,7 +158,10 @@ class FlizpayWebhookService
         $this->logger->info("Webhook test received", ["data" => $data]);
 
         // Set webhook as alive - connection verified!
-        $this->systemConfig->set("FlizpayPayment.config.webhookAlive", true);
+        $this->systemConfig->set(
+            "FlizpayForShopware.config.webhookAlive",
+            true,
+        );
 
         $this->logger->info(
             "Webhook connection verified - payment method enabled",
