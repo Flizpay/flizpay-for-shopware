@@ -7,7 +7,7 @@
 
     <services>
         <!-- Payment Method Installer -->
-        <service id="Flizpay\Payment\Service\PaymentMethodInstaller">
+        <service id="FLIZpay\FlizpayForShopware\Service\PaymentMethodInstaller">
             <argument type="service" id="payment_method.repository" />
             <argument
                 type="service"
@@ -16,7 +16,7 @@
         </service>
 
         <!-- API Client Instance -->
-        <service id="Flizpay\Payment\Service\FlizpayApi">
+        <service id="FLIZpay\FlizpayForShopware\Service\FlizpayApi">
             <argument
                 type="service"
                 id="Shopware\Core\System\SystemConfig\SystemConfigService"
@@ -25,13 +25,16 @@
         </service>
 
         <!-- API Service -->
-        <service id="Flizpay\Payment\Service\FlizpayApiService">
-            <argument type="service" id="Flizpay\Payment\Service\FlizpayApi" />
+        <service id="FLIZpay\FlizpayForShopware\Service\FlizpayApiService">
+            <argument
+                type="service"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpayApi"
+            />
             <argument type="service" id="router" />
         </service>
 
         <!-- Webhook Service -->
-        <service id="Flizpay\Payment\Service\FlizpayWebhookService">
+        <service id="FLIZpay\FlizpayForShopware\Service\FlizpayWebhookService">
             <argument
                 type="service"
                 id="Shopware\Core\System\SystemConfig\SystemConfigService"
@@ -46,12 +49,12 @@
 
         <!-- Webhook Controller -->
         <service
-            id="Flizpay\Payment\Storefront\Controller\FlizpayWebhookController"
+            id="FLIZpay\FlizpayForShopware\Storefront\Controller\FlizpayWebhookController"
             public="true"
         >
             <argument
                 type="service"
-                id="Flizpay\Payment\Service\FlizpayWebhookService"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpayWebhookService"
             />
             <argument type="service" id="monolog.logger" />
             <call method="setContainer">
@@ -60,10 +63,10 @@
         </service>
 
         <!-- Payment Handler -->
-        <service id="Flizpay\Payment\Handler\FlizpayPaymentHandler">
+        <service id="FLIZpay\FlizpayForShopware\Handler\FlizpayPaymentHandler">
             <argument
                 type="service"
-                id="Flizpay\Payment\Service\FlizpayApiService"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpayApiService"
             />
             <argument
                 type="service"
@@ -80,7 +83,7 @@
 
         <!-- Admin API Controller -->
         <service
-            id="Flizpay\Payment\Core\Api\FlizpayConfigController"
+            id="FLIZpay\FlizpayForShopware\Core\Api\FlizpayConfigController"
             public="true"
         >
             <argument
@@ -89,7 +92,7 @@
             />
             <argument
                 type="service"
-                id="Flizpay\Payment\Service\FlizpayApiService"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpayApiService"
             />
             <argument type="service" id="monolog.logger" />
             <call method="setContainer">
@@ -99,14 +102,16 @@
         </service>
 
         <!-- Payment Method Validation Logger (Debug) -->
-        <service id="Flizpay\Payment\Subscriber\PaymentMethodValidationLogger">
+        <service
+            id="FLIZpay\FlizpayForShopware\Subscriber\PaymentMethodValidationLogger"
+        >
             <argument type="service" id="monolog.logger" />
             <tag name="kernel.event_subscriber" />
         </service>
 
         <!-- Cart Validator - checks FLIZpay availability before checkout -->
         <service
-            id="Flizpay\Payment\Checkout\Cart\Validation\FlizpayCartValidator"
+            id="FLIZpay\FlizpayForShopware\Checkout\Cart\Validation\FlizpayCartValidator"
         >
             <argument
                 type="service"
