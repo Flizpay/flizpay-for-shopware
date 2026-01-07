@@ -17,7 +17,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
-class FlizpayPayment extends Plugin
+class FlizpayForShopware extends Plugin
 {
     public function configureRoutes(
         RoutingConfigurator $routes,

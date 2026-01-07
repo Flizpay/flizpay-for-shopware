@@ -18,7 +18,7 @@
     }
   },
   "extra": {
-    "shopware-plugin-class": "FLIZpay\\FlizpayForShopware\\FlizpayPayment",
+    "shopware-plugin-class": "FLIZpay\\FlizpayForShopware\\FlizpayForShopware",
     "label": {
       "de-DE": "FLIZpay Zahlungsgateway",
       "en-GB": "FLIZpay Payment Gateway"
