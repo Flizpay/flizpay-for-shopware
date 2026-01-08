@@ -19,8 +19,30 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles FLIZpay payment processing for Shopware checkout. (Asynchronous)
+ *
+ * This handler implements the redirect-based payment flow:
+ * 1. Customer initiates checkout with FLIZpay payment method
+ * 2. Handler creates a transaction via FLIZpay API and redirects to payment page
+ * 3. Customer completes payment on FLIZpay's hosted page
+ * 4. Customer is redirected back to the shop (finalize method)
+ * 5. Webhook confirms actual payment status asynchronously
+ *
+ * Note: This handler does not support recurring payments or refunds.
+ * Primary cart validation occurs in FlizpayCartValidator before order creation.
+ */
 class FlizpayPaymentHandler extends AbstractPaymentHandler
 {
+    /**
+     * Initializes the payment handler with required services.
+     *
+     * @param FlizpayApiService $apiService Handles communication with the FLIZpay API
+     * @param OrderTransactionStateHandler $transactionStateHandler Manages payment state transitions (open, in_progress, paid, failed)
+     * @param LoggerInterface $logger PSR-3 logger for debugging and error tracking
+     * @param SystemConfigService $systemConfigService Provides access to plugin configuration (API key, webhook status)
+     * @param EntityRepository $orderTransactionRepository Repository for fetching order transaction entities with associations
+     */
     public function __construct(
         private readonly FlizpayApiService $apiService,
         private readonly OrderTransactionStateHandler $transactionStateHandler,
@@ -83,13 +105,17 @@ class FlizpayPaymentHandler extends AbstractPaymentHandler
                 "transactionId" => $transactionId,
             ]);
 
-            // Mark as in_progress
-            $this->transactionStateHandler->process($transactionId, $context);
+            // Returns Shopware order finalized url
+            // In case of `paid` order status -> order completed page
+            // When order still having `open` status -> /account/order page,
+            // where user can re-initiate payment transaction
+            $returnUrl = $transaction->getReturnUrl();
 
             // Create FLIZpay transaction
             $redirectUrl = $this->apiService->create_transaction(
                 $order,
                 "plugin",
+                $returnUrl,
             );
 
             if (!$redirectUrl) {
@@ -111,6 +137,18 @@ class FlizpayPaymentHandler extends AbstractPaymentHandler
         }
     }
 
+    /**
+     * This method will be called after redirect from the external payment provider.
+     *
+     * Checks if the payment was completed (webhook would have set status to 'paid').
+     * If payment is still in 'open' state, the customer either:
+     * - Clicked the cancel button on FLIZpay checkout page
+     * - The webhook hasn't arrived yet
+     *
+     * We throw an exception to redirect the customer to the order edit page
+     * where they can retry payment. The transaction stays in 'open' state
+     * to allow retry.
+     */
     public function finalize(
         Request $request,
         PaymentTransactionStruct $transaction,
@@ -123,14 +161,33 @@ class FlizpayPaymentHandler extends AbstractPaymentHandler
             $context,
         );
 
+        $currentState = $orderTransaction
+            ->getStateMachineState()
+            ?->getTechnicalName();
+
         $this->logger->info("Customer returned from FLIZpay", [
             "transactionId" => $transactionId,
-            "currentState" => $orderTransaction
-                ->getStateMachineState()
-                ?->getTechnicalName(),
+            "currentState" => $currentState,
         ]);
 
-        // Webhook handles actual payment confirmation
+        // Check if webhook already confirmed the payment
+        if ($currentState === "paid") {
+            $this->logger->info("FLIZpay payment confirmed by webhook", [
+                "transactionId" => $transactionId,
+            ]);
+            return;
+        }
+
+        // Payment not completed - customer clicked cancel or webhook hasn't arrived
+        $this->logger->info("FLIZpay payment not completed", [
+            "transactionId" => $transactionId,
+            "state" => $currentState,
+        ]);
+
+        throw PaymentException::asyncFinalizeInterrupted(
+            $transactionId,
+            "Payment was not completed. Please try again.",
+        );
     }
 
     /**
