@@ -97,9 +97,17 @@ class FlizpayApiService
         return null;
     }
 
+    /**
+     * Create a FLIZpay transaction and return the redirect URL.
+     *
+     * @param OrderEntity $order The order to create a transaction for
+     * @param string $source The source of the transaction (e.g., "plugin")
+     * @param string|null $returnUrl Shopware's finalize URL
+     */
     public function create_transaction(
         OrderEntity $order,
         string $source,
+        ?string $returnUrl = null,
     ): ?string {
         $orderCustomer = $order->getOrderCustomer();
 
@@ -122,8 +130,8 @@ class FlizpayApiService
             "amount" => $order->getAmountTotal(),
             "currency" => $currency->getIsoCode(),
             "externalId" => $order->getId(),
-            "successUrl" => $this->get_success_url($order),
-            "failureUrl" => $this->get_failure_url($order),
+            "successUrl" => $returnUrl ?? $this->get_success_url($order),
+            "failureUrl" => $returnUrl ?? $this->get_failure_url($order),
             "customer" => $customer,
             "source" => $source,
             "needsShipping" => $this->needs_shipping($order),
