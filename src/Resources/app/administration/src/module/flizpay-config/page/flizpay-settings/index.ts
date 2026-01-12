@@ -13,6 +13,7 @@ import type {
   FlizpayTestConnectionResponse,
   PaymentFlowOption,
   SystemConfigValues,
+  FlizpayCashbackData,
 } from "FlizpayForShopware/types/flizpay.types";
 import type FlizpayApiService from "FlizpayForShopware/service/flizpay-api.service";
 
@@ -38,6 +39,7 @@ interface ComponentData {
   isWaitingForWebhook: boolean;
   currentSalesChannelId: string | null;
   pollingInterval: number | null;
+  cashbackData: FlizpayCashbackData | null;
 }
 
 interface ComponentMethods {
@@ -57,6 +59,7 @@ interface ComponentMethods {
 interface ComponentComputed {
   paymentFlowOptions: PaymentFlowOption[];
   isConnectionEstablished: boolean;
+  hasCashback: boolean;
 }
 
 interface ComponentInstance
@@ -84,12 +87,14 @@ Component.register("flizpay-settings", {
         webhookKey: "",
         paymentFlow: "redirect",
         enableLogging: false,
+        displayCashbackInTitle: true,
       },
       connectionStatus: null,
       initialApiKey: null,
       isWaitingForWebhook: false,
       currentSalesChannelId: null,
       pollingInterval: null,
+      cashbackData: null,
     };
   },
 
@@ -109,6 +114,14 @@ Component.register("flizpay-settings", {
 
     isConnectionEstablished(this: ComponentInstance): boolean {
       return this.config.webhookAlive === true;
+    },
+
+    hasCashback(this: ComponentInstance): boolean {
+      if (!this.cashbackData) return false;
+      return (
+        (this.cashbackData.first_purchase_amount ?? 0) > 0 ||
+        (this.cashbackData.standard_amount ?? 0) > 0
+      );
     },
   },
 
@@ -148,6 +161,22 @@ Component.register("flizpay-settings", {
         this.config.enableLogging =
           (values["FlizpayForShopware.config.enableLogging"] as boolean) ||
           false;
+        this.config.displayCashbackInTitle =
+          (values[
+            "FlizpayForShopware.config.displayCashbackInTitle"
+          ] as boolean) ?? true;
+
+        // Load cashback data
+        const cashbackDataJson = values[
+          "FlizpayForShopware.config.cashbackData"
+        ] as string;
+        if (cashbackDataJson) {
+          try {
+            this.cashbackData = JSON.parse(cashbackDataJson);
+          } catch {
+            this.cashbackData = null;
+          }
+        }
 
         this.initialApiKey = this.config.apiKey;
       } catch {
@@ -190,6 +219,8 @@ Component.register("flizpay-settings", {
             "FlizpayForShopware.config.paymentFlow": this.config.paymentFlow,
             "FlizpayForShopware.config.enableLogging":
               this.config.enableLogging,
+            "FlizpayForShopware.config.displayCashbackInTitle":
+              this.config.displayCashbackInTitle,
           },
           this.currentSalesChannelId,
         );

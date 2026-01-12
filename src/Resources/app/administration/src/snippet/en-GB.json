@@ -96,6 +96,16 @@
       "notConfigured": "No cashback configured",
       "refreshButton": "Refresh Cashback Data"
     },
+    "cashback": {
+      "title": "Cashback Settings",
+      "displayInTitleLabel": "Show Cashback in Payment Method Title",
+      "displayInTitleHelpText": "When enabled, the cashback percentage will be shown in the payment method name at checkout (e.g., 'FLIZpay - Up to 5% Cashback').",
+      "currentRates": "Current Cashback Rates:",
+      "firstPurchase": "First Purchase",
+      "standard": "Standard",
+      "noCashback": "No cashback is currently configured. Enable cashback in your FLIZpay dashboard to offer rewards to your customers.",
+      "configureLink": "Configure cashback rates in your <a href='https://app.flizpay.de/cashback' target='_blank'>FLIZpay Dashboard</a>."
+    },
     "reconfiguration": {
       "warning": "You already have an integration set up. By reconfiguring, you will invalidate all current ongoing payment responses. Proceed?",
       "title": "Confirm Reconfiguration"

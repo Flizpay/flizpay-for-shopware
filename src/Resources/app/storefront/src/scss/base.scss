@@ -1,0 +1,88 @@
+// FLIZpay Storefront Styles
+
+// FLIZpay Payment Method Styles (matching WooCommerce design)
+.flizpay-payment-method-label {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+
+    .flizpay-payment-description {
+        flex: 1;
+    }
+
+    .flizpay-description-text {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #374151;
+        line-height: 1.5;
+    }
+}
+
+// FLIZpay logo badge (right side)
+.flizpay-logo-badge {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+    flex-shrink: 0;
+
+    svg {
+        display: block;
+    }
+}
+
+// Ensure payment method row has proper layout for FLIZpay
+.payment-method:has(.flizpay-payment-method-label) {
+    .payment-method-radio {
+        .form-check-label {
+            width: 100%;
+        }
+    }
+}
+
+// Fallback for browsers without :has() support
+.flizpay-payment-method-label {
+    width: calc(100% - 30px);
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .flizpay-payment-method-label {
+        .flizpay-description-text {
+            color: #d1d5db;
+        }
+    }
+
+    .flizpay-logo-badge {
+        svg rect {
+            fill: #1a3d1f;
+        }
+        svg text:first-of-type {
+            fill: #86efac;
+        }
+        svg text:last-of-type {
+            fill: #4ade80;
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+    .flizpay-payment-method-label {
+        flex-wrap: wrap;
+
+        .flizpay-description-text {
+            font-size: 0.8rem;
+        }
+    }
+
+    .flizpay-logo-badge {
+        margin-left: 0.5rem;
+
+        svg {
+            width: 60px;
+            height: 20px;
+        }
+    }
+}

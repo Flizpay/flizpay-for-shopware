@@ -96,6 +96,16 @@
       "notConfigured": "Kein Cashback konfiguriert",
       "refreshButton": "Cashback-Daten aktualisieren"
     },
+    "cashback": {
+      "title": "Cashback-Einstellungen",
+      "displayInTitleLabel": "Cashback im Zahlungsmethoden-Titel anzeigen",
+      "displayInTitleHelpText": "Wenn aktiviert, wird der Cashback-Prozentsatz im Namen der Zahlungsmethode an der Kasse angezeigt (z.B. 'FLIZpay - Bis zu 5% Rabatt').",
+      "currentRates": "Aktuelle Cashback-Raten:",
+      "firstPurchase": "Erstkauf",
+      "standard": "Standard",
+      "noCashback": "Derzeit ist kein Cashback konfiguriert. Aktiviere Cashback in deinem FLIZpay-Dashboard, um deinen Kunden Belohnungen anzubieten.",
+      "configureLink": "Konfiguriere Cashback-Raten in deinem <a href='https://app.flizpay.de/cashback' target='_blank'>FLIZpay-Dashboard</a>."
+    },
     "reconfiguration": {
       "warning": "Du hast bereits eine Integration eingerichtet. Durch die Neukonfiguration werden alle aktuellen laufenden Zahlungsantworten ungültig. Fortfahren?",
       "title": "Neukonfiguration bestätigen"

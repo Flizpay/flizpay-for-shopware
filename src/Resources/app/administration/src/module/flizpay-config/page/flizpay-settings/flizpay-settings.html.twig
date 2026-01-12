@@ -145,6 +145,53 @@
             </sw-card>
             {% endblock %}
 
+            {% block flizpay_settings_cashback_card %}
+            <sw-card
+                :title="$tc('flizpay-config.cashback.title')"
+                :isLoading="isLoading"
+                class="flizpay-settings__cashback-card">
+
+                <sw-container columns="1fr" gap="16px">
+                    {% block flizpay_settings_display_cashback %}
+                    <sw-switch-field
+                        v-model="config.displayCashbackInTitle"
+                        :label="$tc('flizpay-config.cashback.displayInTitleLabel')"
+                        :helpText="$tc('flizpay-config.cashback.displayInTitleHelpText')"
+                        :disabled="isLoading">
+                    </sw-switch-field>
+                    {% endblock %}
+
+                    {% block flizpay_settings_cashback_info %}
+                    <div class="flizpay-cashback-info">
+                        <sw-alert
+                            v-if="hasCashback"
+                            variant="info"
+                            class="flizpay-cashback-info__alert">
+                            <strong>{{ $tc('flizpay-config.cashback.currentRates') }}</strong>
+                            <ul class="flizpay-cashback-info__list">
+                                <li v-if="cashbackData.first_purchase_amount > 0">
+                                    {{ $tc('flizpay-config.cashback.firstPurchase') }}: {{ cashbackData.first_purchase_amount }}%
+                                </li>
+                                <li v-if="cashbackData.standard_amount > 0">
+                                    {{ $tc('flizpay-config.cashback.standard') }}: {{ cashbackData.standard_amount }}%
+                                </li>
+                            </ul>
+                        </sw-alert>
+
+                        <sw-alert
+                            v-else
+                            variant="warning"
+                            class="flizpay-cashback-info__no-cashback">
+                            {{ $tc('flizpay-config.cashback.noCashback') }}
+                        </sw-alert>
+
+                        <p class="flizpay-cashback-info__configure" v-html="$tc('flizpay-config.cashback.configureLink')"></p>
+                    </div>
+                    {% endblock %}
+                </sw-container>
+            </sw-card>
+            {% endblock %}
+
         </sw-card-view>
     </template>
     {% endblock %}

@@ -1,0 +1,65 @@
+{% sw_extends '@Storefront/storefront/component/payment/payment-method.html.twig' %}
+
+{% set isFlizpay = payment.handlerIdentifier == 'FLIZpay\\FlizpayForShopware\\Handler\\FlizpayPaymentHandler' %}
+
+{% block component_payment_method_label %}
+    <label class="form-check-label payment-method-label{% if isFlizpay %} flizpay-payment-method-label{% endif %}"
+           for="paymentMethod{{ payment.id }}">
+
+        {% block component_payment_method_image %}
+            {% if payment.media %}
+                {% sw_thumbnails 'payment-method-image-thumbnails' with {
+                    media: payment.media,
+                    sizes: {
+                        default: '100px'
+                    },
+                    attributes: {
+                        class: 'payment-method-image',
+                        alt: (payment.media.translated.alt ?: payment.translated.name),
+                        title: (payment.media.translated.title ?: payment.translated.name)
+                    }
+                } %}
+            {% endif %}
+        {% endblock %}
+
+        {% block component_payment_method_description %}
+            <div class="payment-method-description{% if isFlizpay %} flizpay-payment-description{% endif %}">
+                {% set paymentName = payment.translated.name %}
+
+                {% block component_payment_method_name %}
+                    <strong>{{ paymentName }}</strong>
+                {% endblock %}
+
+                {# For FLIZpay: show full description when selected, no truncation #}
+                {% if isFlizpay and payment.id is same as(selectedPaymentMethodId) %}
+                    {% if payment.translated.description %}
+                        {% block flizpay_payment_method_description_text %}
+                            <p class="mb-0 flizpay-description-text">{{ payment.translated.description|raw }}</p>
+                        {% endblock %}
+                    {% endif %}
+                {% elseif payment.translated.description and payment.id is same as(selectedPaymentMethodId) %}
+                    {% set paymentDescription = payment.translated.description|raw %}
+                    {% set paymentDescriptionTitle = payment.translated.description|striptags|raw %}
+                    {% set paymentDescription = (paymentDescription|length > 75 ? paymentDescription[:75] ~ ' ...' : paymentDescription) %}
+
+                    {% block component_payment_method_description_text %}
+                        <p class="mb-0" title="{{ paymentDescriptionTitle }}">{{ paymentDescription }}</p>
+                    {% endblock %}
+                {% endif %}
+            </div>
+        {% endblock %}
+
+        {# FLIZpay logo badge on the right #}
+        {% if isFlizpay %}
+            {% block flizpay_logo_badge %}
+                <span class="flizpay-logo-badge">
+                    <svg width="70" height="24" viewBox="0 0 70 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="70" height="24" rx="4" fill="#E8F5E9"/>
+                        <text x="10" y="16" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" fill="#2E7D32">FLIZ</text>
+                        <text x="36" y="16" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="400" fill="#4CAF50">PAY</text>
+                    </svg>
+                </span>
+            {% endblock %}
+        {% endif %}
+    </label>
+{% endblock %}

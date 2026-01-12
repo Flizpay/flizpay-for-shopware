@@ -3,6 +3,7 @@
 namespace FLIZpay\FlizpayForShopware\Service;
 
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler;
+use Shopware\Core\Checkout\Order\OrderEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -15,9 +16,11 @@ use Psr\Log\LoggerInterface;
 class FlizpayWebhookService
 {
     private const FLIZ_SIGNATURE_HEADER = "X-FLIZ-SIGNATURE";
+    private const CONFIG_PREFIX = "FlizpayForShopware.config.";
 
     private SystemConfigService $systemConfig;
     private EntityRepository $orderRepository;
+    private EntityRepository $orderLineItemRepository;
     private OrderTransactionStateHandler $transactionStateHandler;
     private LoggerInterface $logger;
 
@@ -26,6 +29,7 @@ class FlizpayWebhookService
      *
      * @param $systemConfig
      * @param $orderRepository
+     * @param $orderLineItemRepository
      * @param $transactionStateHandler
      * @param $logger
      *
@@ -34,11 +38,13 @@ class FlizpayWebhookService
     public function __construct(
         SystemConfigService $systemConfig,
         EntityRepository $orderRepository,
+        EntityRepository $orderLineItemRepository,
         OrderTransactionStateHandler $transactionStateHandler,
         LoggerInterface $logger,
     ) {
         $this->systemConfig = $systemConfig;
         $this->orderRepository = $orderRepository;
+        $this->orderLineItemRepository = $orderLineItemRepository;
         $this->transactionStateHandler = $transactionStateHandler;
         $this->logger = $logger;
     }
@@ -142,7 +148,53 @@ class FlizpayWebhookService
             return $this->handleTest($data);
         }
 
+        if (isset($data["updateCashbackInfo"])) {
+            return $this->handleCashbackUpdate($data);
+        }
+
         return $this->handlePaymentComplete($data);
+    }
+
+    /**
+     * Handle cashback update webhook
+     * Updates stored cashback data from FLIZpay
+     *
+     * @param array $data
+     * @return JsonResponse
+     *
+     * @since 1.1.0
+     */
+    private function handleCashbackUpdate(array $data): JsonResponse
+    {
+        $this->logger->info("Cashback update webhook received", [
+            "data" => $data,
+        ]);
+
+        $firstPurchaseAmount = (float) ($data["firstPurchaseAmount"] ?? 0);
+        $standardAmount = (float) ($data["amount"] ?? 0);
+
+        $cashbackData = json_encode([
+            "first_purchase_amount" => $firstPurchaseAmount,
+            "standard_amount" => $standardAmount,
+        ]);
+
+        $this->systemConfig->set(
+            self::CONFIG_PREFIX . "cashbackData",
+            $cashbackData,
+        );
+
+        $this->logger->info("Cashback data updated", [
+            "first_purchase_amount" => $firstPurchaseAmount,
+            "standard_amount" => $standardAmount,
+        ]);
+
+        return new JsonResponse(
+            [
+                "success" => true,
+                "message" => "Cashback information updated",
+            ],
+            Response::HTTP_OK,
+        );
     }
 
     /**
@@ -199,6 +251,7 @@ class FlizpayWebhookService
         try {
             $criteria = new Criteria([$orderId]);
             $criteria->addAssociation("transactions");
+            $criteria->addAssociation("lineItems");
 
             $order = $this->orderRepository
                 ->search($criteria, $context)
@@ -234,7 +287,12 @@ class FlizpayWebhookService
                 $discount =
                     (float) $data["originalAmount"] - (float) $data["amount"];
                 if ($discount > 0) {
-                    // $this->applyCashback($order, $discount, $context);
+                    $this->applyCashbackToOrder(
+                        $order,
+                        $data,
+                        $discount,
+                        $context,
+                    );
                 }
             }
 
@@ -255,5 +313,94 @@ class FlizpayWebhookService
                 Response::HTTP_INTERNAL_SERVER_ERROR,
             );
         }
+    }
+
+    /**
+     * Apply cashback discount to order (matching WooCommerce behavior)
+     * Updates line items proportionally and sets order total to settled amount
+     *
+     * @param OrderEntity $order
+     * @param array $data
+     * @param float $discount
+     * @param Context $context
+     *
+     * @since 1.1.0
+     */
+    private function applyCashbackToOrder(
+        OrderEntity $order,
+        array $data,
+        float $discount,
+        Context $context,
+    ): void {
+        $originalAmount = (float) $data["originalAmount"];
+        $finalAmount = (float) $data["amount"];
+        $currency = $data["currency"] ?? "EUR";
+
+        // Calculate cashback percentage
+        $cashbackPercent = ($discount / $originalAmount) * 100;
+
+        $this->logger->info("Applying cashback to order", [
+            "orderId" => $order->getId(),
+            "originalAmount" => $originalAmount,
+            "finalAmount" => $finalAmount,
+            "discount" => $discount,
+            "cashbackPercent" => $cashbackPercent,
+        ]);
+
+        // Get line items and apply proportional discount (like WooCommerce)
+        $lineItems = $order->getLineItems();
+        $lineItemUpdates = [];
+
+        if ($lineItems) {
+            foreach ($lineItems as $lineItem) {
+                $itemTotal = $lineItem->getTotalPrice();
+                $discountAmount = ($itemTotal * $cashbackPercent) / 100;
+                $newTotal = round($itemTotal - $discountAmount, 2);
+
+                $lineItemUpdates[] = [
+                    "id" => $lineItem->getId(),
+                    "totalPrice" => $newTotal,
+                    "unitPrice" =>
+                        $lineItem->getQuantity() > 0
+                            ? round($newTotal / $lineItem->getQuantity(), 2)
+                            : $newTotal,
+                ];
+            }
+        }
+
+        // Update line items
+        if (!empty($lineItemUpdates)) {
+            $this->orderLineItemRepository->update($lineItemUpdates, $context);
+        }
+
+        // Update order total to match FLIZpay settled amount
+        // Also store cashback details in custom fields for reference
+        $this->orderRepository->update(
+            [
+                [
+                    "id" => $order->getId(),
+                    "amountTotal" => $finalAmount,
+                    "customFields" => [
+                        "flizpay_cashback_applied" => $discount,
+                        "flizpay_cashback_percent" => round(
+                            $cashbackPercent,
+                            2,
+                        ),
+                        "flizpay_cashback_currency" => $currency,
+                        "flizpay_original_amount" => $originalAmount,
+                    ],
+                ],
+            ],
+            $context,
+        );
+
+        $this->logger->info("FLIZ Cashback Applied", [
+            "orderId" => $order->getId(),
+            "originalAmount" => $originalAmount,
+            "finalAmount" => $finalAmount,
+            "discount" => $discount,
+            "cashbackPercent" => round($cashbackPercent, 2),
+            "currency" => $currency,
+        ]);
     }
 }

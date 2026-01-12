@@ -18,6 +18,12 @@ export interface FlizpayConfig {
   webhookKey: string;
   paymentFlow: "redirect" | "embedded";
   enableLogging: boolean;
+  displayCashbackInTitle: boolean;
+}
+
+export interface FlizpayCashbackData {
+  first_purchase_amount: number;
+  standard_amount: number;
 }
 
 export interface FlizpayTestConnectionRequest {
