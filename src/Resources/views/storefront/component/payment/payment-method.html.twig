@@ -1,6 +1,7 @@
 {% sw_extends '@Storefront/storefront/component/payment/payment-method.html.twig' %}
 
 {% set isFlizpay = payment.handlerIdentifier == 'FLIZpay\\FlizpayForShopware\\Handler\\FlizpayPaymentHandler' %}
+{% set flizpayCashback = page.extensions.flizpayCashback %}
 
 {% block component_payment_method_label %}
     <label class="form-check-label payment-method-label{% if isFlizpay %} flizpay-payment-method-label{% endif %}"
@@ -30,9 +31,9 @@
                     <strong>{{ paymentName }}</strong>
                 {% endblock %}
 
-                {# For FLIZpay: show full description when selected, no truncation #}
+                {# For FLIZpay: show subtitle (description) when selected if enabled #}
                 {% if isFlizpay and payment.id is same as(selectedPaymentMethodId) %}
-                    {% if payment.translated.description %}
+                    {% if flizpayCashback and flizpayCashback.showSubtitle and payment.translated.description %}
                         {% block flizpay_payment_method_description_text %}
                             <p class="mb-0 flizpay-description-text">{{ payment.translated.description|raw }}</p>
                         {% endblock %}
@@ -49,8 +50,8 @@
             </div>
         {% endblock %}
 
-        {# FLIZpay logo badge on the right #}
-        {% if isFlizpay %}
+        {# FLIZpay logo badge on the right - controlled by showLogo setting #}
+        {% if isFlizpay and flizpayCashback and flizpayCashback.showLogo %}
             {% block flizpay_logo_badge %}
                 <span class="flizpay-logo-badge">
                     <svg width="70" height="24" viewBox="0 0 70 24" fill="none" xmlns="http://www.w3.org/2000/svg">

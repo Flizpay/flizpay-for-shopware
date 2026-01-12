@@ -84,8 +84,6 @@ class FlizpayConfigController extends AbstractController
                 $salesChannelId,
             );
 
-            // Step 1: Generate and register webhook URL (like WordPress: generate_webhook_url first)
-            $this->logger->info("STEP 1: Starting webhook URL registration");
             try {
                 $this->logger->debug(
                     "Calling flizpayApiService->generate_webhook_url()",
@@ -110,21 +108,11 @@ class FlizpayConfigController extends AbstractController
                     $webhookUrl,
                     $salesChannelId,
                 );
-
-                $this->logger->info(
-                    "✓ STEP 1 COMPLETE: Webhook URL registered",
-                    [
-                        "webhookUrl" => $webhookUrl,
-                    ],
-                );
             } catch (\Exception $e) {
-                $this->logger->error(
-                    "✗ STEP 1 FAILED: Failed to register webhook URL",
-                    [
-                        "error" => $e->getMessage(),
-                        "trace" => $e->getTraceAsString(),
-                    ],
-                );
+                $this->logger->error("Failed to register webhook URL", [
+                    "error" => $e->getMessage(),
+                    "trace" => $e->getTraceAsString(),
+                ]);
 
                 // Clear API key on failure
                 $this->systemConfigService->set(
@@ -144,8 +132,6 @@ class FlizpayConfigController extends AbstractController
                 );
             }
 
-            // Step 2: Get webhook key (like WordPress: get_webhook_key second)
-            $this->logger->info("STEP 2: Starting webhook key retrieval");
             try {
                 $this->logger->debug(
                     "Calling flizpayApiService->get_webhook_key()",
@@ -168,16 +154,11 @@ class FlizpayConfigController extends AbstractController
                     $webhookKey,
                     $salesChannelId,
                 );
-
-                $this->logger->info("✓ STEP 2 COMPLETE: Webhook key retrieved");
             } catch (\Exception $e) {
-                $this->logger->error(
-                    "✗ STEP 2 FAILED: Failed to get webhook key",
-                    [
-                        "error" => $e->getMessage(),
-                        "trace" => $e->getTraceAsString(),
-                    ],
-                );
+                $this->logger->error("Failed to get webhook key", [
+                    "error" => $e->getMessage(),
+                    "trace" => $e->getTraceAsString(),
+                ]);
 
                 // Clear API key on failure
                 $this->systemConfigService->set(
@@ -210,34 +191,28 @@ class FlizpayConfigController extends AbstractController
                 ]);
 
                 if ($cashbackData) {
-                    // Parse cashback like WordPress: look for first_purchase_amount and standard amount
-                    $parsedCashback = $this->parseCashbackData($cashbackData);
-                    $this->logger->info("Parsed cashback data", [
-                        "parsedCashback" => $parsedCashback,
+                    $this->logger->info("Cashback data received", [
+                        "cashbackData" => $cashbackData,
                     ]);
 
                     $this->systemConfigService->set(
                         "FlizpayForShopware.config.cashbackData",
-                        json_encode($parsedCashback),
+                        json_encode($cashbackData),
                         $salesChannelId,
                     );
-
+                } else {
                     $this->logger->info(
-                        "✓ STEP 3 COMPLETE: Cashback data saved",
-                        [
-                            "cashback" => $parsedCashback,
-                        ],
+                        "No active cashback data returned from API",
                     );
                 }
             } catch (\Exception $e) {
                 $this->logger->warning(
-                    "⚠ STEP 3 WARNING: Cashback data fetch failed (non-critical)",
+                    "Cashback data fetch failed (non-critical)",
                     [
                         "error" => $e->getMessage(),
                         "trace" => $e->getTraceAsString(),
                     ],
                 );
-                // Non-critical, continue
             }
 
             $this->logger->info("=== SUCCESS: All steps completed ===", [
@@ -284,49 +259,5 @@ class FlizpayConfigController extends AbstractController
                 500,
             );
         }
-    }
-
-    /**
-     * Parse cashback data like WordPress plugin
-     * Looks for firstPurchaseAmount and standard amount
-     */
-    private function parseCashbackData(array $cashbackData): array
-    {
-        $firstPurchaseAmount = 0;
-        $standardAmount = 0;
-
-        // Look for active cashback with amounts > 0
-        if (
-            isset($cashbackData["cashback"]) &&
-            is_array($cashbackData["cashback"])
-        ) {
-            foreach ($cashbackData["cashback"] as $cashback) {
-                if (!empty($cashback["active"])) {
-                    $firstPurchaseAmount =
-                        $cashback["firstPurchaseAmount"] ?? 0;
-                    $standardAmount = $cashback["amount"] ?? 0;
-
-                    if ($firstPurchaseAmount > 0 || $standardAmount > 0) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        return [
-            "first_purchase_amount" => $firstPurchaseAmount,
-            "standard_amount" => $standardAmount,
-        ];
-    }
-
-    /**
-     * Get the shop base URL
-     */
-    private function getShopUrl(Request $request): string
-    {
-        $scheme = $request->getScheme();
-        $host = $request->getHttpHost();
-
-        return sprintf("%s://%s", $scheme, $host);
     }
 }

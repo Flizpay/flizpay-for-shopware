@@ -282,4 +282,68 @@ class FlizpayCashbackHelper
 
         return (bool) $value;
     }
+
+    /**
+     * Check if show logo in checkout is enabled
+     *
+     * @param string|null $salesChannelId
+     * @return bool
+     */
+    public function isShowLogoEnabled(?string $salesChannelId = null): bool
+    {
+        $value = $this->systemConfig->get(
+            self::CONFIG_PREFIX . "showLogo",
+            $salesChannelId,
+        );
+
+        // Default to true if not set
+        if ($value === null) {
+            return true;
+        }
+
+        return (bool) $value;
+    }
+
+    /**
+     * Check if show description in title is enabled
+     *
+     * @param string|null $salesChannelId
+     * @return bool
+     */
+    public function isShowDescriptionInTitleEnabled(
+        ?string $salesChannelId = null,
+    ): bool {
+        $value = $this->systemConfig->get(
+            self::CONFIG_PREFIX . "showDescriptionInTitle",
+            $salesChannelId,
+        );
+
+        // Default to true if not set
+        if ($value === null) {
+            return true;
+        }
+
+        return (bool) $value;
+    }
+
+    /**
+     * Check if show subtitle is enabled
+     *
+     * @param string|null $salesChannelId
+     * @return bool
+     */
+    public function isShowSubtitleEnabled(?string $salesChannelId = null): bool
+    {
+        $value = $this->systemConfig->get(
+            self::CONFIG_PREFIX . "showSubtitle",
+            $salesChannelId,
+        );
+
+        // Default to true if not set
+        if ($value === null) {
+            return true;
+        }
+
+        return (bool) $value;
+    }
 }

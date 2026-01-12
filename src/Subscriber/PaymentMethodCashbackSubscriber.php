@@ -40,17 +40,19 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
         $salesChannelContext = $event->getSalesChannelContext();
         $salesChannelId = $salesChannelContext->getSalesChannelId();
 
-        // Check if cashback display is enabled and available
-        $displayEnabled = $this->cashbackHelper->isDisplayCashbackEnabled(
+        // Get display settings
+        $showLogo = $this->cashbackHelper->isShowLogoEnabled($salesChannelId);
+        $showDescriptionInTitle = $this->cashbackHelper->isShowDescriptionInTitleEnabled(
             $salesChannelId,
         );
-        $cashbackAvailable = $this->cashbackHelper->isCashbackAvailable(
+        $showSubtitle = $this->cashbackHelper->isShowSubtitleEnabled(
             $salesChannelId,
         );
 
-        if (!$displayEnabled || !$cashbackAvailable) {
-            return;
-        }
+        // Check if cashback is available
+        $cashbackAvailable = $this->cashbackHelper->isCashbackAvailable(
+            $salesChannelId,
+        );
 
         // Get locale from request
         $locale = $event->getRequest()->getLocale() ?? "de-DE";
@@ -61,15 +63,24 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
 
         // Get cashback display data
         $displayValue = $this->cashbackHelper->getDisplayValue($salesChannelId);
-        $cashbackTitle = $this->cashbackHelper->getCashbackTitle(
-            $locale,
-            $salesChannelId,
-        );
-        $cashbackDescription = $this->cashbackHelper->getCashbackDescription(
-            $shopName,
-            $locale,
-            $salesChannelId,
-        );
+
+        // Build title based on settings
+        $cashbackTitle =
+            $showDescriptionInTitle && $cashbackAvailable
+                ? $this->cashbackHelper->getCashbackTitle(
+                    $locale,
+                    $salesChannelId,
+                )
+                : "FLIZpay";
+
+        // Build description based on settings
+        $cashbackDescription = $showSubtitle
+            ? $this->cashbackHelper->getCashbackDescription(
+                $shopName,
+                $locale,
+                $salesChannelId,
+            )
+            : null;
 
         // Find and modify the FLIZpay payment method in the list
         $page = $event->getPage();
@@ -79,7 +90,7 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
             if (
                 $paymentMethod->getHandlerIdentifier() === self::FLIZPAY_HANDLER
             ) {
-                // Modify the payment method's translated name to include cashback info
+                // Modify the payment method's translated name/description
                 $this->modifyPaymentMethodDisplay(
                     $paymentMethod,
                     $cashbackTitle,
@@ -87,32 +98,39 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
                 );
 
                 $this->logger->info(
-                    "FLIZpay payment method modified with cashback info",
+                    "FLIZpay payment method modified with checkout settings",
                     [
                         "title" => $cashbackTitle,
-                        "displayValue" => $displayValue,
+                        "showLogo" => $showLogo,
+                        "showDescriptionInTitle" => $showDescriptionInTitle,
+                        "showSubtitle" => $showSubtitle,
                     ],
                 );
                 break;
             }
         }
 
-        // Also add as page extension for any custom template usage
+        // Add page extension for template usage
         $page->addExtension(
             "flizpayCashback",
             new ArrayStruct([
-                "enabled" => true,
+                "enabled" => $cashbackAvailable,
                 "displayValue" => $displayValue,
-                "formattedValue" => $this->cashbackHelper->formatForLocale(
-                    $displayValue,
-                    $locale,
-                ),
+                "formattedValue" => $displayValue
+                    ? $this->cashbackHelper->formatForLocale(
+                        $displayValue,
+                        $locale,
+                    )
+                    : null,
                 "title" => $cashbackTitle,
                 "description" => $cashbackDescription,
                 "type" => $this->cashbackHelper->getCashbackType(
                     $salesChannelId,
                 ),
                 "locale" => $locale,
+                "showLogo" => $showLogo,
+                "showDescriptionInTitle" => $showDescriptionInTitle,
+                "showSubtitle" => $showSubtitle,
             ]),
         );
     }
@@ -123,16 +141,18 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
     private function modifyPaymentMethodDisplay(
         PaymentMethodEntity $paymentMethod,
         string $cashbackTitle,
-        string $cashbackDescription,
+        ?string $cashbackDescription,
     ): void {
         // Get current translated data or create new array
         $translated = $paymentMethod->getTranslated() ?? [];
 
-        // Update the name to include cashback info (like WooCommerce does)
+        // Update the name
         $translated["name"] = $cashbackTitle;
 
-        // Update description to include cashback details
-        $translated["description"] = $cashbackDescription;
+        // Update description if provided
+        if ($cashbackDescription !== null) {
+            $translated["description"] = $cashbackDescription;
+        }
 
         // Set the modified translations back
         $paymentMethod->setTranslated($translated);

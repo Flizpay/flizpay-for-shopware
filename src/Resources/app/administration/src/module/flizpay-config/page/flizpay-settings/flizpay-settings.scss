@@ -1,37 +1,36 @@
+@import "../../../../scss/variables";
+
+$radio-button-color: #798490;
+
 .flizpay-settings {
+    .flizpay-settings__save-button {
+        min-width: 120px;
+    }
+
     .flizpay-settings__welcome-card {
         .flizpay-welcome-content {
             padding: 16px 0;
-        }
-
-        .flizpay-logo {
-            text-align: center;
-            margin-bottom: 24px;
-
-            .flizpay-logo-image {
-                max-width: 200px;
-                height: auto;
-            }
         }
 
         .flizpay-instructions-title {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 16px;
-            color: #52667a;
+            color: $flizpay-navy-blue;
         }
 
         .flizpay-instructions-list {
+            list-style-type: decimal;
             margin: 0 0 24px 0;
             padding-left: 24px;
 
             li {
                 margin-bottom: 12px;
                 line-height: 1.6;
-                color: #52667a;
+                color: $flizpay-navy-blue;
 
                 a {
-                    color: #00D094;
+                    color: $flizpay-primary;
                     text-decoration: none;
                     font-weight: 500;
 
@@ -44,14 +43,14 @@
 
         .flizpay-links {
             padding-top: 16px;
-            border-top: 1px solid #d1d9e0;
+            border-top: 1px solid var(--color-border-secondary-default);
 
             p {
                 margin-bottom: 8px;
-                color: #52667a;
+                color: $flizpay-navy-blue;
 
                 a {
-                    color: #00D094;
+                    color: $flizpay-primary;
                     text-decoration: none;
                     font-weight: 500;
 
@@ -96,16 +95,130 @@
         }
     }
 
-    .flizpay-settings__save-button {
-        min-width: 120px;
-    }
-}
+    .flizpay-settings__checkout-card {
+        .flizpay-checkout-preview {
+            margin-bottom: var(--mt-card-content-padding);
 
-// Override for links in instructions
-.flizpay-settings a {
-    color: #00D094;
+            &__box {
+                max-width: 500px;
+                margin: 0 auto 16px;
+                padding: 16px;
+                background: #fff;
+                border: 2px solid $flizpay-tertiary;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
 
-    &:hover {
-        color: #00b882;
+            &__row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            &__radio {
+                width: 20px;
+                height: 20px;
+                border: 2px solid $radio-button-color;
+                border-radius: 50%;
+                position: relative;
+                flex-shrink: 0;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 10px;
+                    height: 10px;
+                    background: $flizpay-tertiary;
+                    border-radius: 50%;
+                }
+            }
+
+            &__name {
+                font-weight: 600;
+                color: $flizpay-navy-blue;
+            }
+
+            &__title {
+                color: $flizpay-navy-blue;
+            }
+
+            &__logo {
+                margin-left: auto;
+            }
+
+            &__logo-badge {
+                display: inline-block;
+                padding: 4px 10px;
+                background: $flizpay-tertiary;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                color: $flizpay-navy-blue;
+            }
+
+            &__subtitle {
+                margin-top: 12px;
+                border-radius: 4px;
+                font-size: 13px;
+                color: $flizpay-navy-blue;
+                line-height: 1.5;
+            }
+
+            &__labels {
+                display: flex;
+                justify-content: center;
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+
+            &__label {
+                font-size: 12px;
+                color: $flizpay-navy-blue;
+                font-weight: 500;
+                padding: 4px 8px;
+                background: $flizpay-tertiary;
+                border-radius: 4px;
+
+                &--title::before,
+                &--logo::before,
+                &--subtitle::before {
+                    content: "↑ ";
+                }
+            }
+        }
+
+        .flizpay-checkout-settings {
+            border-top: 1px solid var(--color-border-secondary-default);
+            padding-top: 20px;
+
+            &__option {
+                display: flex;
+                align-items: center;
+                padding: 12px 0;
+                border-bottom: 1px solid var(--color-border-secondary-default);
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                span {
+                    min-width: 100px;
+                    font-weight: 600;
+                    color: $flizpay-navy-blue;
+                }
+
+                .settings-checkbox-field {
+                    margin-bottom: 0;
+
+                    .mt-field__label {
+                        margin-bottom: 0;
+                        margin-left: var(--scale-size-16);
+                    }
+                }
+            }
+        }
     }
 }

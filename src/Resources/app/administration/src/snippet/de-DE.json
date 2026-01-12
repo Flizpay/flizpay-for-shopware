@@ -9,13 +9,14 @@
       "title": "Willkommen bei FLIZpay!"
     },
     "instructions": {
-      "title": "Erste Schritte",
-      "step1": "Wenn du noch kein FLIZ-Firmenkonto hast, <a href='https://app.flizpay.de/auth/signup' target='_blank'>klicke hier</a> und registriere dich.",
-      "step2": "Nachdem du dich registriert hast, generiere einen neuen API-Schlüssel in deinem FLIZ-Firmenkonto und füge ihn in das Feld \"API-Schlüssel\" unten ein. Du findest den API-Schlüssel im Bereich \"Installation\" deines Firmenkontos.",
-      "step3": "Klicke auf \"Verbindung testen\", um deinen API-Schlüssel zu überprüfen.",
+      "title": "Anleitung:",
+      "step1": "Wenn du noch kein FLIZ-Firmenkonto hast, klicke bitte <a href='https://app.flizpay.de/auth/signup' target='_blank'>hier</a> und registriere dich jetzt.",
+      "step2": "Nachdem du dich registriert hast, generiere bitte einen neuen API Key in deinem FLIZ-Firmenkonto und füge ihn in das unten stehende Feld \"API Key\" ein. Du findest den API-Schlüssel im Abschnitt\"Installation\" deines FLIZ-Firmenkontos.",
+      "step3": "Klicke anschließend auf den Button \"Speichern\".",
       "step4": "Warte etwa 5 Sekunden, bis die Seite automatisch neu lädt.",
-      "step5": "Nach dem Neuladen der Seite erscheint eine grüne Box, die die erfolgreiche Konfiguration anzeigt. Du bist jetzt bereit, gebührenfreie Zahlungen zu empfangen!",
-      "step6": "Wir empfehlen dir, Cashback für deine Kunden zu aktivieren. Mit Cashback änderst du das Zahlungsverhalten deiner Kunden, damit sie gebührenfreies FLIZ nutzen. <a href='https://app.flizpay.de/cashback' target='_blank'>Cashback hier aktivieren.</a>"
+      "step5": "Nach dem Neuladen der Seite erscheint unten eine grüne Box, die die erfolgreiche Konfiguration des FLIZpay-Plugins anzeigt. Du bist jetzt bereit, gebührenfreie Zahlungen zu empfangen.",
+      "step6": "Stelle sicher, dass du mit FLIZ so viele Gebühren wie möglich sparst. Vergiss also nicht, FLIZpay in der für Kunden zur Auswahl stehenden Liste an Zahlungsmethoden an die erste Stelle zu setzen. Klicke im linken Menü auf \"Einstellungen\", dann im Untermenü auf \"Zahlungsarten\". Klicke anschließend im Menü oben auf den Taste \"Darstellungsreihenfolge im Bestellprozess ändern\". Auf dieser Seite kannst du per Drag-and-Drop die Position von FLIZpay in der Liste der verfügbaren Zahlungsmethoden anpassen. Klicke zum Schluss unten links auf \"Speichern\".</a>",
+      "step7": "Darüber hinaus empfehlen wir dir, Cashback für deine Kunden zu aktivieren. Ändere das Zahlungsverhalten deiner Kunden, damit sie FLIZ nutzen - denn FLIZ ist gebührenfrei. Um das zu erreichen, kannst du einen prozentualen Cashback festlegen, der als Rabatt von jedem Einkauf abgezogen wird, den deine Kunden mit FLIZ tätigen. Je mehr Cashback du gibst, desto höher wird der Anteil von FLIZ an deiner Kasse, was bedeutet, dass deine Kundenbasis zu einer gebührenfreien Zahlungsmethode gewechselt ist. Du kannst Cashback in deinem FLIZ-Firmenkonto aktivieren, <a href='https://app.flizpay.de/cashback' target='_blank'>klicke hier.</a>"
     },
     "links": {
       "faq": "Noch Fragen? <a href='https://flizpay.de/#faq' target='_blank'>Schau dir unsere FAQ-Seite an</a>.",
@@ -96,8 +97,23 @@
       "notConfigured": "Kein Cashback konfiguriert",
       "refreshButton": "Cashback-Daten aktualisieren"
     },
+    "checkout": {
+      "title": "Checkout-Einstellungen",
+      "previewUpTo": "Bis zu",
+      "previewOff": "Rabatt",
+      "previewSubtitle": "Sichere Zahlungen in direkter Zusammenarbeit mit deiner Bank. Nach deiner ersten FLIZ-Zahlung erhältst du weiterhin Cashback.",
+      "labelTitle": "Beschreibung im Titel",
+      "labelLogo": "Logo",
+      "labelSubtitle": "Untertitel",
+      "logoLabel": "Logo",
+      "logoDescription": "FLIZpay-Logo im Checkout anzeigen",
+      "titleLabel": "Titel",
+      "titleDescription": "Beschreibung im Titel anzeigen",
+      "subtitleLabel": "Untertitel",
+      "subtitleDescription": "Beschreibung im Untertitel anzeigen, wenn FLIZpay ausgewählt ist"
+    },
     "cashback": {
-      "title": "Cashback-Einstellungen",
+      "title": "Cashback-Informationen",
       "displayInTitleLabel": "Cashback im Zahlungsmethoden-Titel anzeigen",
       "displayInTitleHelpText": "Wenn aktiviert, wird der Cashback-Prozentsatz im Namen der Zahlungsmethode an der Kasse angezeigt (z.B. 'FLIZpay - Bis zu 5% Rabatt').",
       "currentRates": "Aktuelle Cashback-Raten:",

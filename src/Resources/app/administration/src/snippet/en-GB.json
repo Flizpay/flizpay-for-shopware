@@ -9,13 +9,14 @@
       "title": "Welcome to FLIZpay!"
     },
     "instructions": {
-      "title": "Getting Started",
+      "title": "Instructions:",
       "step1": "If you haven't signed up for a FLIZ company account, please <a href='https://app.flizpay.de/auth/signup' target='_blank'>click here</a> and sign up.",
       "step2": "Once you have signed up, please generate a new API Key in your FLIZ company account and paste it in the \"API Key\" field below. You will find the API Key in the \"Installation\" section of your company account.",
-      "step3": "Click the \"Test Connection\" button to verify your API key.",
+      "step3": "Afterwards, click the button \"Save\".",
       "step4": "Wait about 5 seconds and the page will reload automatically.",
-      "step5": "After the page reloads, a green box will appear indicating the successful configuration. You are now ready to receive fee-free payments!",
-      "step6": "We advise you to activate cashback for your customers. With cashback, you change your customers' payment behavior to ensure they use fee-free FLIZ. <a href='https://app.flizpay.de/cashback' target='_blank'>Activate cashback here.</a>"
+      "step5": "After the page reloaded, a green box will appear at the bottom, indicating the successful configuration of the FLIZpay plugin. You are now ready to receive fee-free payments.",
+      "step6": "Make sure you save as many fees as possible with fee-free FLIZ. Don’t forget to put FLIZpay first in the list of payment methods presented to customers. To do this go to the left menu and click on \"Settings\", then click on the sub-menu \"Payment methods\". Now click on the button \"Edit display order in checkout\" and you can drag and drop to adjust the position of FLIZpay in the list of available payment methods. When you are finished, go to the bottom right and click \"Save\".</a>",
+      "step7": "Moreover, we advise you to activate cashback for your customers. With cashback, you change your customers’ payment behavior to ensure they use fee-free payment method FLIZ. This way, customers support your bottom line and optimize their own finances at the same time. You can activate cashback in your FLIZ company account, <a href='https://app.flizpay.de/cashback' target='_blank'>click here.</a>"
     },
     "links": {
       "faq": "Still have questions? <a href='https://flizpay.de/#faq' target='_blank'>Check out our FAQ page</a>.",
@@ -96,8 +97,23 @@
       "notConfigured": "No cashback configured",
       "refreshButton": "Refresh Cashback Data"
     },
+    "checkout": {
+      "title": "Checkout Settings",
+      "previewUpTo": "Up to",
+      "previewOff": "off",
+      "previewSubtitle": "Secure payments in direct collaboration with your bank. After your first FLIZ payment, you will continue to receive cashback.",
+      "labelTitle": "Description in title",
+      "labelLogo": "Logo",
+      "labelSubtitle": "Subtitle",
+      "logoLabel": "Logo",
+      "logoDescription": "Show FLIZpay logo in checkout",
+      "titleLabel": "Title",
+      "titleDescription": "Show description in title",
+      "subtitleLabel": "Subtitle",
+      "subtitleDescription": "Show description in subtitle when FLIZpay is selected"
+    },
     "cashback": {
-      "title": "Cashback Settings",
+      "title": "Cashback Information",
       "displayInTitleLabel": "Show Cashback in Payment Method Title",
       "displayInTitleHelpText": "When enabled, the cashback percentage will be shown in the payment method name at checkout (e.g., 'FLIZpay - Up to 5% Cashback').",
       "currentRates": "Current Cashback Rates:",
