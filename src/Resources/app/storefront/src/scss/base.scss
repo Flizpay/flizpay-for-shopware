@@ -1,24 +1,5 @@
-// FLIZpay Storefront Styles
-
-// Import FLIZpay SCSS variables
 @import "../abstract/variables";
 
-// Additional color variables for storefront
-$flizpay-badge-bg: #e8f5e9;
-$flizpay-badge-text: #2e7d32;
-$flizpay-badge-text-light: #4caf50;
-$flizpay-text: #374151;
-$flizpay-text-muted: #64748b;
-
-// Dark mode colors
-$flizpay-dark-badge-bg: #1a3d1f;
-$flizpay-dark-badge-text: #86efac;
-$flizpay-dark-badge-text-light: #4ade80;
-$flizpay-dark-text: #d1d5db;
-
-// ============================================
-// FLIZpay Payment Method Styles
-// ============================================
 .flizpay-payment-method-label {
     display: flex;
     align-items: flex-start;
@@ -33,32 +14,8 @@ $flizpay-dark-text: #d1d5db;
     .flizpay-description-text {
         margin-top: 0.5rem;
         font-size: 0.9rem;
-        color: $flizpay-text;
+        color: $flizpay-navy-blue;
         line-height: 1.5;
-    }
-}
-
-// FLIZpay logo badge (right side)
-.flizpay-logo-badge {
-    display: flex;
-    align-items: center;
-    margin-left: 1rem;
-    flex-shrink: 0;
-
-    svg {
-        display: block;
-    }
-
-    svg rect {
-        fill: $flizpay-badge-bg;
-    }
-
-    svg text:first-of-type {
-        fill: $flizpay-badge-text;
-    }
-
-    svg text:last-of-type {
-        fill: $flizpay-badge-text-light;
     }
 }
 
@@ -76,47 +33,12 @@ $flizpay-dark-text: #d1d5db;
     width: calc(100% - 30px);
 }
 
-// ============================================
-// Dark Mode Support
-// ============================================
-@media (prefers-color-scheme: dark) {
-    .flizpay-payment-method-label {
-        .flizpay-description-text {
-            color: $flizpay-dark-text;
-        }
-    }
-
-    .flizpay-logo-badge {
-        svg rect {
-            fill: $flizpay-dark-badge-bg;
-        }
-        svg text:first-of-type {
-            fill: $flizpay-dark-badge-text;
-        }
-        svg text:last-of-type {
-            fill: $flizpay-dark-badge-text-light;
-        }
-    }
-}
-
-// ============================================
-// Responsive Adjustments
-// ============================================
 @media (max-width: 576px) {
     .flizpay-payment-method-label {
         flex-wrap: wrap;
 
         .flizpay-description-text {
             font-size: 0.8rem;
-        }
-    }
-
-    .flizpay-logo-badge {
-        margin-left: 0.5rem;
-
-        svg {
-            width: 60px;
-            height: 20px;
         }
     }
 }
