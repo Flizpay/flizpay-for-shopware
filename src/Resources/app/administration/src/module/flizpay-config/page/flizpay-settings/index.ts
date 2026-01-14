@@ -62,10 +62,12 @@ interface ComponentMethods {
   stopWebhookPolling(): void;
   confirmReconfiguration(): Promise<boolean>;
   onSalesChannelChanged(salesChannelId: string | null): void;
+  goToPaymentMethods(): void;
   createNotificationSuccess(config: { message: string }): void;
   createNotificationError(config: { message: string }): void;
   createNotificationWarning(config: { message: string }): void;
   $tc(key: string): string;
+  $router: { push(location: { name: string }): void };
 }
 
 interface ComponentComputed {
@@ -124,11 +126,6 @@ Component.register("flizpay-settings", {
     },
 
     hasCashback(this: ComponentInstance): boolean {
-      console.log("[FLIZpay] hasCashback check:", {
-        cashbackData: this.cashbackData,
-        first_purchase_amount: this.cashbackData?.first_purchase_amount,
-        standard_amount: this.cashbackData?.standard_amount,
-      });
       if (!this.cashbackData) return false;
       return (
         (this.cashbackData.first_purchase_amount ?? 0) > 0 ||
@@ -383,6 +380,10 @@ Component.register("flizpay-settings", {
       this.currentSalesChannelId = salesChannelId;
       this.stopWebhookPolling();
       this.loadConfig();
+    },
+
+    goToPaymentMethods(this: ComponentInstance): void {
+      this.$router.push({ name: "sw.settings.payment.overview" });
     },
   },
 });

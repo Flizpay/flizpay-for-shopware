@@ -39,7 +39,13 @@
                         <li>{{ $tc('flizpay-config.instructions.step3') }}</li>
                         <li>{{ $tc('flizpay-config.instructions.step4') }}</li>
                         <li>{{ $tc('flizpay-config.instructions.step5') }}</li>
-                        <li v-html="$tc('flizpay-config.instructions.step6')"></li>
+                        <li>
+                            {{ $tc('flizpay-config.instructions.step6Before') }}
+                            <a href="#" class="flizpay-link" @click.prevent="goToPaymentMethods">
+                                {{ $tc('flizpay-config.instructions.step6Link') }}
+                            </a>
+                            {{ $tc('flizpay-config.instructions.step6After') }}
+                        </li>
                         <li v-html="$tc('flizpay-config.instructions.step7')"></li>
                     </ol>
 
