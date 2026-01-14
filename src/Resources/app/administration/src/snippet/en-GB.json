@@ -15,8 +15,10 @@
       "step3": "Afterwards, click the button \"Save\".",
       "step4": "Wait about 5 seconds and the page will reload automatically.",
       "step5": "After the page reloaded, a green box will appear at the bottom, indicating the successful configuration of the FLIZpay plugin. You are now ready to receive fee-free payments.",
-      "step6": "Make sure you save as many fees as possible with fee-free FLIZ. Don’t forget to put FLIZpay first in the list of payment methods presented to customers. To do this go to the left menu and click on \"Settings\", then click on the sub-menu \"Payment methods\". Now click on the button \"Edit display order in checkout\" and you can drag and drop to adjust the position of FLIZpay in the list of available payment methods. When you are finished, go to the bottom right and click \"Save\".</a>",
-      "step7": "Moreover, we advise you to activate cashback for your customers. With cashback, you change your customers’ payment behavior to ensure they use fee-free payment method FLIZ. This way, customers support your bottom line and optimize their own finances at the same time. You can activate cashback in your FLIZ company account, <a href='https://app.flizpay.de/cashback' target='_blank'>click here.</a>"
+      "step6Before": "Assign FLIZpay to your sales channels and set the display order.",
+      "step6Link": "Go to Payment Methods",
+      "step6After": "to configure availability and drag FLIZpay to the top of the list for maximum fee savings.",
+      "step7": "Moreover, we advise you to activate cashback for your customers. With cashback, you change your customers' payment behavior to ensure they use fee-free payment method FLIZ. This way, customers support your bottom line and optimize their own finances at the same time. You can activate cashback in your FLIZ company account, <a href='https://app.flizpay.de/cashback' target='_blank'>click here.</a>"
     },
     "links": {
       "faq": "Still have questions? <a href='https://flizpay.de/#faq' target='_blank'>Check out our FAQ page</a>.",
