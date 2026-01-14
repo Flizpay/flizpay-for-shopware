@@ -1,0 +1,44 @@
+@import "../abstract/variables";
+
+.flizpay-payment-method-label {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+
+    .flizpay-payment-description {
+        flex: 1;
+    }
+
+    .flizpay-description-text {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: $flizpay-navy-blue;
+        line-height: 1.5;
+    }
+}
+
+// Ensure payment method row has proper layout for FLIZpay
+.payment-method:has(.flizpay-payment-method-label) {
+    .payment-method-radio {
+        .form-check-label {
+            width: 100%;
+        }
+    }
+}
+
+// Fallback for browsers without :has() support
+.flizpay-payment-method-label {
+    width: calc(100% - 30px);
+}
+
+@media (max-width: 576px) {
+    .flizpay-payment-method-label {
+        flex-wrap: wrap;
+
+        .flizpay-description-text {
+            font-size: 0.8rem;
+        }
+    }
+}

@@ -12,12 +12,20 @@ declare global {
 
 export interface FlizpayConfig {
   apiKey: string;
-  sandboxMode: boolean;
   webhookUrl: string;
   webhookAlive: boolean;
   webhookKey: string;
   paymentFlow: "redirect" | "embedded";
   enableLogging: boolean;
+  displayCashbackInTitle: boolean;
+  showLogo: boolean;
+  showDescriptionInTitle: boolean;
+  showSubtitle: boolean;
+}
+
+export interface FlizpayCashbackData {
+  first_purchase_amount: number;
+  standard_amount: number;
 }
 
 export interface FlizpayTestConnectionRequest {

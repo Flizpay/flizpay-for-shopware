@@ -33,6 +33,14 @@
             <argument type="service" id="router" />
         </service>
 
+        <!-- Cashback Helper Service -->
+        <service id="FLIZpay\FlizpayForShopware\Service\FlizpayCashbackHelper">
+            <argument
+                type="service"
+                id="Shopware\Core\System\SystemConfig\SystemConfigService"
+            />
+        </service>
+
         <!-- Webhook Service -->
         <service id="FLIZpay\FlizpayForShopware\Service\FlizpayWebhookService">
             <argument
@@ -40,6 +48,7 @@
                 id="Shopware\Core\System\SystemConfig\SystemConfigService"
             />
             <argument type="service" id="order.repository" />
+            <argument type="service" id="order_line_item.repository" />
             <argument
                 type="service"
                 id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"
@@ -119,6 +128,18 @@
             />
             <argument type="service" id="monolog.logger" />
             <tag name="shopware.cart.validator" />
+        </service>
+
+        <!-- Payment Method Cashback Subscriber - displays cashback info at checkout -->
+        <service
+            id="FLIZpay\FlizpayForShopware\Subscriber\PaymentMethodCashbackSubscriber"
+        >
+            <argument
+                type="service"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpayCashbackHelper"
+            />
+            <argument type="service" id="monolog.logger" />
+            <tag name="kernel.event_subscriber" />
         </service>
     </services>
 </container>
