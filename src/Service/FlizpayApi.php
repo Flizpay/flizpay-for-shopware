@@ -15,7 +15,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
  */
 class FlizpayApi
 {
-    private const API_BASE_URL = "https://olegs-macbook-pro-1.tail9450f2.ts.net:4440";
+    private const API_BASE_URL = "https://api-staging.flizpay.de";
 
     private ?string $api_key = null;
     private array $routes;
