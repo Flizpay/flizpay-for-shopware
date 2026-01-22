@@ -77,7 +77,7 @@
                     {% block flizpay_settings_connection_status %}
                     <div class="flizpay-connection-status">
                         <sw-alert
-                            v-if="connectionStatus"
+                            v-if="connectionStatus && !(isConnectionEstablished && connectionStatus.type === 'success')"
                             :variant="connectionStatus.type"
                             class="flizpay-connection-status__alert">
                             {{ connectionStatus.message }}
@@ -116,7 +116,7 @@
                                 - {{ $tc('flizpay-config.checkout.previewUpTo') }} {{ maxCashbackValue }}% {{ $tc('flizpay-config.checkout.previewOff') }}
                             </span>
                             <span v-if="config.showLogo" class="flizpay-checkout-preview__logo">
-                                <img :src="assetFilter('/FlizpayForShopware/administration/static/fliz-checkout-logo.svg')">
+                                <img :src="assetFilter('flizpayforshopware/administration/static/fliz-checkout-logo.svg')">
                             </span>
                         </div>
                         <div v-if="config.showSubtitle" class="flizpay-checkout-preview__subtitle">
@@ -125,7 +125,7 @@
                     </div>
 
                     <div class="flizpay-checkout-preview__labels">
-                        <span v-if="config.showDescriptionInTitle" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--title">
+                        <span v-if="config.showDescriptionInTitle && hasCashback" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--title">
                             {{ $tc('flizpay-config.checkout.labelTitle') }}
                         </span>
                         <span v-if="config.showLogo" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--logo">
@@ -152,7 +152,7 @@
                     {% endblock %}
 
                     {% block flizpay_settings_show_title %}
-                    <div class="flizpay-checkout-settings__option">
+                    <div v-if="hasCashback" class="flizpay-checkout-settings__option">
                         <span>{{ $tc('flizpay-config.checkout.titleLabel') }}</span>
                         <sw-checkbox-field
                             v-model="config.showDescriptionInTitle"

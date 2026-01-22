@@ -49,15 +49,15 @@ Central service for reading and formatting cashback data.
 
 **Key Methods:**
 
-| Method | Purpose |
-|--------|---------|
-| `getCashbackData()` | Retrieves raw cashback data from SystemConfig |
-| `getDisplayValue()` | Returns the maximum cashback value (for display) |
-| `getCashbackType()` | Returns 'both', 'first', or 'standard' |
-| `isCashbackAvailable()` | Checks if cashback can be displayed |
-| `getCashbackTitle()` | Generates localized title (e.g., "FLIZpay - Up to 5% off") |
-| `getCashbackDescription()` | Generates localized description |
-| `formatForLocale()` | Formats numbers for locale (5.5 vs 5,5) |
+| Method                     | Purpose                                                    |
+| -------------------------- | ---------------------------------------------------------- |
+| `getCashbackData()`        | Retrieves raw cashback data from SystemConfig              |
+| `getDisplayValue()`        | Returns the maximum cashback value (for display)           |
+| `getCashbackType()`        | Returns 'both', 'first', or 'standard'                     |
+| `isCashbackAvailable()`    | Checks if cashback can be displayed                        |
+| `getCashbackTitle()`       | Generates localized title (e.g., "FLIZpay - Up to 5% off") |
+| `getCashbackDescription()` | Generates localized description                            |
+| `formatForLocale()`        | Formats numbers for locale (5.5 vs 5,5)                    |
 
 **Configuration Keys:**
 
@@ -77,14 +77,17 @@ FlizpayForShopware.config.showSubtitle          // Show subtitle
 Event subscriber that modifies the FLIZpay payment method display at checkout.
 
 **Subscribed Events:**
+
 - `CheckoutConfirmPageLoadedEvent` - Triggered when checkout page loads
 
 **Behavior:**
+
 1. Finds FLIZpay payment method in the list
 2. Modifies translated name/description based on settings
 3. Adds `flizpayCashback` page extension for template use
 
 **Page Extension Data:**
+
 ```php
 [
     'enabled' => bool,           // Is cashback available?
@@ -106,30 +109,32 @@ Handles incoming webhooks from FLIZpay backend.
 
 **Webhook Types:**
 
-| Webhook | Payload | Handler |
-|---------|---------|---------|
-| Test | `{ "test": true }` | `handleTest()` |
-| Cashback Update | `{ "updateCashbackInfo": true, ... }` | `handleCashbackUpdate()` |
+| Webhook          | Payload                                     | Handler                   |
+| ---------------- | ------------------------------------------- | ------------------------- |
+| Test             | `{ "test": true }`                          | `handleTest()`            |
+| Cashback Update  | `{ "updateCashbackInfo": true, ... }`       | `handleCashbackUpdate()`  |
 | Payment Complete | `{ "metadata": { "orderId": "..." }, ... }` | `handlePaymentComplete()` |
 
 **Cashback Update Webhook:**
+
 ```json
 {
-    "updateCashbackInfo": true,
-    "firstPurchaseAmount": 10.0,
-    "amount": 5.0
+  "updateCashbackInfo": true,
+  "firstPurchaseAmount": 10.0,
+  "amount": 5.0
 }
 ```
 
 **Payment Complete with Cashback:**
+
 ```json
 {
-    "metadata": { "orderId": "abc123" },
-    "status": "completed",
-    "transactionId": "tx_123",
-    "originalAmount": 100.00,
-    "amount": 95.00,
-    "currency": "EUR"
+  "metadata": { "orderId": "abc123" },
+  "status": "completed",
+  "transactionId": "tx_123",
+  "originalAmount": 100.0,
+  "amount": 95.0,
+  "currency": "EUR"
 }
 ```
 
@@ -138,12 +143,14 @@ Handles incoming webhooks from FLIZpay backend.
 When a payment webhook includes cashback (`originalAmount > amount`), the webhook service:
 
 1. **Calculates discount percentage:**
+
    ```php
    $discount = $originalAmount - $finalAmount;
    $cashbackPercent = ($discount / $originalAmount) * 100;
    ```
 
 2. **Updates line items proportionally:**
+
    ```php
    foreach ($lineItems as $lineItem) {
        $itemTotal = $lineItem->getTotalPrice();
@@ -224,7 +231,7 @@ The payment method template (`payment-method.html.twig`) extends the default Sho
 
 {# Show logo badge if enabled #}
 {% if isFlizpay and flizpayCashback.showLogo %}
-    <img src="{{ asset('bundles/FlizpayForShopware/fliz-checkout-logo.svg') }}">
+    <img src="{{ asset('bundles/flizpayforshopware/fliz-checkout-logo.svg', 'asset') }}">
 {% endif %}
 
 {# Show subtitle when selected #}
@@ -252,19 +259,19 @@ Preview updates in real-time as settings are toggled.
 
 Cashback text is localized:
 
-| Locale | Title Format | Number Format |
-|--------|--------------|---------------|
-| de-DE | "FLIZpay - Bis zu 5,5% Rabatt" | Comma decimal |
-| en-GB | "FLIZpay - Up to 5.5% Cashback" | Dot decimal |
+| Locale | Title Format                    | Number Format |
+| ------ | ------------------------------- | ------------- |
+| de-DE  | "FLIZpay - Bis zu 5,5% Rabatt"  | Comma decimal |
+| en-GB  | "FLIZpay - Up to 5.5% Cashback" | Dot decimal   |
 
 ## Configuration Options
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `showLogo` | true | Display FLIZpay logo in checkout |
-| `showDescriptionInTitle` | true | Append cashback % to payment method name |
-| `showSubtitle` | true | Show detailed description when selected |
-| `displayCashbackInTitle` | true | Legacy setting (backward compat) |
+| Setting                  | Default | Description                              |
+| ------------------------ | ------- | ---------------------------------------- |
+| `showLogo`               | true    | Display FLIZpay logo in checkout         |
+| `showDescriptionInTitle` | true    | Append cashback % to payment method name |
+| `showSubtitle`           | true    | Show detailed description when selected  |
+| `displayCashbackInTitle` | true    | Legacy setting (backward compat)         |
 
 ## Security
 
