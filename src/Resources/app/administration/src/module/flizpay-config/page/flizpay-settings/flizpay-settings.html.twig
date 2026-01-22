@@ -77,7 +77,7 @@
                     {% block flizpay_settings_connection_status %}
                     <div class="flizpay-connection-status">
                         <sw-alert
-                            v-if="connectionStatus"
+                            v-if="connectionStatus && !(isConnectionEstablished && connectionStatus.type === 'success')"
                             :variant="connectionStatus.type"
                             class="flizpay-connection-status__alert">
                             {{ connectionStatus.message }}
