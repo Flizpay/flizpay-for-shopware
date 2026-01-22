@@ -125,7 +125,7 @@
                     </div>
 
                     <div class="flizpay-checkout-preview__labels">
-                        <span v-if="config.showDescriptionInTitle" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--title">
+                        <span v-if="config.showDescriptionInTitle && hasCashback" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--title">
                             {{ $tc('flizpay-config.checkout.labelTitle') }}
                         </span>
                         <span v-if="config.showLogo" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--logo">
@@ -152,7 +152,7 @@
                     {% endblock %}
 
                     {% block flizpay_settings_show_title %}
-                    <div class="flizpay-checkout-settings__option">
+                    <div v-if="hasCashback" class="flizpay-checkout-settings__option">
                         <span>{{ $tc('flizpay-config.checkout.titleLabel') }}</span>
                         <sw-checkbox-field
                             v-model="config.showDescriptionInTitle"
