@@ -116,7 +116,7 @@
                                 - {{ $tc('flizpay-config.checkout.previewUpTo') }} {{ maxCashbackValue }}% {{ $tc('flizpay-config.checkout.previewOff') }}
                             </span>
                             <span v-if="config.showLogo" class="flizpay-checkout-preview__logo">
-                                <img :src="assetFilter('/FlizpayForShopware/administration/static/fliz-checkout-logo.svg')">
+                                <img :src="assetFilter('flizpayforshopware/administration/static/fliz-checkout-logo.svg')">
                             </span>
                         </div>
                         <div v-if="config.showSubtitle" class="flizpay-checkout-preview__subtitle">
