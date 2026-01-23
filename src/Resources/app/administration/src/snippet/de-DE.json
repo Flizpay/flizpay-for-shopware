@@ -10,7 +10,7 @@
     },
     "instructions": {
       "title": "Anleitung:",
-      "step1": "Wenn du noch kein FLIZ-Firmenkonto hast, klicke bitte <a href='https://app.flizpay.de/auth/signup' target='_blank'>hier</a> und registriere dich jetzt.",
+      "step1": "Wenn du noch kein FLIZ-Firmenkonto hast, klicke bitte <a href='https://app.flizpay.de/auth/signup' target='_blank' rel='noopener'>hier</a> und registriere dich jetzt.",
       "step2": "Nachdem du dich registriert hast, generiere bitte einen neuen API Key in deinem FLIZ-Firmenkonto und füge ihn in das unten stehende Feld \"API Key\" ein. Du findest den API-Schlüssel im Abschnitt\"Installation\" deines FLIZ-Firmenkontos.",
       "step3": "Klicke anschließend auf den Button \"Speichern\".",
       "step4": "Warte etwa 5 Sekunden, bis die Seite automatisch neu lädt.",
@@ -18,11 +18,11 @@
       "step6Before": "Weise FLIZpay deinen Verkaufskanälen zu und lege die Anzeigereihenfolge fest.",
       "step6Link": "Zu den Zahlungsarten",
       "step6After": "- dort kannst du die Verfügbarkeit konfigurieren und FLIZpay an die erste Stelle ziehen, um maximale Gebührenersparnis zu erzielen.",
-      "step7": "Darüber hinaus empfehlen wir dir, Cashback für deine Kunden zu aktivieren. Ändere das Zahlungsverhalten deiner Kunden, damit sie FLIZ nutzen - denn FLIZ ist gebührenfrei. Um das zu erreichen, kannst du einen prozentualen Cashback festlegen, der als Rabatt von jedem Einkauf abgezogen wird, den deine Kunden mit FLIZ tätigen. Je mehr Cashback du gibst, desto höher wird der Anteil von FLIZ an deiner Kasse, was bedeutet, dass deine Kundenbasis zu einer gebührenfreien Zahlungsmethode gewechselt ist. Du kannst Cashback in deinem FLIZ-Firmenkonto aktivieren, <a href='https://app.flizpay.de/cashback' target='_blank'>klicke hier.</a>"
+      "step7": "Darüber hinaus empfehlen wir dir, Cashback für deine Kunden zu aktivieren. Ändere das Zahlungsverhalten deiner Kunden, damit sie FLIZ nutzen - denn FLIZ ist gebührenfrei. Um das zu erreichen, kannst du einen prozentualen Cashback festlegen, der als Rabatt von jedem Einkauf abgezogen wird, den deine Kunden mit FLIZ tätigen. Je mehr Cashback du gibst, desto höher wird der Anteil von FLIZ an deiner Kasse, was bedeutet, dass deine Kundenbasis zu einer gebührenfreien Zahlungsmethode gewechselt ist. Du kannst Cashback in deinem FLIZ-Firmenkonto aktivieren, <a href='https://app.flizpay.de/cashback' target='_blank' rel='noopener'>klicke hier.</a>"
     },
     "links": {
-      "faq": "Noch Fragen? <a href='https://flizpay.de/businesses#how-do-i-install-fliz' target='_blank'>Schau dir unsere FAQ-Seite an</a>.",
-      "docs": "Mehr Details benötigt? <a href='https://www.docs.flizpay.de/docs/intro' target='_blank'>Lies unsere Dokumentation.</a>"
+      "faq": "Noch Fragen? <a href='https://flizpay.de/businesses#how-do-i-install-fliz' target='_blank' rel='noopener'>Schau dir unsere FAQ-Seite an</a>.",
+      "docs": "Mehr Details benötigt? <a href='https://www.docs.flizpay.de/docs/intro' target='_blank' rel='noopener'>Lies unsere Dokumentation.</a>"
     },
     "api": {
       "title": "API-Konfiguration",
@@ -122,7 +122,7 @@
       "firstPurchase": "Erstkauf",
       "standard": "Standard",
       "noCashback": "Derzeit ist kein Cashback konfiguriert. Aktiviere Cashback in deinem FLIZpay-Dashboard, um deinen Kunden Belohnungen anzubieten.",
-      "configureLink": "Konfiguriere Cashback-Raten in deinem <a href='https://app.flizpay.de/cashback' target='_blank'>FLIZpay-Dashboard</a>."
+      "configureLink": "Konfiguriere Cashback-Raten in deinem <a href='https://app.flizpay.de/cashback' target='_blank' rel='noopener'>FLIZpay-Dashboard</a>."
     },
     "reconfiguration": {
       "warning": "Du hast bereits eine Integration eingerichtet. Durch die Neukonfiguration werden alle aktuellen laufenden Zahlungsantworten ungültig. Fortfahren?",
