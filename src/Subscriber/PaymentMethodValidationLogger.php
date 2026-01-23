@@ -40,7 +40,7 @@ class PaymentMethodValidationLogger implements EventSubscriberInterface
             }
         }
 
-        $this->logger->critical("=== CHECKOUT CONFIRM PAGE LOADED ===", [
+        $this->logger->debug("Checkout confirm page loaded", [
             "total_payment_methods" => $paymentMethods->count(),
             "flizpay_in_list" => $flizpayInList,
             "current_payment_method" => $context
@@ -72,7 +72,7 @@ class PaymentMethodValidationLogger implements EventSubscriberInterface
 
         $currentPaymentMethod = $context->getPaymentMethod();
 
-        $this->logger->critical("=== PAYMENT METHOD ROUTE RESPONSE ===", [
+        $this->logger->debug("Payment method route response", [
             "total_methods" => $paymentMethods->count(),
             "flizpay_in_list" => $flizpayExists,
             "current_payment_method" => $currentPaymentMethod->getHandlerIdentifier(),
@@ -92,7 +92,7 @@ class PaymentMethodValidationLogger implements EventSubscriberInterface
                 $entity instanceof PaymentMethodEntity &&
                 $entity->getHandlerIdentifier() === self::FLIZPAY_HANDLER
             ) {
-                $this->logger->critical("=== FLIZPAY ENTITY LOADED ===", [
+                $this->logger->debug("FLIZpay entity loaded", [
                     "id" => $entity->getId(),
                     "name" => $entity->getName(),
                     "handler" => $entity->getHandlerIdentifier(),

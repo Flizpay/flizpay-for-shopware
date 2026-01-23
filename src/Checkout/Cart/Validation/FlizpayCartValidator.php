@@ -25,7 +25,7 @@ class FlizpayCartValidator implements CartValidatorInterface
     ): void {
         $paymentMethod = $context->getPaymentMethod();
 
-        $this->logger->critical("=== FLIZPAY CART VALIDATOR ===", [
+        $this->logger->debug("FLIZpay cart validator triggered", [
             "selected_handler" => $paymentMethod->getHandlerIdentifier(),
             "expected_handler" => FlizpayPaymentHandler::class,
             "is_flizpay" =>
@@ -54,15 +54,13 @@ class FlizpayCartValidator implements CartValidatorInterface
             "FlizpayForShopware.config.apiKey",
         );
 
-        $this->logger->critical("=== FLIZPAY CART VALIDATOR CONFIG ===", [
+        $this->logger->debug("FLIZpay cart validator config check", [
             "webhookAlive" => $webhookAlive,
             "apiKey_exists" => !empty($apiKey),
         ]);
 
         if (!$webhookAlive) {
-            $this->logger->critical(
-                "=== FLIZPAY BLOCKED: webhook not alive ===",
-            );
+            $this->logger->info("FLIZpay blocked: webhook not alive");
             $errors->add(
                 new PaymentMethodBlockedError($name, "not configured", $id),
             );
@@ -70,13 +68,13 @@ class FlizpayCartValidator implements CartValidatorInterface
         }
 
         if (!$apiKey) {
-            $this->logger->critical("=== FLIZPAY BLOCKED: no API key ===");
+            $this->logger->info("FLIZpay blocked: no API key configured");
             $errors->add(
                 new PaymentMethodBlockedError($name, "not configured", $id),
             );
             return;
         }
 
-        $this->logger->critical("=== FLIZPAY CART VALIDATOR: PASSED ===");
+        $this->logger->debug("FLIZpay cart validator passed");
     }
 }
