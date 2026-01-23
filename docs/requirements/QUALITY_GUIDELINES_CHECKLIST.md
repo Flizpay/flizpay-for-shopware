@@ -87,11 +87,11 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 
 ### External Links
 
-| Requirement                          | Status | Notes                             |
-| ------------------------------------ | ------ | --------------------------------- |
-| External links have rel="noopener"   | FAIL   | Check translation files for links |
-| External links have target="\_blank" | FAIL   | Check translation files for links |
-| External services disclosed          | PASS   | FLIZpay API documented in README  |
+| Requirement                          | Status | Notes                            |
+| ------------------------------------ | ------ | -------------------------------- |
+| External links have rel="noopener"   | PASS   | Added to all external links      |
+| External links have target="\_blank" | PASS   | All external links have it       |
+| External services disclosed          | PASS   | FLIZpay API documented in README |
 
 ### Cookies
 
@@ -227,9 +227,7 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 
 ### Still Needs Work
 
-| Item                     | Priority                      |
-| ------------------------ | ----------------------------- |
-| External link attributes | LOW - check translation files |
+All code-related items are now complete.
 
 ---
 

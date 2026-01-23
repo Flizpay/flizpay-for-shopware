@@ -10,7 +10,7 @@
     },
     "instructions": {
       "title": "Instructions:",
-      "step1": "If you haven't signed up for a FLIZ company account, please <a href='https://app.flizpay.de/auth/signup' target='_blank'>click here</a> and sign up.",
+      "step1": "If you haven't signed up for a FLIZ company account, please <a href='https://app.flizpay.de/auth/signup' target='_blank' rel='noopener'>click here</a> and sign up.",
       "step2": "Once you have signed up, please generate a new API Key in your FLIZ company account and paste it in the \"API Key\" field below. You will find the API Key in the \"Installation\" section of your company account.",
       "step3": "Afterwards, click the button \"Save\".",
       "step4": "Wait about 5 seconds and the page will reload automatically.",
@@ -18,11 +18,11 @@
       "step6Before": "Assign FLIZpay to your sales channels and set the display order.",
       "step6Link": "Go to Payment Methods",
       "step6After": "to configure availability and drag FLIZpay to the top of the list for maximum fee savings.",
-      "step7": "Moreover, we advise you to activate cashback for your customers. With cashback, you change your customers' payment behavior to ensure they use fee-free payment method FLIZ. This way, customers support your bottom line and optimize their own finances at the same time. You can activate cashback in your FLIZ company account, <a href='https://app.flizpay.de/cashback' target='_blank'>click here.</a>"
+      "step7": "Moreover, we advise you to activate cashback for your customers. With cashback, you change your customers' payment behavior to ensure they use fee-free payment method FLIZ. This way, customers support your bottom line and optimize their own finances at the same time. You can activate cashback in your FLIZ company account, <a href='https://app.flizpay.de/cashback' target='_blank' rel='noopener'>click here.</a>"
     },
     "links": {
-      "faq": "Still have questions? <a href='https://flizpay.de/businesses#how-do-i-install-fliz' target='_blank'>Check out our FAQ page</a>.",
-      "docs": "Need more details? <a href='https://www.docs.flizpay.de/docs/intro' target='_blank'>Read our documentation.</a>"
+      "faq": "Still have questions? <a href='https://flizpay.de/businesses#how-do-i-install-fliz' target='_blank' rel='noopener'>Check out our FAQ page</a>.",
+      "docs": "Need more details? <a href='https://www.docs.flizpay.de/docs/intro' target='_blank' rel='noopener'>Read our documentation.</a>"
     },
     "api": {
       "title": "API Configuration",
@@ -122,7 +122,7 @@
       "firstPurchase": "First Purchase",
       "standard": "Standard",
       "noCashback": "No cashback is currently configured. Enable cashback in your FLIZpay dashboard to offer rewards to your customers.",
-      "configureLink": "Configure cashback rates in your <a href='https://app.flizpay.de/cashback' target='_blank'>FLIZpay Dashboard</a>."
+      "configureLink": "Configure cashback rates in your <a href='https://app.flizpay.de/cashback' target='_blank' rel='noopener'>FLIZpay Dashboard</a>."
     },
     "reconfiguration": {
       "warning": "You already have an integration set up. By reconfiguring, you will invalidate all current ongoing payment responses. Proceed?",
