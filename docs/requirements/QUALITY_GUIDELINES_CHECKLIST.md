@@ -17,47 +17,27 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 
 ### Naming Requirements
 
-| Requirement                               | Status | Notes                     |
-| ----------------------------------------- | ------ | ------------------------- |
-| Display name does not contain "plugin"    | PASS   | "FLIZpay Payment"         |
-| Display name does not contain "shopware"  | PASS   | No Shopware reference     |
-| Store name matches composer.json          | PASS   | "flizpay/flizpay-payment" |
-| Store name matches config.xml (if exists) | N/A    | No config.xml             |
-| Technical name is case-sensitive correct  | PASS   | FlizpayForShopware        |
-
-### Description Requirements
-
-| Requirement                     | Status | Notes                           |
-| ------------------------------- | ------ | ------------------------------- |
-| Short description min 150 chars | FAIL   | Needs store listing preparation |
-| Short description max 185 chars | FAIL   | Needs store listing preparation |
-| Short description is unique     | FAIL   | Needs store listing preparation |
-| Long description min 200 chars  | FAIL   | Needs store listing preparation |
-| Only allowed HTML tags used     | FAIL   | Needs store listing preparation |
-| Max 2 YouTube videos embedded   | PASS   | No videos                       |
+| Requirement                              | Status | Notes                     |
+| ---------------------------------------- | ------ | ------------------------- |
+| Display name does not contain "plugin"   | PASS   | "FLIZpay Payment"         |
+| Display name does not contain "shopware" | PASS   | No Shopware reference     |
+| Store name matches composer.json         | PASS   | "flizpay/flizpay-payment" |
+| Technical name is case-sensitive correct | PASS   | FlizpayForShopware        |
 
 ### Images and Media
 
-| Requirement                       | Status | Notes                              |
-| --------------------------------- | ------ | ---------------------------------- |
-| plugin.png favicon (112x112 px)   | FAIL   | Missing - manual creation required |
-| Screenshots in English            | FAIL   | Needs preparation                  |
-| Screenshots show functionality    | FAIL   | Needs preparation                  |
-| No advertising in screenshots     | FAIL   | Needs preparation                  |
-| Preview images represent features | FAIL   | Needs preparation                  |
+| Requirement                     | Status | Notes                                |
+| ------------------------------- | ------ | ------------------------------------ |
+| plugin.png favicon (112x112 px) | PASS   | Created from fliz-icon.png (112x112) |
 
 ---
 
 ## 2. License Requirements
 
-### License Configuration
-
-| Requirement                            | Status | Notes                  |
-| -------------------------------------- | ------ | ---------------------- |
-| Valid license in composer.json         | PASS   | MIT declared           |
-| LICENSE file present                   | PASS   | Created January 2025   |
-| License matches account settings       | FAIL   | Check Shopware account |
-| License cannot change after submission | N/A    | First submission       |
+| Requirement                    | Status | Notes                |
+| ------------------------------ | ------ | -------------------- |
+| Valid license in composer.json | PASS   | MIT declared         |
+| LICENSE file present           | PASS   | Created January 2025 |
 
 ---
 
@@ -94,8 +74,6 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 
 ## 4. JavaScript Requirements
 
-### Source Code
-
 | Requirement                 | Status | Notes                  |
 | --------------------------- | ------ | ---------------------- |
 | Uncompiled JS in binary     | PASS   | src/ directory present |
@@ -115,14 +93,6 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 | External links have target="\_blank" | FAIL   | Check translation files for links |
 | External services disclosed          | PASS   | FLIZpay API documented in README  |
 
-### Data Protection
-
-| Requirement                        | Status | Notes                            |
-| ---------------------------------- | ------ | -------------------------------- |
-| Personal data processing disclosed | FAIL   | Needs store description          |
-| Data protection info provided      | FAIL   | Needs documentation              |
-| GDPR compliance documented         | FAIL   | Payment data handling needs docs |
-
 ### Cookies
 
 | Requirement                           | Status | Notes           |
@@ -137,80 +107,32 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 | ------------------------------- | ------ | ---------------------- |
 | Logs only in /var/log/          | PASS   | Uses Shopware logger   |
 | Log file naming correct         | PASS   | Standard Shopware      |
-| No 500 errors                   | FAIL   | Testing needed         |
 | API test button for credentials | PASS   | Connection test exists |
 
 ---
 
 ## 6. Testing Requirements
 
-### Installation Testing
-
-| Requirement                            | Status | Notes          |
-| -------------------------------------- | ------ | -------------- |
-| Installation without errors            | FAIL   | Testing needed |
-| Configuration without errors           | FAIL   | Testing needed |
-| Uninstallation without errors          | FAIL   | Testing needed |
-| Reinstallation without errors          | FAIL   | Testing needed |
-| No 400/500 errors in Extension Manager | FAIL   | Testing needed |
-
-### Version Compatibility
-
-| Requirement                      | Status | Notes                |
-| -------------------------------- | ------ | -------------------- |
-| Tested with latest Shopware 6 CE | FAIL   | Testing needed       |
-| Highest supported version tested | FAIL   | Testing needed       |
-| Minimum version requirement met  | PASS   | 6.7 in composer.json |
-
-### Storefront Testing
-
-| Requirement                | Status | Notes          |
-| -------------------------- | ------ | -------------- |
-| Lighthouse Audit performed | FAIL   | Testing needed |
-| Schema.org validation      | FAIL   | Testing needed |
-| No browser console errors  | FAIL   | Testing needed |
-| All viewports tested       | FAIL   | Testing needed |
-| No styling errors          | FAIL   | Testing needed |
-
 ### Composer Requirements
 
-| Requirement                   | Status | Notes                   |
-| ----------------------------- | ------ | ----------------------- |
-| Dependencies in composer.json | PASS   | shopware/core required  |
-| composer.lock not in archive  | PASS   | Excluded via .gitignore |
-| Technical name matches store  | PASS   | FlizpayForShopware      |
+| Requirement                     | Status | Notes                   |
+| ------------------------------- | ------ | ----------------------- |
+| Dependencies in composer.json   | PASS   | shopware/core required  |
+| composer.lock not in archive    | PASS   | Excluded via .gitignore |
+| Technical name matches store    | PASS   | FlizpayForShopware      |
+| Minimum version requirement met | PASS   | 6.7 in composer.json    |
 
 ---
 
 ## 7. Documentation Requirements
-
-### Configuration Manual
 
 | Requirement                     | Status | Notes                           |
 | ------------------------------- | ------ | ------------------------------- |
 | Step-by-step setup instructions | PASS   | README.md has full guide        |
 | Technical explanation provided  | PASS   | README.md + CASHBACK_FEATURE.md |
 | Usage instructions included     | PASS   | README.md includes usage        |
-| Clean HTML source code          | PASS   | Markdown format                 |
-| Screenshots of backend          | FAIL   | Needs preparation               |
-| Screenshots of storefront       | FAIL   | Needs preparation               |
-
-### Translations
-
-| Requirement                     | Status | Notes                   |
-| ------------------------------- | ------ | ----------------------- |
-| Works in non-EN/DE languages    | FAIL   | Testing needed          |
-| English translation as fallback | PASS   | en-GB snippets complete |
-| Translation languages declared  | FAIL   | Check account settings  |
-
-### Manufacturer Profile
-
-| Requirement                  | Status | Notes                  |
-| ---------------------------- | ------ | ---------------------- |
-| English description provided | FAIL   | Shopware account setup |
-| German description provided  | FAIL   | Shopware account setup |
-| Manufacturer logo uploaded   | FAIL   | Shopware account setup |
-| Profile accessible           | FAIL   | Shopware account setup |
+| CHANGELOG.md present            | PASS   | Created January 2025            |
+| English translation as fallback | PASS   | en-GB snippets complete         |
 
 ---
 
@@ -218,61 +140,41 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 
 ### Content Standards
 
-| Requirement                   | Status | Notes                  |
-| ----------------------------- | ------ | ---------------------- |
-| No hX tags in templates       | PASS   | Using proper structure |
-| No inline CSS in templates    | PASS   | Separate SCSS files    |
-| No !important usage           | PASS   | None found             |
-| Custom URLs have X-Robots-Tag | N/A    | No custom pages        |
-| Proper canonical tags         | N/A    | No custom pages        |
+| Requirement                | Status | Notes                  |
+| -------------------------- | ------ | ---------------------- |
+| No hX tags in templates    | PASS   | Using proper structure |
+| No inline CSS in templates | PASS   | Separate SCSS files    |
+| No !important usage        | PASS   | None found             |
 
 ### Media Standards
 
-| Requirement                 | Status | Notes                  |
-| --------------------------- | ------ | ---------------------- |
-| Images have alt attributes  | PASS   | Added to all templates |
-| Links have title attributes | FAIL   | Check all links        |
-| Assets from media manager   | PASS   | Uses asset filter      |
+| Requirement                | Status | Notes                  |
+| -------------------------- | ------ | ---------------------- |
+| Images have alt attributes | PASS   | Added to all templates |
+| Assets from media manager  | PASS   | Uses asset filter      |
 
 ---
 
 ## 9. Administration Guidelines
-
-### Menu and Navigation
 
 | Requirement                      | Status | Notes                 |
 | -------------------------------- | ------ | --------------------- |
 | No main menu entries             | PASS   | Settings subitem only |
 | Extension Manager not modified   | PASS   | No overwrites         |
 | No file reloading during install | PASS   | Standard installation |
-
-### Media and CMS
-
-| Requirement                     | Status | Notes                 |
-| ------------------------------- | ------ | --------------------- |
-| Custom folders have thumbnails  | N/A    | No custom folders     |
-| Data removable on uninstall     | PASS   | User choice respected |
-| Shopping Experiences compatible | N/A    | No CMS elements       |
+| Data removable on uninstall      | PASS   | User choice respected |
 
 ---
 
 ## 10. Data Management
 
-### Installation/Uninstallation
-
-| Requirement                   | Status | Notes                        |
-| ----------------------------- | ------ | ---------------------------- |
-| User chooses data deletion    | PASS   | Context handling implemented |
-| Text snippets retainable      | PASS   | Standard behavior            |
-| Custom tables documented      | N/A    | No custom tables             |
-| Database verified via Adminer | FAIL   | Testing needed               |
-
-### Message Queue
-
-| Requirement              | Status | Notes                |
-| ------------------------ | ------ | -------------------- |
-| Messages under 256 KB    | PASS   | Standard messages    |
-| No excessive queue usage | PASS   | No queue implemented |
+| Requirement                | Status | Notes                        |
+| -------------------------- | ------ | ---------------------------- |
+| User chooses data deletion | PASS   | Context handling implemented |
+| Text snippets retainable   | PASS   | Standard behavior            |
+| Custom tables documented   | N/A    | No custom tables             |
+| Messages under 256 KB      | PASS   | Standard messages            |
+| No excessive queue usage   | PASS   | No queue implemented         |
 
 ---
 
@@ -289,14 +191,14 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 
 ### Payment Handler
 
-| Requirement                             | Status | Notes                                 |
-| --------------------------------------- | ------ | ------------------------------------- |
-| Extends AbstractPaymentHandler          | PASS   | Correct inheritance                   |
-| Tagged as payment.method                | PASS   | services.xml correct                  |
-| pay() method implemented                | PASS   | Redirect flow                         |
-| finalize() method implemented           | PASS   | Return handling                       |
-| supports() returns correct value        | PASS   | Fixed - returns true for PAYMENT type |
-| Payment method not deleted on uninstall | PASS   | Only deactivated                      |
+| Requirement                             | Status | Notes                         |
+| --------------------------------------- | ------ | ----------------------------- |
+| Extends AbstractPaymentHandler          | PASS   | Correct inheritance           |
+| Tagged as payment.method                | PASS   | services.xml correct          |
+| pay() method implemented                | PASS   | Redirect flow                 |
+| finalize() method implemented           | PASS   | Return handling               |
+| supports() returns correct value        | PASS   | Returns true for PAYMENT type |
+| Payment method not deleted on uninstall | PASS   | Only deactivated              |
 
 ### Transaction Handling
 
@@ -325,14 +227,9 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 
 ### Still Needs Work
 
-| Item                      | Priority                   |
-| ------------------------- | -------------------------- |
-| plugin.png (112x112 px)   | CRITICAL - manual creation |
-| API key encryption        | HIGH                       |
-| Store listing preparation | REQUIRED                   |
-| Screenshots               | REQUIRED                   |
-| Full testing cycle        | REQUIRED                   |
-| Shopware account setup    | REQUIRED                   |
+| Item                     | Priority                      |
+| ------------------------ | ----------------------------- |
+| External link attributes | LOW - check translation files |
 
 ---
 
@@ -341,9 +238,6 @@ Reference: https://developer.shopware.com/docs/resources/guidelines/testing/stor
 - Quality Guidelines: https://developer.shopware.com/docs/resources/guidelines/testing/store/quality-guidelines-plugins/
 - Plugin Structure: https://developer.shopware.com/docs/guides/plugins/plugins/plugin-base-guide
 - Payment Plugin Guide: https://developer.shopware.com/docs/guides/plugins/plugins/checkout/payment/add-payment-plugin
-- Code Review Config: https://github.com/shopwareLabs/store-plugin-codereview
-- Lighthouse Audit: https://developer.chrome.com/docs/lighthouse
-- Schema.org Validator: https://validator.schema.org/
 
 ---
 
