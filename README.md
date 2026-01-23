@@ -22,7 +22,6 @@ Official FLIZpay payment plugin for Shopware 6.7+. Accept payments via FLIZpay a
 - Configurable cashback display in checkout
 - Support for multiple sales channels
 - German and English translations included
-- Sandbox mode for testing
 
 ## Requirements
 
@@ -169,8 +168,8 @@ Look for entries containing "FLIZpay" or "flizpay" for plugin-specific logs.
 ## Support
 
 - **FLIZpay Support**: support@flizpay.de
-- **Documentation**: https://docs.flizpay.de
-- **Merchant Dashboard**: https://merchant.flizpay.de
+- **Documentation**: https://www.docs.flizpay.de/docs/intro
+- **Merchant Dashboard**: https://app.flizpay.de
 
 ## License
 
