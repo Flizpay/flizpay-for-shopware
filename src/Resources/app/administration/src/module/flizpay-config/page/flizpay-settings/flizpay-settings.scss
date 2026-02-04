@@ -69,6 +69,19 @@ $radio-button-color: #798490;
         }
     }
 
+    .flizpay-connection-status {
+        &__loader {
+            display: flex;
+            justify-content: center;
+            padding: 16px 0;
+            position: relative;
+        }
+
+        &__alert {
+            width: 100%;
+        }
+    }
+
     .flizpay-test-connection {
         display: flex;
         flex-direction: column;

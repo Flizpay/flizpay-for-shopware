@@ -118,16 +118,16 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
-        <!-- Cart Validator - checks FLIZpay availability before checkout -->
+        <!-- Payment Method Filter - hides FLIZpay payment option on checkout page when not configured -->
         <service
-            id="FLIZpay\FlizpayForShopware\Checkout\Cart\Validation\FlizpayCartValidator"
+            id="FLIZpay\FlizpayForShopware\Subscriber\PaymentMethodFilterSubscriber"
         >
             <argument
                 type="service"
                 id="Shopware\Core\System\SystemConfig\SystemConfigService"
             />
             <argument type="service" id="monolog.logger" />
-            <tag name="shopware.cart.validator" />
+            <tag name="kernel.event_subscriber" />
         </service>
 
         <!-- Payment Method Cashback Subscriber - displays cashback info at checkout -->
