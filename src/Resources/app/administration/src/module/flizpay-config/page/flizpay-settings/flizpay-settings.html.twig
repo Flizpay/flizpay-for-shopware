@@ -65,36 +65,25 @@
 
                 <sw-container columns="1fr" gap="16px">
                     {% block flizpay_settings_api_key %}
-                    <sw-text-field
+                    <mt-password-field
                         v-model="config.apiKey"
                         :label="$tc('flizpay-config.api.apiKeyLabel')"
                         :placeholder="$tc('flizpay-config.api.apiKeyPlaceholder')"
                         :helpText="$tc('flizpay-config.api.apiKeyHelpText')"
                         :disabled="isLoading">
-                    </sw-text-field>
+                    </mt-password-field>
                     {% endblock %}
 
                     {% block flizpay_settings_connection_status %}
-                    <div class="flizpay-connection-status">
-                        <sw-alert
-                            v-if="connectionStatus && !(isConnectionEstablished && connectionStatus.type === 'success')"
-                            :variant="connectionStatus.type"
-                            class="flizpay-connection-status__alert">
-                            {{ connectionStatus.message }}
-                            <sw-loader
-                                v-if="isWaitingForWebhook"
-                                size="16px"
-                                class="flizpay-connection-status__loader">
-                            </sw-loader>
-                        </sw-alert>
-
-                        <sw-alert
-                            v-if="isConnectionEstablished"
-                            variant="success"
-                            class="flizpay-connection-status__established">
-                            {{ $tc('flizpay-config.connection.established') }}
-                        </sw-alert>
+                    <div v-if="pollingInterval !== null" class="flizpay-connection-status__loader">
+                        <sw-loader size="36px"></sw-loader>
                     </div>
+                    <sw-alert
+                        v-if="alertConfig"
+                        :variant="alertConfig.variant"
+                        class="flizpay-connection-status__alert">
+                        {{ alertConfig.message }}
+                    </sw-alert>
                     {% endblock %}
                 </sw-container>
             </sw-card>

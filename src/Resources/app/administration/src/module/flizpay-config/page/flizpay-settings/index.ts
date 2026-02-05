@@ -9,7 +9,6 @@ import "./flizpay-settings.scss";
 
 import type {
   FlizpayConfig,
-  FlizpayConnectionTestResult,
   FlizpayTestConnectionResponse,
   PaymentFlowOption,
   SystemConfigValues,
@@ -18,6 +17,24 @@ import type {
 import type FlizpayApiService from "FlizpayForShopware/service/flizpay-api.service";
 
 const { Component, Mixin } = Shopware;
+
+/**
+ * Connection state enum - single source of truth for connection status
+ */
+const ConnectionState = {
+  IDLE: "idle",
+  ESTABLISHED: "established",
+  ERROR: "error",
+  TIMEOUT: "timeout",
+} as const;
+
+type ConnectionStateType =
+  (typeof ConnectionState)[keyof typeof ConnectionState];
+
+interface AlertConfig {
+  variant: "success" | "info" | "warning" | "error";
+  message: string;
+}
 
 const FLIZ_CONFIG = {
   API_KEY: "FlizpayForShopware.config.apiKey",
@@ -46,9 +63,8 @@ interface ComponentData {
   isLoading: boolean;
   isSaving: boolean;
   config: FlizpayConfig;
-  connectionStatus: FlizpayConnectionTestResult | null;
+  connectionState: ConnectionStateType;
   initialApiKey: string | null;
-  isWaitingForWebhook: boolean;
   currentSalesChannelId: string | null;
   pollingInterval: number | null;
   cashbackData: FlizpayCashbackData | null;
@@ -72,7 +88,7 @@ interface ComponentMethods {
 
 interface ComponentComputed {
   paymentFlowOptions: PaymentFlowOption[];
-  isConnectionEstablished: boolean;
+  alertConfig: AlertConfig | null;
   hasCashback: boolean;
   maxCashbackValue: number;
 }
@@ -106,9 +122,8 @@ Component.register("flizpay-settings", {
         showDescriptionInTitle: true,
         showSubtitle: true,
       },
-      connectionStatus: null,
+      connectionState: ConnectionState.IDLE,
       initialApiKey: null,
-      isWaitingForWebhook: false,
       currentSalesChannelId: null,
       pollingInterval: null,
       cashbackData: null,
@@ -121,8 +136,30 @@ Component.register("flizpay-settings", {
       return Shopware.Filter.getByName("asset");
     },
 
-    isConnectionEstablished(this: ComponentInstance): boolean {
-      return this.config.webhookAlive === true;
+    /**
+     * Returns alert configuration based on connection state, or null if no alert should show
+     */
+    alertConfig(this: ComponentInstance): AlertConfig | null {
+      switch (this.connectionState) {
+        case ConnectionState.ESTABLISHED:
+          return {
+            variant: "success",
+            message: this.$tc("flizpay-config.connection.established"),
+          };
+        case ConnectionState.ERROR:
+          return {
+            variant: "error",
+            message: this.$tc("flizpay-config.connection.failed"),
+          };
+        case ConnectionState.TIMEOUT:
+          return {
+            variant: "warning",
+            message: this.$tc("flizpay-config.connection.webhookTimeout"),
+          };
+        case ConnectionState.IDLE:
+        default:
+          return null;
+      }
     },
 
     hasCashback(this: ComponentInstance): boolean {
@@ -191,6 +228,13 @@ Component.register("flizpay-settings", {
         }
 
         this.initialApiKey = this.config.apiKey;
+
+        // Set connection state based on loaded config
+        // Both webhookAlive AND apiKey must be present for valid connection
+        this.connectionState =
+          this.config.webhookAlive && this.config.apiKey
+            ? ConnectionState.ESTABLISHED
+            : ConnectionState.IDLE;
       } catch {
         this.createNotificationError({
           message: this.$tc("flizpay-config.errors.loadFailed"),
@@ -201,6 +245,10 @@ Component.register("flizpay-settings", {
     },
 
     async saveConfig(this: ComponentInstance): Promise<void> {
+      // Reset connection state before saving
+      this.stopWebhookPolling();
+      this.connectionState = ConnectionState.IDLE;
+
       if (!this.config.apiKey) {
         this.createNotificationError({
           message: this.$tc("flizpay-config.errors.apiKeyRequired"),
@@ -220,7 +268,6 @@ Component.register("flizpay-settings", {
       }
 
       this.isSaving = true;
-      this.connectionStatus = null;
 
       try {
         // Step 1: Save basic config first
@@ -272,32 +319,15 @@ Component.register("flizpay-settings", {
           }
 
           // Start polling for webhook verification
-          this.isWaitingForWebhook = true;
-          this.connectionStatus = {
-            type: "info",
-            message: this.$tc("flizpay-config.connection.pending"),
-          };
           this.startWebhookPolling();
         } else {
-          this.connectionStatus = {
-            type: "error",
-            message:
-              response.message || this.$tc("flizpay-config.connection.failed"),
-          };
+          this.connectionState = ConnectionState.ERROR;
           this.createNotificationError({
-            message:
-              response.message || this.$tc("flizpay-config.connection.failed"),
+            message: this.$tc("flizpay-config.connection.failed"),
           });
         }
       } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : this.$tc("flizpay-config.connection.failed");
-        this.connectionStatus = {
-          type: "error",
-          message: errorMessage,
-        };
+        this.connectionState = ConnectionState.ERROR;
       }
     },
 
@@ -325,12 +355,7 @@ Component.register("flizpay-settings", {
             // Success! Webhook verified
             this.stopWebhookPolling();
             this.config.webhookAlive = true;
-            this.isWaitingForWebhook = false;
-
-            this.connectionStatus = {
-              type: "success",
-              message: this.$tc("flizpay-config.connection.established"),
-            };
+            this.connectionState = ConnectionState.ESTABLISHED;
 
             this.createNotificationSuccess({
               message: this.$tc("flizpay-config.connection.webhookVerified"),
@@ -338,17 +363,12 @@ Component.register("flizpay-settings", {
           } else if (attempts >= maxAttempts) {
             // Timeout - webhook not received
             this.stopWebhookPolling();
-            this.isWaitingForWebhook = false;
-
-            this.connectionStatus = {
-              type: "warning",
-              message:
-                "Webhook verification timeout. Please check your server configuration or try again.",
-            };
+            this.connectionState = ConnectionState.TIMEOUT;
 
             this.createNotificationWarning({
-              message:
-                "Webhook not verified within 30 seconds. Connection may still work - please check your server logs.",
+              message: this.$tc(
+                "flizpay-config.connection.webhookTimeoutNotification",
+              ),
             });
           }
         } catch (error) {
@@ -379,6 +399,7 @@ Component.register("flizpay-settings", {
     ): void {
       this.currentSalesChannelId = salesChannelId;
       this.stopWebhookPolling();
+      this.connectionState = ConnectionState.IDLE;
       this.loadConfig();
     },
 

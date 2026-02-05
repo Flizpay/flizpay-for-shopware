@@ -57,11 +57,11 @@
       "testConnection": "Test Connection"
     },
     "connection": {
-      "success": "Connected! Waiting for webhook confirmation. Page will reload automatically in 5 seconds...",
       "failed": "Connection failed. Please check your API key and try again.",
-      "pending": "Connected! Waiting for webhook confirmation. Page will reload automatically in 5 seconds...",
       "established": "Connection established! Our servers have successfully communicated with your site. You're now ready to accept fee-free payments!",
-      "webhookVerified": "Webhook verified! Payment method is now active."
+      "webhookVerified": "Webhook verified! Payment method is now active.",
+      "webhookTimeout": "Webhook verification timeout. Please check your server configuration or try again.",
+      "webhookTimeoutNotification": "Webhook not verified within 30 seconds. Connection may still work - please check your server logs."
     },
     "displayOptions": {
       "title": "Display Options",

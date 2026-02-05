@@ -57,11 +57,11 @@
       "testConnection": "Verbindung testen"
     },
     "connection": {
-      "success": "Verbunden! Warte auf Webhook-Bestätigung. Die Seite wird in 5 Sekunden automatisch neu geladen...",
       "failed": "Verbindung fehlgeschlagen. Bitte überprüfe deinen API-Schlüssel und versuche es erneut.",
-      "pending": "Verbunden! Warte auf Webhook-Bestätigung. Die Seite wird in 5 Sekunden automatisch neu geladen...",
       "established": "Verbindung hergestellt! Unsere Server haben erfolgreich mit deiner Website kommuniziert. Du kannst jetzt gebührenfreie Zahlungen empfangen!",
-      "webhookVerified": "Webhook verifiziert! Zahlungsmethode ist jetzt aktiv."
+      "webhookVerified": "Webhook verifiziert! Zahlungsmethode ist jetzt aktiv.",
+      "webhookTimeout": "Zeitüberschreitung bei der Webhook-Verifizierung. Bitte überprüfe deine Serverkonfiguration oder versuche es erneut.",
+      "webhookTimeoutNotification": "Webhook wurde nicht innerhalb von 30 Sekunden verifiziert. Die Verbindung funktioniert möglicherweise trotzdem - bitte überprüfe deine Server-Logs."
     },
     "displayOptions": {
       "title": "Anzeige-Optionen",

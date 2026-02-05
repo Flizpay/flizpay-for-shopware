@@ -121,6 +121,13 @@ class FlizpayConfigController extends AbstractController
                     $salesChannelId,
                 );
 
+                // Also reset webhook status to prevent invalid state
+                $this->systemConfigService->set(
+                    "FlizpayForShopware.config.webhookAlive",
+                    false,
+                    $salesChannelId,
+                );
+
                 return new JsonResponse(
                     [
                         "success" => false,
@@ -164,6 +171,13 @@ class FlizpayConfigController extends AbstractController
                 $this->systemConfigService->set(
                     "FlizpayForShopware.config.apiKey",
                     "",
+                    $salesChannelId,
+                );
+
+                // Also reset webhook status to prevent invalid state
+                $this->systemConfigService->set(
+                    "FlizpayForShopware.config.webhookAlive",
+                    false,
                     $salesChannelId,
                 );
 
@@ -247,6 +261,13 @@ class FlizpayConfigController extends AbstractController
             $this->systemConfigService->set(
                 "FlizpayForShopware.config.apiKey",
                 "",
+                $salesChannelId ?? null,
+            );
+
+            // Also reset webhook status to prevent invalid state
+            $this->systemConfigService->set(
+                "FlizpayForShopware.config.webhookAlive",
+                false,
                 $salesChannelId ?? null,
             );
 
