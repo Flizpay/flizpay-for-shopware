@@ -12,9 +12,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use FLIZpay\FlizpayForShopware\Service\PaymentMethodInstaller;
 use FLIZpay\FlizpayForShopware\Service\FlizpayApi;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
-use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Connection;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class FlizpayForShopware extends Plugin
@@ -135,38 +133,18 @@ class FlizpayForShopware extends Plugin
      */
     private function cleanupConfiguration(): void
     {
-        try {
-            // Notify Flizpay of uninstall
-            $this->notifyFlizpayStatus(false);
+        $this->notifyFlizpayStatus(false);
 
-            // Clear webhook URL on Flizpay side
-            /** @var FlizpayApi $flizpayApi */
-            $flizpayApi = $this->container->get(FlizpayApi::class);
-            $flizpayApi->dispatch("edit_business", ["webhookUrl" => ""], false);
-        } catch (\Exception $e) {
-            // Log but continue with cleanup
-            /** @var LoggerInterface $logger */
-            $logger = $this->container->get(LoggerInterface::class);
-            $logger->warning("Failed to notify Flizpay during uninstall", [
-                "error" => $e->getMessage(),
-            ]);
-        }
+        /** @var FlizpayApi $flizpayApi */
+        $flizpayApi = $this->container->get(FlizpayApi::class);
+        $flizpayApi->dispatch("edit_business", ["webhookUrl" => ""], false);
 
-        // Remove all configuration from database
-        try {
-            /** @var Connection $connection */
-            $connection = $this->container->get(Connection::class);
-            $connection->executeStatement(
-                "DELETE FROM system_config
-                 WHERE configuration_key LIKE 'FlizpayForShopware.config.%'",
-            );
-        } catch (\Exception $e) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->container->get(LoggerInterface::class);
-            $logger->error("Failed to clean up configuration", [
-                "error" => $e->getMessage(),
-            ]);
-        }
+        /** @var Connection $connection */
+        $connection = $this->container->get(Connection::class);
+        $connection->executeStatement(
+            "DELETE FROM system_config
+             WHERE configuration_key LIKE 'FlizpayForShopware.config.%'",
+        );
     }
 
     /**
