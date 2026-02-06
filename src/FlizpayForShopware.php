@@ -135,16 +135,36 @@ class FlizpayForShopware extends Plugin
     {
         $this->notifyFlizpayStatus(false);
 
-        /** @var FlizpayApi $flizpayApi */
-        $flizpayApi = $this->container->get(FlizpayApi::class);
-        $flizpayApi->dispatch("edit_business", ["webhookUrl" => ""], false);
+        try {
+            // Silently skip if container is not available
+            if (!$this->container) {
+                return;
+            }
 
-        /** @var Connection $connection */
-        $connection = $this->container->get(Connection::class);
-        $connection->executeStatement(
-            "DELETE FROM system_config
-             WHERE configuration_key LIKE 'FlizpayForShopware.config.%'",
-        );
+            /** @var SystemConfigService $systemConfig */
+            $systemConfig = $this->container->get(SystemConfigService::class);
+            $apiKey = $systemConfig->getString(
+                "FlizpayForShopware.config.apiKey",
+            );
+
+            if (!$apiKey) {
+                return; // Not configured yet
+            }
+
+            /** @var FlizpayApi $flizpayApi */
+            $flizpayApi = $this->container->get(FlizpayApi::class);
+            $flizpayApi->dispatch("edit_business", ["webhookUrl" => ""], false);
+
+            /** @var Connection $connection */
+            $connection = $this->container->get(Connection::class);
+            $connection->executeStatement(
+                "DELETE FROM system_config
+                 WHERE configuration_key LIKE 'FlizpayForShopware.config.%'",
+            );
+        } catch (\Exception $e) {
+            // Silently fail - don't block activation/deactivation
+            // Logger might not be available during lifecycle operations
+        }
     }
 
     /**
