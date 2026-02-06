@@ -12,9 +12,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use FLIZpay\FlizpayForShopware\Service\PaymentMethodInstaller;
 use FLIZpay\FlizpayForShopware\Service\FlizpayApi;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
-use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Connection;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class FlizpayForShopware extends Plugin
@@ -135,25 +133,28 @@ class FlizpayForShopware extends Plugin
      */
     private function cleanupConfiguration(): void
     {
-        try {
-            // Notify Flizpay of uninstall
-            $this->notifyFlizpayStatus(false);
+        $this->notifyFlizpayStatus(false);
 
-            // Clear webhook URL on Flizpay side
+        try {
+            // Silently skip if container is not available
+            if (!$this->container) {
+                return;
+            }
+
+            /** @var SystemConfigService $systemConfig */
+            $systemConfig = $this->container->get(SystemConfigService::class);
+            $apiKey = $systemConfig->getString(
+                "FlizpayForShopware.config.apiKey",
+            );
+
+            if (!$apiKey) {
+                return; // Not configured yet
+            }
+
             /** @var FlizpayApi $flizpayApi */
             $flizpayApi = $this->container->get(FlizpayApi::class);
             $flizpayApi->dispatch("edit_business", ["webhookUrl" => ""], false);
-        } catch (\Exception $e) {
-            // Log but continue with cleanup
-            /** @var LoggerInterface $logger */
-            $logger = $this->container->get(LoggerInterface::class);
-            $logger->warning("Failed to notify Flizpay during uninstall", [
-                "error" => $e->getMessage(),
-            ]);
-        }
 
-        // Remove all configuration from database
-        try {
             /** @var Connection $connection */
             $connection = $this->container->get(Connection::class);
             $connection->executeStatement(
@@ -161,11 +162,8 @@ class FlizpayForShopware extends Plugin
                  WHERE configuration_key LIKE 'FlizpayForShopware.config.%'",
             );
         } catch (\Exception $e) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->container->get(LoggerInterface::class);
-            $logger->error("Failed to clean up configuration", [
-                "error" => $e->getMessage(),
-            ]);
+            // Silently fail - don't block activation/deactivation
+            // Logger might not be available during lifecycle operations
         }
     }
 

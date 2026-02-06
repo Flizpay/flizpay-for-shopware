@@ -16,7 +16,7 @@
         </service>
 
         <!-- API Client Instance -->
-        <service id="FLIZpay\FlizpayForShopware\Service\FlizpayApi">
+        <service id="FLIZpay\FlizpayForShopware\Service\FlizpayApi" public="true">
             <argument
                 type="service"
                 id="Shopware\Core\System\SystemConfig\SystemConfigService"
