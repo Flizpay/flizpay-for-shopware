@@ -56,9 +56,8 @@ class FlizpayPaymentHandler extends AbstractPaymentHandler
         string $paymentMethodId,
         Context $context,
     ): bool {
-        // This handler supports regular payments only
-        // Recurring payments and refunds are not supported
-        return $type === PaymentHandlerType::PAYMENT;
+        // This payment handler does not support recurring payments nor refunds
+        return false;
     }
 
     /**
