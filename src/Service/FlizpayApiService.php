@@ -28,7 +28,12 @@ class FlizpayApiService
         return $response["webhookKey"] ?? null;
     }
 
-    public function generate_webhook_url(): ?string
+    /**
+     * Register webhook URL with FLIZpay backend.
+     *
+     * @return array{webhookUrl: string, businessId: string|null}|null
+     */
+    public function generate_webhook_url(): ?array
     {
         // Generate absolute URL with HTTPS
         $webhookUrl = $this->router->generate(
@@ -50,10 +55,9 @@ class FlizpayApiService
         }
 
         // Register webhook URL with Flizpay backend
-        // IMPORTANT: Use camelCase "webhookUrl" parameter (not snake_case "webhook_url")
         $response = $this->client->dispatch(
             "edit_business",
-            ["webhookUrl" => $webhookUrl], // ✓ Fixed: camelCase to match API expectation
+            ["webhookUrl" => $webhookUrl],
             false,
         );
 
@@ -65,7 +69,10 @@ class FlizpayApiService
             return null;
         }
 
-        return $webhookUrlResponse;
+        return [
+            "webhookUrl" => $webhookUrlResponse,
+            "businessId" => $response["id"] ?? null,
+        ];
     }
 
     public function fetch_cashback_data(): ?array

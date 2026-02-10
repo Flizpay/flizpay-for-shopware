@@ -16,12 +16,19 @@
         </service>
 
         <!-- API Client Instance -->
-        <service id="FLIZpay\FlizpayForShopware\Service\FlizpayApi" public="true">
+        <service
+            id="FLIZpay\FlizpayForShopware\Service\FlizpayApi"
+            public="true"
+        >
             <argument
                 type="service"
                 id="Shopware\Core\System\SystemConfig\SystemConfigService"
             />
             <argument type="service" id="monolog.logger" />
+            <argument
+                type="service"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter"
+            />
         </service>
 
         <!-- API Service -->
@@ -31,6 +38,14 @@
                 id="FLIZpay\FlizpayForShopware\Service\FlizpayApi"
             />
             <argument type="service" id="router" />
+        </service>
+
+        <!-- Sentry Error Reporter -->
+        <service id="FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter">
+            <argument
+                type="service"
+                id="Shopware\Core\System\SystemConfig\SystemConfigService"
+            />
         </service>
 
         <!-- Cashback Helper Service -->
@@ -54,6 +69,10 @@
                 id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"
             />
             <argument type="service" id="monolog.logger" />
+            <argument
+                type="service"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter"
+            />
         </service>
 
         <!-- Webhook Controller -->
@@ -87,6 +106,10 @@
                 id="Shopware\Core\System\SystemConfig\SystemConfigService"
             />
             <argument type="service" id="order_transaction.repository" />
+            <argument
+                type="service"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter"
+            />
             <tag name="shopware.payment.method" />
         </service>
 
@@ -104,6 +127,10 @@
                 id="FLIZpay\FlizpayForShopware\Service\FlizpayApiService"
             />
             <argument type="service" id="monolog.logger" />
+            <argument
+                type="service"
+                id="FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter"
+            />
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>

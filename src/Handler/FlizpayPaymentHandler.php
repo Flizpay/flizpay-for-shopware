@@ -3,6 +3,7 @@
 namespace FLIZpay\FlizpayForShopware\Handler;
 
 use FLIZpay\FlizpayForShopware\Service\FlizpayApiService;
+use FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionEntity;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler;
@@ -49,6 +50,7 @@ class FlizpayPaymentHandler extends AbstractPaymentHandler
         private readonly LoggerInterface $logger,
         private readonly SystemConfigService $systemConfigService,
         private readonly EntityRepository $orderTransactionRepository,
+        private readonly FlizpaySentryReporter $sentryReporter,
     ) {}
 
     public function supports(
@@ -127,6 +129,10 @@ class FlizpayPaymentHandler extends AbstractPaymentHandler
         } catch (\Throwable $e) {
             $this->logger->error("FLIZpay payment failed", [
                 "error" => $e->getMessage(),
+                "transactionId" => $transactionId,
+            ]);
+
+            $this->sentryReporter->report($e, [
                 "transactionId" => $transactionId,
             ]);
 
