@@ -53,7 +53,7 @@ class FlizpaySentryReporter
 
             $payload = $this->buildPayload($exception, $context, $level);
 
-            $this->client->post($this->storeUrl, [
+            $this->client->postAsync($this->storeUrl, [
                 "headers" => [
                     "Content-Type" => "application/json",
                     "X-Sentry-Auth" => $this->buildAuthHeader(),
