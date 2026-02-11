@@ -122,7 +122,7 @@ class FlizpaySentryReporter
             ],
             "request" => $this->buildRequest(),
             "extra" => $context,
-            "server_name" => gethostname() ?: "unknown",
+            "server_name" => "shopware-plugin",
         ];
     }
 
