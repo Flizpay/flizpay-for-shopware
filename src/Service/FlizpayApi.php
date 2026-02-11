@@ -22,6 +22,7 @@ class FlizpayApi
     private Client $httpClient;
     private LoggerInterface $logger;
     private SystemConfigService $systemConfigService;
+    private FlizpaySentryReporter $sentryReporter;
     private ?string $salesChannelId;
 
     /**
@@ -29,6 +30,7 @@ class FlizpayApi
      *
      * @param SystemConfigService $systemConfigService
      * @param LoggerInterface $logger
+     * @param FlizpaySentryReporter $sentryReporter
      * @param string|null $salesChannelId
      *
      * @since 1.0.0
@@ -36,10 +38,12 @@ class FlizpayApi
     public function __construct(
         SystemConfigService $systemConfigService,
         LoggerInterface $logger,
+        FlizpaySentryReporter $sentryReporter,
         ?string $salesChannelId = null,
     ) {
         $this->systemConfigService = $systemConfigService;
         $this->logger = $logger;
+        $this->sentryReporter = $sentryReporter;
         $this->salesChannelId = $salesChannelId;
         $this->init();
     }
@@ -203,6 +207,11 @@ class FlizpayApi
                 "method" => $route_data["method"],
                 "endpoint" => $route_data["path"],
                 "error" => $error->getMessage(),
+            ]);
+
+            $this->sentryReporter->report($error, [
+                "method" => $route_data["method"],
+                "endpoint" => $route_data["path"],
             ]);
 
             throw new \RuntimeException(

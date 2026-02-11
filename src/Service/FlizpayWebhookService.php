@@ -13,6 +13,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,6 +39,7 @@ class FlizpayWebhookService
     private EntityRepository $orderLineItemRepository;
     private OrderTransactionStateHandler $transactionStateHandler;
     private LoggerInterface $logger;
+    private FlizpaySentryReporter $sentryReporter;
 
     /**
      * Initialize webhook service
@@ -47,6 +49,7 @@ class FlizpayWebhookService
      * @param $orderLineItemRepository
      * @param $transactionStateHandler
      * @param $logger
+     * @param $sentryReporter
      *
      * @since 1.0.0
      */
@@ -56,12 +59,14 @@ class FlizpayWebhookService
         EntityRepository $orderLineItemRepository,
         OrderTransactionStateHandler $transactionStateHandler,
         LoggerInterface $logger,
+        FlizpaySentryReporter $sentryReporter,
     ) {
         $this->systemConfig = $systemConfig;
         $this->orderRepository = $orderRepository;
         $this->orderLineItemRepository = $orderLineItemRepository;
         $this->transactionStateHandler = $transactionStateHandler;
         $this->logger = $logger;
+        $this->sentryReporter = $sentryReporter;
     }
 
     /**
@@ -108,6 +113,9 @@ class FlizpayWebhookService
                 "error" => $e->getMessage(),
                 "trace" => $e->getTraceAsString(),
             ]);
+
+            $this->sentryReporter->report($e);
+
             return new JsonResponse(
                 ["error" => "Internal server error"],
                 Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -372,6 +380,10 @@ class FlizpayWebhookService
                 "orderId" => $orderId,
                 "error" => $e->getMessage(),
                 "trace" => $e->getTraceAsString(),
+            ]);
+
+            $this->sentryReporter->report($e, [
+                "orderId" => $orderId,
             ]);
 
             return new JsonResponse(

@@ -3,6 +3,7 @@
 namespace FLIZpay\FlizpayForShopware\Core\Api;
 
 use FLIZpay\FlizpayForShopware\Service\FlizpayApiService;
+use FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
@@ -17,15 +18,18 @@ class FlizpayConfigController extends AbstractController
     private SystemConfigService $systemConfigService;
     private FlizpayApiService $flizpayApiService;
     private LoggerInterface $logger;
+    private FlizpaySentryReporter $sentryReporter;
 
     public function __construct(
         SystemConfigService $systemConfigService,
         FlizpayApiService $flizpayApiService,
         LoggerInterface $logger,
+        FlizpaySentryReporter $sentryReporter,
     ) {
         $this->systemConfigService = $systemConfigService;
         $this->flizpayApiService = $flizpayApiService;
         $this->logger = $logger;
+        $this->sentryReporter = $sentryReporter;
     }
 
     /**
@@ -88,17 +92,20 @@ class FlizpayConfigController extends AbstractController
                 $this->logger->debug(
                     "Calling flizpayApiService->generate_webhook_url()",
                 );
-                $webhookUrl = $this->flizpayApiService->generate_webhook_url();
+                $webhookResult = $this->flizpayApiService->generate_webhook_url();
                 $this->logger->debug("generate_webhook_url() returned", [
-                    "webhookUrl" => $webhookUrl,
-                    "isEmpty" => empty($webhookUrl),
+                    "webhookResult" => $webhookResult,
+                    "isEmpty" => empty($webhookResult),
                 ]);
 
-                if (empty($webhookUrl)) {
+                if (empty($webhookResult)) {
                     throw new \RuntimeException(
                         "Failed to register webhook URL with Flizpay",
                     );
                 }
+
+                $webhookUrl = $webhookResult["webhookUrl"];
+                $businessId = $webhookResult["businessId"] ?? null;
 
                 $this->logger->info("Saving webhook URL to config", [
                     "webhookUrl" => $webhookUrl,
@@ -108,10 +115,22 @@ class FlizpayConfigController extends AbstractController
                     $webhookUrl,
                     $salesChannelId,
                 );
+
+                if ($businessId) {
+                    $this->systemConfigService->set(
+                        "FlizpayForShopware.config.businessId",
+                        $businessId,
+                        $salesChannelId,
+                    );
+                }
             } catch (\Exception $e) {
                 $this->logger->error("Failed to register webhook URL", [
                     "error" => $e->getMessage(),
                     "trace" => $e->getTraceAsString(),
+                ]);
+
+                $this->sentryReporter->report($e, [
+                    "step" => "generate_webhook_url",
                 ]);
 
                 // Clear API key on failure
@@ -165,6 +184,10 @@ class FlizpayConfigController extends AbstractController
                 $this->logger->error("Failed to get webhook key", [
                     "error" => $e->getMessage(),
                     "trace" => $e->getTraceAsString(),
+                ]);
+
+                $this->sentryReporter->report($e, [
+                    "step" => "get_webhook_key",
                 ]);
 
                 // Clear API key on failure
@@ -255,6 +278,14 @@ class FlizpayConfigController extends AbstractController
                     "line" => $e->getLine(),
                     "trace" => $e->getTraceAsString(),
                 ],
+            );
+
+            $this->sentryReporter->report(
+                $e,
+                [
+                    "step" => "configurePaymentGateway",
+                ],
+                "fatal",
             );
 
             // Clear API key on unexpected failure
