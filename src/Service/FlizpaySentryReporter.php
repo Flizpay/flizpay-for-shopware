@@ -53,7 +53,7 @@ class FlizpaySentryReporter
 
             $payload = $this->buildPayload($exception, $context, $level);
 
-            $this->client->postAsync($this->storeUrl, [
+            $this->client->post($this->storeUrl, [
                 "headers" => [
                     "Content-Type" => "application/json",
                     "X-Sentry-Auth" => $this->buildAuthHeader(),
@@ -205,9 +205,12 @@ class FlizpaySentryReporter
 
     private function getShopwareVersion(): string
     {
-        if (defined("Shopware\Core\Kernel::SHOPWARE_FALLBACK_VERSION")) {
-            return \Shopware\Core\Kernel::SHOPWARE_FALLBACK_VERSION;
+        try {
+            return \Composer\InstalledVersions::getVersion("shopware/core") ??
+                (\Composer\InstalledVersions::getVersion("shopware/platform") ??
+                    "unknown");
+        } catch (\Throwable) {
+            return "unknown";
         }
-        return "unknown";
     }
 }
