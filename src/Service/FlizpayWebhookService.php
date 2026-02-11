@@ -313,19 +313,9 @@ class FlizpayWebhookService
                 );
             }
 
-            // Mark as paid
-            $this->transactionStateHandler->paid(
-                $transaction->getId(),
-                $context,
-            );
-
-            $this->logger->info("Transaction marked as paid", [
-                "orderId" => $orderId,
-                "transactionId" => $transaction->getId(),
-                "orderAmountTotal" => $order->getAmountTotal(),
-            ]);
-
-            // Apply cashback if applicable
+            // Apply cashback BEFORE marking as paid, because the paid state
+            // transition triggers Shopware's order confirmation email.
+            // The email must include the updated totals with cashback applied.
             if (isset($data["originalAmount"]) && isset($data["amount"])) {
                 $discount =
                     (float) $data["originalAmount"] - (float) $data["amount"];
@@ -368,6 +358,19 @@ class FlizpayWebhookService
                     ],
                 );
             }
+
+            // Mark as paid AFTER cashback is applied so the confirmation
+            // email (triggered by this state change) reflects the correct total
+            $this->transactionStateHandler->paid(
+                $transaction->getId(),
+                $context,
+            );
+
+            $this->logger->info("Transaction marked as paid", [
+                "orderId" => $orderId,
+                "transactionId" => $transaction->getId(),
+                "orderAmountTotal" => $order->getAmountTotal(),
+            ]);
 
             $this->logger->info("Payment completed successfully", [
                 "orderId" => $orderId,
