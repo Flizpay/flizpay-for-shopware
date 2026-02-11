@@ -60,6 +60,7 @@ class FlizpaySentryReporter
                 ],
                 "json" => $payload,
                 "timeout" => self::TIMEOUT,
+                "connect_timeout" => 1,
             ]);
 
             $this->lastReportTime = microtime(true);
