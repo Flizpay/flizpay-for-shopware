@@ -98,7 +98,7 @@ class FlizpaySentryReporter
 
         return [
             "event_id" => bin2hex(random_bytes(16)),
-            "timestamp" => gmdate("Y-m-d\TH:i:s"),
+            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
             "level" => $level,
             "platform" => "php",
             "logger" => "flizpay-shopware-sentry-reporter",
