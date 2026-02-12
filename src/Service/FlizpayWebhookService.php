@@ -9,6 +9,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\StateMachine\Exception\IllegalTransitionException;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -313,6 +314,20 @@ class FlizpayWebhookService
                 );
             }
 
+            // Idempotency guard: if cashback was already applied, this is a duplicate webhook
+            $customFields = $order->getCustomFields() ?? [];
+            if (!empty($customFields["flizpay_cashback_applied"])) {
+                $this->logger->info(
+                    "Duplicate webhook detected, cashback already applied",
+                    [
+                        "orderId" => $orderId,
+                        "previousCashback" =>
+                            $customFields["flizpay_cashback_applied"],
+                    ],
+                );
+                return new JsonResponse(["success" => true], Response::HTTP_OK);
+            }
+
             // Apply cashback BEFORE marking as paid, because the paid state
             // transition triggers Shopware's order confirmation email.
             // The email must include the updated totals with cashback applied.
@@ -361,16 +376,25 @@ class FlizpayWebhookService
 
             // Mark as paid AFTER cashback is applied so the confirmation
             // email (triggered by this state change) reflects the correct total
-            $this->transactionStateHandler->paid(
-                $transaction->getId(),
-                $context,
-            );
-
-            $this->logger->info("Transaction marked as paid", [
-                "orderId" => $orderId,
-                "transactionId" => $transaction->getId(),
-                "orderAmountTotal" => $order->getAmountTotal(),
-            ]);
+            try {
+                $this->transactionStateHandler->paid(
+                    $transaction->getId(),
+                    $context,
+                );
+                $this->logger->info("Transaction marked as paid", [
+                    "orderId" => $orderId,
+                    "transactionId" => $transaction->getId(),
+                    "orderAmountTotal" => $order->getAmountTotal(),
+                ]);
+            } catch (IllegalTransitionException $e) {
+                $this->logger->info(
+                    "Transaction already paid, skipping state transition",
+                    [
+                        "orderId" => $orderId,
+                        "transactionId" => $transaction->getId(),
+                    ],
+                );
+            }
 
             $this->logger->info("Payment completed successfully", [
                 "orderId" => $orderId,
