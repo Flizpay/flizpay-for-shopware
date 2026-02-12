@@ -381,6 +381,11 @@ class FlizpayWebhookService
                     $transaction->getId(),
                     $context,
                 );
+                $this->logger->info("Transaction marked as paid", [
+                    "orderId" => $orderId,
+                    "transactionId" => $transaction->getId(),
+                    "orderAmountTotal" => $order->getAmountTotal(),
+                ]);
             } catch (IllegalTransitionException $e) {
                 $this->logger->info(
                     "Transaction already paid, skipping state transition",
@@ -390,12 +395,6 @@ class FlizpayWebhookService
                     ],
                 );
             }
-
-            $this->logger->info("Transaction marked as paid", [
-                "orderId" => $orderId,
-                "transactionId" => $transaction->getId(),
-                "orderAmountTotal" => $order->getAmountTotal(),
-            ]);
 
             $this->logger->info("Payment completed successfully", [
                 "orderId" => $orderId,
