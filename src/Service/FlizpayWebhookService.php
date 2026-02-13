@@ -605,6 +605,38 @@ class FlizpayWebhookService
             }
         }
 
+        // Build tax rules with rounding residual correction (must sum to 100%)
+        $creditTaxRules = array_map(
+            fn($r) => [
+                "taxRate" => $r["taxRate"],
+                "percentage" => round($r["proportion"] * 100, 2),
+            ],
+            $perRateDiscounts,
+        );
+        if (count($creditTaxRules) > 0) {
+            $pctSum = array_sum(array_column($creditTaxRules, "percentage"));
+            $pctResidual = round(100 - $pctSum, 2);
+
+            if ($pctResidual !== 0.0) {
+                $this->logger->info(
+                    "Rounding residual detected in taxRules percentages",
+                    [
+                        "orderId" => $order->getId(),
+                        "percentageSum" => $pctSum,
+                        "residual" => $pctResidual,
+                        "appliedToBucket" =>
+                            $creditTaxRules[count($creditTaxRules) - 1][
+                                "taxRate"
+                            ] . "%",
+                    ],
+                );
+
+                $creditTaxRules[count($creditTaxRules) - 1][
+                    "percentage"
+                ] += $pctResidual;
+            }
+        }
+
         // Create a credit line item for the cashback discount (negative amount)
         // This matches WooCommerce's "Rabatt" display
         $creditLineItemId = Uuid::randomHex();
@@ -635,13 +667,7 @@ class FlizpayWebhookService
                     ],
                     $perRateDiscounts,
                 ),
-                "taxRules" => array_map(
-                    fn($r) => [
-                        "taxRate" => $r["taxRate"],
-                        "percentage" => round($r["proportion"] * 100, 2),
-                    ],
-                    $perRateDiscounts,
-                ),
+                "taxRules" => $creditTaxRules,
             ],
             "payload" => [
                 "flizpay_cashback" => true,
