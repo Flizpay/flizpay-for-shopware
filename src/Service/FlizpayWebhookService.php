@@ -526,6 +526,62 @@ class FlizpayWebhookService
             $totalDiscountTax += $rateTax;
         }
 
+        // Fix rounding residual: independently rounded per-rate discounts
+        // may not sum exactly to $discount (e.g. 9.99 instead of 10.00).
+        // Assign the remainder to the last bucket to keep the price object consistent.
+        if (count($perRateDiscounts) > 0) {
+            $allocatedDiscount = array_sum(
+                array_column($perRateDiscounts, "discount"),
+            );
+            $residual = round($discount - $allocatedDiscount, 2);
+
+            if ($residual !== 0.0) {
+                $this->logger->info(
+                    "Rounding residual detected in cashback distribution",
+                    [
+                        "orderId" => $order->getId(),
+                        "discount" => $discount,
+                        "allocatedDiscount" => $allocatedDiscount,
+                        "residual" => $residual,
+                        "appliedToBucket" =>
+                            $perRateDiscounts[count($perRateDiscounts) - 1][
+                                "taxRate"
+                            ] . "%",
+                    ],
+                );
+
+                $last = &$perRateDiscounts[count($perRateDiscounts) - 1];
+                $oldNet = $last["discountNet"];
+                $oldTax = $last["discountTax"];
+                $last["discount"] += $residual;
+
+                $rate = $last["taxRate"];
+                if ($taxStatus === "gross" && $rate > 0) {
+                    $last["discountNet"] = round(
+                        $last["discount"] / (1 + $rate / 100),
+                        2,
+                    );
+                    $last["discountTax"] = round(
+                        $last["discount"] - $last["discountNet"],
+                        2,
+                    );
+                } elseif ($taxStatus === "net" && $rate > 0) {
+                    $last["discountNet"] = $last["discount"];
+                    $last["discountTax"] = round(
+                        ($last["discount"] * $rate) / 100,
+                        2,
+                    );
+                } else {
+                    $last["discountNet"] = $last["discount"];
+                    $last["discountTax"] = 0.0;
+                }
+
+                $totalDiscountNet += $last["discountNet"] - $oldNet;
+                $totalDiscountTax += $last["discountTax"] - $oldTax;
+                unset($last);
+            }
+        }
+
         $this->logger->info("Applying cashback to order", [
             "orderId" => $order->getId(),
             "originalAmount" => $originalAmount,
