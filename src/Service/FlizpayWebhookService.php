@@ -486,23 +486,44 @@ class FlizpayWebhookService
         $originalPrice = $order->getPrice();
         $taxStatus = $originalPrice->getTaxStatus();
 
-        // Get tax rate from the order (use the first tax rule, typically the main VAT rate)
-        $taxRate = 0.0;
-        $taxRules = $originalPrice->getTaxRules();
-        if ($taxRules->count() > 0) {
-            $taxRate = $taxRules->first()->getTaxRate();
-        }
+        // Distribute discount proportionally across all tax rates
+        // e.g. if order is 60% at 7% VAT and 40% at 19% VAT,
+        // the discount is split 60/40 between those rates
+        $calculatedTaxes = $originalPrice->getCalculatedTaxes();
+        $totalGross = $originalPrice->getTotalPrice();
 
-        // Calculate tax portion of the discount
-        // If tax status is 'gross', the discount includes tax
-        // If tax status is 'net', we need to calculate tax separately
-        $discountNet = $discount;
-        $discountTax = 0.0;
-        if ($taxStatus === "gross" && $taxRate > 0) {
-            $discountNet = round($discount / (1 + $taxRate / 100), 2);
-            $discountTax = round($discount - $discountNet, 2);
-        } elseif ($taxStatus === "net" && $taxRate > 0) {
-            $discountTax = round(($discount * $taxRate) / 100, 2);
+        $perRateDiscounts = [];
+        $totalDiscountNet = 0.0;
+        $totalDiscountTax = 0.0;
+
+        foreach ($calculatedTaxes as $tax) {
+            $rate = $tax->getTaxRate();
+            $ratePrice = $tax->getPrice();
+
+            $proportion = $totalGross > 0 ? $ratePrice / $totalGross : 0;
+            $rateDiscount = round($discount * $proportion, 2);
+
+            if ($taxStatus === "gross" && $rate > 0) {
+                $rateNet = round($rateDiscount / (1 + $rate / 100), 2);
+                $rateTax = round($rateDiscount - $rateNet, 2);
+            } elseif ($taxStatus === "net" && $rate > 0) {
+                $rateNet = $rateDiscount;
+                $rateTax = round(($rateDiscount * $rate) / 100, 2);
+            } else {
+                $rateNet = $rateDiscount;
+                $rateTax = 0.0;
+            }
+
+            $perRateDiscounts[] = [
+                "taxRate" => $rate,
+                "discount" => $rateDiscount,
+                "discountNet" => $rateNet,
+                "discountTax" => $rateTax,
+                "proportion" => $proportion,
+            ];
+
+            $totalDiscountNet += $rateNet;
+            $totalDiscountTax += $rateTax;
         }
 
         $this->logger->info("Applying cashback to order", [
@@ -510,10 +531,10 @@ class FlizpayWebhookService
             "originalAmount" => $originalAmount,
             "finalAmount" => $finalAmount,
             "discount" => $discount,
-            "discountNet" => $discountNet,
-            "discountTax" => $discountTax,
+            "totalDiscountNet" => $totalDiscountNet,
+            "totalDiscountTax" => $totalDiscountTax,
             "cashbackPercent" => $cashbackPercent,
-            "taxRate" => $taxRate,
+            "perRateDiscounts" => $perRateDiscounts,
             "taxStatus" => $taxStatus,
         ]);
 
@@ -545,24 +566,26 @@ class FlizpayWebhookService
             "stackable" => false,
             "position" => $maxPosition + 1,
             "states" => [],
-            // Price with negative values for discount
+            // Price with negative values for discount, split across tax rates
             "price" => [
                 "unitPrice" => -$discount,
                 "totalPrice" => -$discount,
                 "quantity" => 1,
-                "calculatedTaxes" => [
-                    [
-                        "tax" => -$discountTax,
-                        "taxRate" => $taxRate,
-                        "price" => -$discount,
+                "calculatedTaxes" => array_map(
+                    fn($r) => [
+                        "tax" => -$r["discountTax"],
+                        "taxRate" => $r["taxRate"],
+                        "price" => -$r["discount"],
                     ],
-                ],
-                "taxRules" => [
-                    [
-                        "taxRate" => $taxRate,
-                        "percentage" => 100.0,
+                    $perRateDiscounts,
+                ),
+                "taxRules" => array_map(
+                    fn($r) => [
+                        "taxRate" => $r["taxRate"],
+                        "percentage" => round($r["proportion"] * 100, 2),
                     ],
-                ],
+                    $perRateDiscounts,
+                ),
             ],
             "payload" => [
                 "flizpay_cashback" => true,
@@ -582,35 +605,33 @@ class FlizpayWebhookService
 
         // Calculate new totals (subtract discount)
         $newTotal = round($originalTotal - $discount, 2);
-        $newNet = round($originalNet - $discountNet, 2);
-        // Position price stays the same (it's the sum of line item prices before shipping)
-        // But we need to include the credit line item
+        $newNet = round($originalNet - $totalDiscountNet, 2);
         $newPositionPrice = round($originalPositionPrice - $discount, 2);
 
-        // Recalculate taxes
-        $calculatedTaxes = $originalPrice->getCalculatedTaxes();
+        // Recalculate taxes — reduce each rate's bucket by its share of the discount
         $newTaxesData = [];
         foreach ($calculatedTaxes as $tax) {
-            // Reduce each tax proportionally
-            $taxReduction =
-                $discountTax * ($tax->getTaxRate() / ($taxRate ?: 1));
+            $rate = $tax->getTaxRate();
+
+            // Find matching per-rate discount
+            $rateData = null;
+            foreach ($perRateDiscounts as $rd) {
+                if ($rd["taxRate"] === $rate) {
+                    $rateData = $rd;
+                    break;
+                }
+            }
+
             $newTaxesData[] = [
-                "tax" => round($tax->getTax() - $taxReduction, 2),
-                "taxRate" => $tax->getTaxRate(),
-                "price" => round(
-                    $tax->getPrice() -
-                        ($discount * $tax->getTaxRate()) / ($taxRate ?: 1),
+                "tax" => round(
+                    $tax->getTax() - ($rateData["discountTax"] ?? 0),
                     2,
                 ),
-            ];
-        }
-
-        // If no taxes existed, create a zero tax entry
-        if (empty($newTaxesData)) {
-            $newTaxesData[] = [
-                "tax" => 0.0,
-                "taxRate" => $taxRate,
-                "price" => $newTotal,
+                "taxRate" => $rate,
+                "price" => round(
+                    $tax->getPrice() - ($rateData["discount"] ?? 0),
+                    2,
+                ),
             ];
         }
 
