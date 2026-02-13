@@ -314,6 +314,41 @@ class FlizpayWebhookService
                 );
             }
 
+            // Check payment status - only proceed with paid flow for completed payments
+            $status = $data["status"];
+            if ($status !== "completed") {
+                $this->logger->info(
+                    "Payment not completed, marking as failed",
+                    [
+                        "orderId" => $orderId,
+                        "status" => $status,
+                        "transactionId" => $transactionId,
+                    ],
+                );
+
+                try {
+                    $this->transactionStateHandler->fail(
+                        $transaction->getId(),
+                        $context,
+                    );
+                    $this->logger->info("Transaction marked as failed", [
+                        "orderId" => $orderId,
+                        "transactionId" => $transaction->getId(),
+                        "status" => $status,
+                    ]);
+                } catch (IllegalTransitionException $e) {
+                    $this->logger->info(
+                        "Transaction already in target state, skipping state transition",
+                        [
+                            "orderId" => $orderId,
+                            "transactionId" => $transaction->getId(),
+                        ],
+                    );
+                }
+
+                return new JsonResponse(["success" => true], Response::HTTP_OK);
+            }
+
             // Idempotency guard: if cashback was already applied, this is a duplicate webhook
             $customFields = $order->getCustomFields() ?? [];
             if (!empty($customFields["flizpay_cashback_applied"])) {
