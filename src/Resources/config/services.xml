@@ -137,14 +137,6 @@
             <tag name="controller.service_arguments" />
         </service>
 
-        <!-- Payment Method Validation Logger (Debug) -->
-        <service
-            id="FLIZpay\FlizpayForShopware\Subscriber\PaymentMethodValidationLogger"
-        >
-            <argument type="service" id="monolog.logger" />
-            <tag name="kernel.event_subscriber" />
-        </service>
-
         <!-- Payment Method Filter - hides FLIZpay payment option on checkout page when not configured -->
         <service
             id="FLIZpay\FlizpayForShopware\Subscriber\PaymentMethodFilterSubscriber"

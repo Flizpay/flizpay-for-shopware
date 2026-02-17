@@ -3,14 +3,16 @@
   "description": "FLIZpay payment gateway for Shopware",
   "version": "1.0.0",
   "type": "shopware-platform-plugin",
-  "license": "MIT",
+  "license": "proprietary",
   "authors": [
     {
       "name": "FLIZpay GmbH"
     }
   ],
   "require": {
-    "shopware/core": "^6.7"
+    "php": ">=8.2",
+    "shopware/core": "^6.7",
+    "shopware/storefront": "^6.7"
   },
   "autoload": {
     "psr-4": {
