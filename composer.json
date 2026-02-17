@@ -3,7 +3,7 @@
   "description": "FLIZpay payment gateway for Shopware",
   "version": "1.0.0",
   "type": "shopware-platform-plugin",
-  "license": "MIT",
+  "license": "proprietary",
   "authors": [
     {
       "name": "FLIZpay GmbH"
