@@ -71,6 +71,8 @@ interface ComponentData {
 }
 
 interface ComponentMethods {
+  connectFromFlizpayDashboard(): Promise<void>;
+  getDashboardConnectParams(): { backendUrl: string; connectToken: string } | null;
   loadConfig(): Promise<void>;
   saveConfig(): Promise<void>;
   testGatewayConnection(): Promise<void>;
@@ -182,7 +184,7 @@ Component.register("flizpay-settings", {
   },
 
   created(this: ComponentInstance): void {
-    this.loadConfig();
+    void this.loadConfig().then(() => this.connectFromFlizpayDashboard());
   },
 
   beforeUnmount(this: ComponentInstance): void {
@@ -191,6 +193,70 @@ Component.register("flizpay-settings", {
   },
 
   methods: {
+    getDashboardConnectParams(
+      this: ComponentInstance,
+    ): { backendUrl: string; connectToken: string } | null {
+      const hashQuery = window.location.hash.split("?")[1] ?? "";
+      const params = new URLSearchParams(hashQuery || window.location.search);
+      const backendUrl = params.get("backendUrl");
+      const connectToken = params.get("connectToken");
+
+      if (!backendUrl || !connectToken) {
+        return null;
+      }
+
+      return { backendUrl, connectToken };
+    },
+
+    async connectFromFlizpayDashboard(this: ComponentInstance): Promise<void> {
+      const params = this.getDashboardConnectParams();
+
+      if (!params || this.config.apiKey) {
+        return;
+      }
+
+      this.isSaving = true;
+      this.connectionStatus = {
+        type: "info",
+        message: this.$tc("flizpay-config.connection.pending"),
+      };
+
+      try {
+        const response = await this.flizpayApiService.connectFromFlizpay(
+          params.connectToken,
+          params.backendUrl,
+          this.currentSalesChannelId,
+        );
+
+        if (!response.success) {
+          throw new Error(
+            response.message || this.$tc("flizpay-config.connection.failed"),
+          );
+        }
+
+        if (response.data) {
+          this.config.webhookUrl =
+            response.data.webhookUrl || this.config.webhookUrl;
+          this.config.webhookAlive = response.data.webhookAlive || false;
+        }
+
+        await this.loadConfig();
+        this.startWebhookPolling();
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : this.$tc("flizpay-config.connection.failed");
+        this.connectionStatus = {
+          type: "error",
+          message: errorMessage,
+        };
+        this.createNotificationError({ message: errorMessage });
+      } finally {
+        this.isSaving = false;
+      }
+    },
+
     async loadConfig(this: ComponentInstance): Promise<void> {
       this.isLoading = true;
 

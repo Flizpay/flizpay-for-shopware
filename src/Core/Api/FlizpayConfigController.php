@@ -32,6 +32,76 @@ class FlizpayConfigController extends AbstractController
         $this->sentryReporter = $sentryReporter;
     }
 
+    #[
+        Route(
+            path: "/api/_action/flizpay/connect-from-flizpay",
+            name: "api.action.flizpay.connect_from_flizpay",
+            defaults: ["_routeScope" => ["api"]],
+            methods: ["POST"],
+        ),
+    ]
+    public function connectFromFlizpay(
+        Request $request,
+        Context $context,
+    ): JsonResponse {
+        try {
+            $data = json_decode($request->getContent(), true);
+            $connectToken = $data["connectToken"] ?? null;
+            $backendUrl = $data["backendUrl"] ?? null;
+            $salesChannelId = $data["salesChannelId"] ?? null;
+
+            if (empty($connectToken) || empty($backendUrl)) {
+                return new JsonResponse(
+                    [
+                        "success" => false,
+                        "message" => "Connection token and backend URL are required",
+                    ],
+                    400,
+                );
+            }
+
+            $connection = $this->flizpayApiService->connect_from_flizpay(
+                $backendUrl,
+                $connectToken,
+                $request->getSchemeAndHttpHost(),
+                "1.0.0",
+            );
+
+            $configureRequest = Request::create(
+                "/api/_action/flizpay/configure-payment-gateway",
+                "POST",
+                [],
+                [],
+                [],
+                [],
+                json_encode([
+                    "apiKey" => $connection["apiKey"],
+                    "salesChannelId" => $salesChannelId,
+                ]),
+            );
+
+            return $this->configurePaymentGateway($configureRequest, $context);
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to connect from FLIZpay", [
+                "error" => $e->getMessage(),
+                "trace" => $e->getTraceAsString(),
+            ]);
+
+            $this->sentryReporter->report($e, [
+                "step" => "connect_from_flizpay",
+            ]);
+
+            return new JsonResponse(
+                [
+                    "success" => false,
+                    "message" => "Could not connect FLIZpay automatically",
+                    "error" => $e->getMessage(),
+                ],
+                500,
+            );
+        }
+    }
+
     /**
      * Configure payment gateway - called when admin saves settings
      * Follows WooCommerce plugin flow: generate_webhook_url -> get_webhook_key -> fetch_cashback

@@ -6,6 +6,7 @@
 import type { AxiosInstance, AxiosResponse } from "axios";
 import type { LoginService } from "src/core/service/login.service";
 import type {
+  FlizpayConnectFromDashboardRequest,
   FlizpayTestConnectionRequest,
   FlizpayTestConnectionResponse,
 } from "../types/flizpay.types";
@@ -40,6 +41,32 @@ class FlizpayApiService extends ApiService {
     return this.httpClient
       .post<FlizpayTestConnectionResponse>(
         `_action/${this.getApiBasePath()}/configure-payment-gateway`,
+        payload,
+        { headers },
+      )
+      .then((response: AxiosResponse<FlizpayTestConnectionResponse>) => {
+        return ApiService.handleResponse(
+          response,
+        ) as FlizpayTestConnectionResponse;
+      });
+  }
+
+  public connectFromFlizpay(
+    connectToken: string,
+    backendUrl: string,
+    salesChannelId: string | null = null,
+  ): Promise<FlizpayTestConnectionResponse> {
+    const headers = this.getBasicHeaders();
+
+    const payload: FlizpayConnectFromDashboardRequest = {
+      backendUrl,
+      connectToken,
+      salesChannelId,
+    };
+
+    return this.httpClient
+      .post<FlizpayTestConnectionResponse>(
+        `_action/${this.getApiBasePath()}/connect-from-flizpay`,
         payload,
         { headers },
       )

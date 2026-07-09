@@ -2,6 +2,7 @@
 
 namespace FLIZpay\FlizpayForShopware\Service;
 
+use GuzzleHttp\Client;
 use Shopware\Core\Checkout\Order\OrderEntity;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -102,6 +103,38 @@ class FlizpayApiService
         }
 
         return null;
+    }
+
+    public function connect_from_flizpay(
+        string $backendUrl,
+        string $connectToken,
+        string $shopDomain,
+        ?string $appVersion = null,
+    ): array {
+        $httpClient = new Client([
+            "base_uri" => rtrim($backendUrl, "/"),
+            "timeout" => 30,
+            "headers" => [
+                "Content-Type" => "application/json",
+                "User-Agent" => "FlizpayShopware6/1.0.0",
+            ],
+        ]);
+
+        $response = $httpClient->post("/integrations/shopware/plugin/connect", [
+            "json" => [
+                "connectToken" => $connectToken,
+                "shopDomain" => $shopDomain,
+                "pluginVersion" => $appVersion,
+            ],
+        ]);
+
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        if (!is_array($body) || empty($body["data"]["apiKey"])) {
+            throw new \RuntimeException("FLIZpay connect response did not include an API key");
+        }
+
+        return $body["data"];
     }
 
     /**

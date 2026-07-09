@@ -33,6 +33,12 @@ export interface FlizpayTestConnectionRequest {
   salesChannelId: string | null;
 }
 
+export interface FlizpayConnectFromDashboardRequest {
+  backendUrl: string;
+  connectToken: string;
+  salesChannelId: string | null;
+}
+
 export interface FlizpayTestConnectionResponse {
   success: boolean;
   message: string;
