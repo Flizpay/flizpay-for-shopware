@@ -21,7 +21,7 @@ class FlizpayForShopware extends Plugin
         RoutingConfigurator $routes,
         string $environment,
     ): void {
-        $routes->import(__DIR__ . "/Resources/config/routes.xml");
+        $routes->import(__DIR__ . "/Resources/config/routes.yaml");
     }
     public function install(InstallContext $installContext): void
     {

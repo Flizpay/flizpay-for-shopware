@@ -55,7 +55,7 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
         );
 
         // Get locale from request
-        $locale = $event->getRequest()->getLocale() ?? "de-DE";
+        $locale = $event->getRequest()->getLocale();
 
         // Get shop name from sales channel
         $shopName =
@@ -144,7 +144,7 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
         ?string $cashbackDescription,
     ): void {
         // Get current translated data or create new array
-        $translated = $paymentMethod->getTranslated() ?? [];
+        $translated = $paymentMethod->getTranslated();
 
         // Update the name
         $translated["name"] = $cashbackTitle;

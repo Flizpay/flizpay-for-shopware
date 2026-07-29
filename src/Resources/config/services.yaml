@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/symfony/dependency-injection/7.4/Loader/schema/services.schema.json
+services:
+    FLIZpay\FlizpayForShopware\Service\PaymentMethodInstaller:
+        arguments:
+            - '@payment_method.repository'
+            - '@Shopware\Core\Framework\Plugin\Util\PluginIdProvider'
+
+    FLIZpay\FlizpayForShopware\Service\FlizpayApi:
+        public: true
+        arguments:
+            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
+            - '@monolog.logger'
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter'
+
+    FLIZpay\FlizpayForShopware\Service\FlizpayApiService:
+        arguments:
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayApi'
+            - '@router'
+
+    FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter:
+        arguments:
+            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
+
+    FLIZpay\FlizpayForShopware\Service\FlizpayCashbackHelper:
+        arguments:
+            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
+
+    FLIZpay\FlizpayForShopware\Service\FlizpayWebhookService:
+        arguments:
+            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
+            - '@order.repository'
+            - '@order_line_item.repository'
+            - '@Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler'
+            - '@monolog.logger'
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter'
+
+    FLIZpay\FlizpayForShopware\Storefront\Controller\FlizpayWebhookController:
+        public: true
+        arguments:
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayWebhookService'
+        calls:
+            - [setContainer, ['@service_container']]
+
+    FLIZpay\FlizpayForShopware\Handler\FlizpayPaymentHandler:
+        arguments:
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayApiService'
+            - '@Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler'
+            - '@monolog.logger'
+            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
+            - '@order_transaction.repository'
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter'
+        tags:
+            - shopware.payment.method
+
+    FLIZpay\FlizpayForShopware\Core\Api\FlizpayConfigController:
+        public: true
+        arguments:
+            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayApiService'
+            - '@monolog.logger'
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter'
+        calls:
+            - [setContainer, ['@service_container']]
+        tags:
+            - controller.service_arguments
+
+    FLIZpay\FlizpayForShopware\Subscriber\PaymentMethodFilterSubscriber:
+        arguments:
+            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
+            - '@monolog.logger'
+        tags:
+            - kernel.event_subscriber
+
+    FLIZpay\FlizpayForShopware\Subscriber\PaymentMethodCashbackSubscriber:
+        arguments:
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayCashbackHelper'
+            - '@monolog.logger'
+        tags:
+            - kernel.event_subscriber

@@ -253,7 +253,7 @@ class FlizpayConfigController extends AbstractController
             }
 
             $this->logger->info("=== SUCCESS: All steps completed ===", [
-                "webhookUrl" => $webhookUrl ?? null,
+                "webhookUrl" => $webhookUrl,
                 "webhookAlive" => false,
                 "requiresWebhookTest" => true,
             ]);
@@ -263,7 +263,7 @@ class FlizpayConfigController extends AbstractController
                 "message" =>
                     "Connection successful. Waiting for webhook verification...",
                 "data" => [
-                    "webhookUrl" => $webhookUrl ?? null,
+                    "webhookUrl" => $webhookUrl,
                     "webhookAlive" => false, // Will be set to true by test webhook
                     "requiresWebhookTest" => true,
                 ],

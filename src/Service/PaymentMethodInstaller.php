@@ -2,6 +2,7 @@
 
 namespace FLIZpay\FlizpayForShopware\Service;
 
+use FLIZpay\FlizpayForShopware\FlizpayForShopware;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -29,7 +30,7 @@ class PaymentMethodInstaller
         }
 
         $pluginId = $this->pluginIdProvider->getPluginIdByBaseClass(
-            \FLIZpay\FlizpayForShopware\FlizpayForShopware::class,
+            FlizpayForShopware::class,
             $context,
         );
 

@@ -3,24 +3,20 @@
 namespace FLIZpay\FlizpayForShopware\Storefront\Controller;
 
 use Shopware\Storefront\Controller\StorefrontController;
+use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use FLIZpay\FlizpayForShopware\Service\FlizpayWebhookService;
-use Psr\Log\LoggerInterface;
 
 #[Route(defaults: ["_routeScope" => ["storefront"]])]
 class FlizpayWebhookController extends StorefrontController
 {
     private FlizpayWebhookService $webhookService;
-    private LoggerInterface $logger;
 
-    public function __construct(
-        FlizpayWebhookService $webhookService,
-        LoggerInterface $logger,
-    ) {
+    public function __construct(FlizpayWebhookService $webhookService)
+    {
         $this->webhookService = $webhookService;
-        $this->logger = $logger;
     }
 
     #[
@@ -30,8 +26,14 @@ class FlizpayWebhookController extends StorefrontController
             methods: ["POST"],
         ),
     ]
-    public function webhook(Request $request): JsonResponse
+    public function webhook(
+        Request $request,
+        SalesChannelContext $salesChannelContext,
+    ): JsonResponse
     {
-        return $this->webhookService->handleWebhook($request);
+        return $this->webhookService->handleWebhook(
+            $request,
+            $salesChannelContext->getContext(),
+        );
     }
 }

@@ -158,7 +158,7 @@ class FlizpayApi
      * @param string $route The route identifier
      * @param array|null $request_body  Request payload (optional)
      * @param bool $api_mode  When true, throws exceptions on API errors. When false, returns raw response.
-     * @return void | array
+     * @return array|null
      *
      * @throws \RuntimeException When route handler not found, response is invalid, or API returns error
      * @throws GuzzleException When HTTP request fails
