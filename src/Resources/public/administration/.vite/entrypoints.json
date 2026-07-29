@@ -1,0 +1,25 @@
+{
+  "base": "/bundles/flizpayforshopware/administration/",
+  "entryPoints": {
+    "flizpay-for-shopware": {
+      "css": [
+        "/bundles/flizpayforshopware/administration/assets/flizpay-for-shopware-D4cRpqQx.css"
+      ],
+      "dynamic": [],
+      "js": [
+        "/bundles/flizpayforshopware/administration/assets/flizpay-for-shopware-Bba-Zw7z.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}

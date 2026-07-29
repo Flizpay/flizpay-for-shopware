@@ -10,12 +10,12 @@ package-lock.json
 yarn.lock
 
 ###> Build artifacts ###
-/src/Resources/public/administration/
 /src/Resources/app/administration/.vite/
 /src/Resources/app/administration/dist/
 /src/Resources/app/administration/node_modules/
-/src/Resources/app/storefront/dist/
 /src/Resources/app/storefront/node_modules/
+/src/Resources/public/administration/**/*.map
+/src/Storefront/Resources/
 
 ###> IDE ###
 .idea/

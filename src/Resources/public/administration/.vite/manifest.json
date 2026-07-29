@@ -1,0 +1,11 @@
+{
+  "main.ts": {
+    "file": "assets/flizpay-for-shopware-Bba-Zw7z.js",
+    "name": "flizpay-for-shopware",
+    "src": "main.ts",
+    "isEntry": true,
+    "css": [
+      "assets/flizpay-for-shopware-D4cRpqQx.css"
+    ]
+  }
+}
