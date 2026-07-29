@@ -78,7 +78,10 @@ class FlizpayWebhookService
      *
      * @since 1.0.0
      */
-    public function handleWebhook(Request $request): JsonResponse
+    public function handleWebhook(
+        Request $request,
+        Context $context,
+    ): JsonResponse
     {
         try {
             $payload = $request->getContent();
@@ -108,7 +111,7 @@ class FlizpayWebhookService
                 );
             }
 
-            return $this->routeWebhook($data);
+            return $this->routeWebhook($data, $context);
         } catch (\Exception $e) {
             $this->logger->error("Webhook processing failed", [
                 "error" => $e->getMessage(),
@@ -166,7 +169,7 @@ class FlizpayWebhookService
      *
      * @since 1.0.0
      */
-    private function routeWebhook(array $data): JsonResponse
+    private function routeWebhook(array $data, Context $context): JsonResponse
     {
         if (isset($data["test"])) {
             return $this->handleTest($data);
@@ -176,7 +179,7 @@ class FlizpayWebhookService
             return $this->handleCashbackUpdate($data);
         }
 
-        return $this->handlePaymentComplete($data);
+        return $this->handlePaymentComplete($data, $context);
     }
 
     /**
@@ -262,7 +265,10 @@ class FlizpayWebhookService
      *
      * @since 1.0.0
      */
-    public function handlePaymentComplete(array $data): JsonResponse
+    public function handlePaymentComplete(
+        array $data,
+        Context $context,
+    ): JsonResponse
     {
         // Log the complete webhook payload for debugging
         $this->logger->info("Payment webhook received", [
@@ -284,13 +290,12 @@ class FlizpayWebhookService
 
         $orderId = $data["metadata"]["orderId"];
         $transactionId = $data["transactionId"] ?? null;
-        $context = Context::createDefaultContext();
-
         try {
             $criteria = new Criteria([$orderId]);
             $criteria->addAssociation("transactions");
             $criteria->addAssociation("lineItems");
 
+            /** @var OrderEntity|null $order */
             $order = $this->orderRepository
                 ->search($criteria, $context)
                 ->first();

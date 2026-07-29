@@ -1,0 +1,12 @@
+compatibility_date: 2026-02-11
+build:
+    zip:
+        composer:
+            enabled: false
+        assets:
+            npm_strict: true
+        pack:
+            excludes:
+                paths:
+                    - composer.lock
+                    - vendor

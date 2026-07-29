@@ -2,6 +2,7 @@
 
 namespace FLIZpay\FlizpayForShopware\Service;
 
+use Composer\InstalledVersions;
 use GuzzleHttp\Client;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
@@ -161,7 +162,7 @@ class FlizpaySentryReporter
             $frames[] = [
                 "filename" => $frame["file"] ?? "unknown",
                 "lineno" => $frame["line"] ?? 0,
-                "function" => $frame["function"] ?? "unknown",
+                "function" => $frame["function"],
                 "module" => $frame["class"] ?? null,
             ];
         }
@@ -181,12 +182,12 @@ class FlizpaySentryReporter
     private function parseDsn(): void
     {
         $parsed = parse_url(self::SENTRY_DSN);
-        $this->publicKey = $parsed["user"] ?? "";
-        $projectId = ltrim($parsed["path"] ?? "", "/");
+        $this->publicKey = $parsed["user"];
+        $projectId = ltrim($parsed["path"], "/");
         $this->storeUrl = sprintf(
             "%s://%s/api/%s/store/",
-            $parsed["scheme"] ?? "https",
-            $parsed["host"] ?? "",
+            $parsed["scheme"],
+            $parsed["host"],
             $projectId,
         );
     }
@@ -207,8 +208,8 @@ class FlizpaySentryReporter
     private function getShopwareVersion(): string
     {
         try {
-            return \Composer\InstalledVersions::getVersion("shopware/core") ??
-                (\Composer\InstalledVersions::getVersion("shopware/platform") ??
+            return InstalledVersions::getVersion("shopware/core") ??
+                (InstalledVersions::getVersion("shopware/platform") ??
                     "unknown");
         } catch (\Throwable) {
             return "unknown";

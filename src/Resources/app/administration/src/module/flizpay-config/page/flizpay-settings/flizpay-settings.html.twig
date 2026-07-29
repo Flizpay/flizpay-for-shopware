@@ -2,7 +2,9 @@
 <sw-page class="flizpay-settings">
     {% block flizpay_settings_header %}
     <template #smart-bar-header>
-        <h2>{{ $tc('flizpay-config.general.title') }}</h2>
+        <h2>
+            {{ $tc('flizpay-config.general.title') }}
+        </h2>
     </template>
     {% endblock %}
 
@@ -14,7 +16,8 @@
             :processSuccess="false"
             :disabled="isLoading || isSaving"
             variant="primary"
-            @click="saveConfig">
+            @click="saveConfig"
+        >
             {{ $tc('flizpay-config.actions.save') }}
         </sw-button-process>
     </template>
@@ -26,29 +29,37 @@
             {% block flizpay_settings_welcome_card %}
             <sw-card
                 :title="$tc('flizpay-config.welcome.title')"
-                class="flizpay-settings__welcome-card">
-
+                class="flizpay-settings__welcome-card"
+            >
                 <div class="flizpay-welcome-content">
                     <h3 class="flizpay-instructions-title">
                         {{ $tc('flizpay-config.instructions.title') }}
                     </h3>
-
                     <ol class="flizpay-instructions-list">
                         <li v-html="$tc('flizpay-config.instructions.step1')"></li>
                         <li v-html="$tc('flizpay-config.instructions.step2')"></li>
-                        <li>{{ $tc('flizpay-config.instructions.step3') }}</li>
-                        <li>{{ $tc('flizpay-config.instructions.step4') }}</li>
-                        <li>{{ $tc('flizpay-config.instructions.step5') }}</li>
+                        <li>
+                            {{ $tc('flizpay-config.instructions.step3') }}
+                        </li>
+                        <li>
+                            {{ $tc('flizpay-config.instructions.step4') }}
+                        </li>
+                        <li>
+                            {{ $tc('flizpay-config.instructions.step5') }}
+                        </li>
                         <li>
                             {{ $tc('flizpay-config.instructions.step6Before') }}
-                            <a href="#" class="flizpay-link" @click.prevent="goToPaymentMethods">
+                            <a
+                                href="#"
+                                class="flizpay-link"
+                                @click.prevent="goToPaymentMethods"
+                            >
                                 {{ $tc('flizpay-config.instructions.step6Link') }}
                             </a>
                             {{ $tc('flizpay-config.instructions.step6After') }}
                         </li>
                         <li v-html="$tc('flizpay-config.instructions.step7')"></li>
                     </ol>
-
                     <div class="flizpay-links">
                         <p v-html="$tc('flizpay-config.links.faq')"></p>
                         <p v-html="$tc('flizpay-config.links.docs')"></p>
@@ -61,27 +72,36 @@
             <sw-card
                 :title="$tc('flizpay-config.api.title')"
                 :isLoading="isLoading"
-                class="flizpay-settings__api-card">
-
-                <sw-container columns="1fr" gap="16px">
+                class="flizpay-settings__api-card"
+            >
+                <sw-container
+                    columns="1fr"
+                    gap="16px"
+                >
                     {% block flizpay_settings_api_key %}
                     <mt-password-field
                         v-model="config.apiKey"
                         :label="$tc('flizpay-config.api.apiKeyLabel')"
                         :placeholder="$tc('flizpay-config.api.apiKeyPlaceholder')"
                         :helpText="$tc('flizpay-config.api.apiKeyHelpText')"
-                        :disabled="isLoading">
+                        :disabled="isLoading"
+                    >
                     </mt-password-field>
                     {% endblock %}
 
                     {% block flizpay_settings_connection_status %}
-                    <div v-if="pollingInterval !== null" class="flizpay-connection-status__loader">
+                    <div
+                        v-if="pollingInterval !== null"
+                        class="flizpay-connection-status__loader"
+                    >
                         <sw-loader size="36px"></sw-loader>
                     </div>
+
                     <sw-alert
                         v-if="alertConfig"
                         :variant="alertConfig.variant"
-                        class="flizpay-connection-status__alert">
+                        class="flizpay-connection-status__alert"
+                    >
                         {{ alertConfig.message }}
                     </sw-alert>
                     {% endblock %}
@@ -93,73 +113,112 @@
             <sw-card
                 :title="$tc('flizpay-config.checkout.title')"
                 :isLoading="isLoading"
-                class="flizpay-settings__checkout-card">
-
+                class="flizpay-settings__checkout-card"
+            >
                 {% block flizpay_settings_checkout_preview %}
                 <div class="flizpay-checkout-preview">
                     <div class="flizpay-checkout-preview__box">
                         <div class="flizpay-checkout-preview__row">
                             <div class="flizpay-checkout-preview__radio"></div>
                             <span class="flizpay-checkout-preview__name">FLIZpay</span>
-                            <span v-if="config.showDescriptionInTitle && hasCashback" class="flizpay-checkout-preview__title">
-                                - {{ $tc('flizpay-config.checkout.previewUpTo') }} {{ maxCashbackValue }}% {{ $tc('flizpay-config.checkout.previewOff') }}
+                            <span
+                                v-if="config.showDescriptionInTitle && hasCashback"
+                                class="flizpay-checkout-preview__title"
+                            >
+                                -
+                                {{ $tc('flizpay-config.checkout.previewUpTo') }}
+                                {{ maxCashbackValue }}
+                                %
+                                {{ $tc('flizpay-config.checkout.previewOff') }}
                             </span>
-                            <span v-if="config.showLogo" class="flizpay-checkout-preview__logo">
-                                <img :src="assetFilter('flizpayforshopware/administration/static/fliz-checkout-logo.svg')" alt="FLIZpay Logo">
+                            <span
+                                v-if="config.showLogo"
+                                class="flizpay-checkout-preview__logo"
+                            >
+                                <img
+                                    :src="assetFilter('flizpayforshopware/administration/static/fliz-checkout-logo.svg')"
+                                    alt="FLIZpay Logo"
+                                />
                             </span>
                         </div>
-                        <div v-if="config.showSubtitle" class="flizpay-checkout-preview__subtitle">
+                        <div
+                            v-if="config.showSubtitle"
+                            class="flizpay-checkout-preview__subtitle"
+                        >
                             {{ $tc('flizpay-config.checkout.previewSubtitle') }}
                         </div>
                     </div>
-
                     <div class="flizpay-checkout-preview__labels">
-                        <span v-if="config.showDescriptionInTitle && hasCashback" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--title">
+                        <span
+                            v-if="config.showDescriptionInTitle && hasCashback"
+                            class="flizpay-checkout-preview__label flizpay-checkout-preview__label--title"
+                        >
                             {{ $tc('flizpay-config.checkout.labelTitle') }}
                         </span>
-                        <span v-if="config.showLogo" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--logo">
+                        <span
+                            v-if="config.showLogo"
+                            class="flizpay-checkout-preview__label flizpay-checkout-preview__label--logo"
+                        >
                             {{ $tc('flizpay-config.checkout.labelLogo') }}
                         </span>
-                        <span v-if="config.showSubtitle" class="flizpay-checkout-preview__label flizpay-checkout-preview__label--subtitle">
+                        <span
+                            v-if="config.showSubtitle"
+                            class="flizpay-checkout-preview__label flizpay-checkout-preview__label--subtitle"
+                        >
                             {{ $tc('flizpay-config.checkout.labelSubtitle') }}
                         </span>
                     </div>
                 </div>
                 {% endblock %}
-
-                <sw-container columns="1fr" gap="16px" class="flizpay-checkout-settings">
+                <sw-container
+                    columns="1fr"
+                    gap="16px"
+                    class="flizpay-checkout-settings"
+                >
                     {% block flizpay_settings_show_logo %}
                     <div class="flizpay-checkout-settings__option">
-                        <span>{{ $tc('flizpay-config.checkout.logoLabel') }}</span>
+                        <span>
+                            {{ $tc('flizpay-config.checkout.logoLabel') }}
+                        </span>
                         <sw-checkbox-field
                             v-model="config.showLogo"
                             :label="$tc('flizpay-config.checkout.logoDescription')"
                             :disabled="isLoading"
-                            class="settings-checkbox-field">
+                            class="settings-checkbox-field"
+                        >
                         </sw-checkbox-field>
                     </div>
                     {% endblock %}
 
                     {% block flizpay_settings_show_title %}
-                    <div v-if="hasCashback" class="flizpay-checkout-settings__option">
-                        <span>{{ $tc('flizpay-config.checkout.titleLabel') }}</span>
+                    <div
+                        v-if="hasCashback"
+                        class="flizpay-checkout-settings__option"
+                    >
+                        <span>
+                            {{ $tc('flizpay-config.checkout.titleLabel') }}
+                        </span>
                         <sw-checkbox-field
                             v-model="config.showDescriptionInTitle"
                             :label="$tc('flizpay-config.checkout.titleDescription')"
                             :disabled="isLoading"
-                            class="settings-checkbox-field">
+                            class="settings-checkbox-field"
+                        >
                         </sw-checkbox-field>
                     </div>
                     {% endblock %}
 
                     {% block flizpay_settings_show_subtitle %}
                     <div class="flizpay-checkout-settings__option">
-                        <span>{{ $tc('flizpay-config.checkout.subtitleLabel') }}</span>
+                        <span>
+                            {{ $tc('flizpay-config.checkout.subtitleLabel') }}
+                        </span>
                         <sw-checkbox-field
                             v-model="config.showSubtitle"
                             :label="$tc('flizpay-config.checkout.subtitleDescription')"
                             :disabled="isLoading"
-                            class="settings-checkbox-field">
+                            class="settings-checkbox-field"
+                        >
                         </sw-checkbox-field>
                     </div>
                     {% endblock %}
@@ -171,15 +230,19 @@
             <sw-card
                 :title="$tc('flizpay-config.options.title')"
                 :isLoading="isLoading"
-                class="flizpay-settings__options-card">
-
-                <sw-container columns="1fr" gap="16px">
+                class="flizpay-settings__options-card"
+            >
+                <sw-container
+                    columns="1fr"
+                    gap="16px"
+                >
                     {% block flizpay_settings_enable_logging %}
                     <sw-switch-field
                         v-model="config.enableLogging"
                         :label="$tc('flizpay-config.options.enableLoggingLabel')"
                         :helpText="$tc('flizpay-config.options.enableLoggingHelpText')"
-                        :disabled="isLoading">
+                        :disabled="isLoading"
+                    >
                     </sw-switch-field>
                     {% endblock %}
                 </sw-container>
@@ -190,40 +253,55 @@
             <sw-card
                 :title="$tc('flizpay-config.cashback.title')"
                 :isLoading="isLoading"
-                class="flizpay-settings__cashback-card">
-
-                <sw-container columns="1fr" gap="16px">
+                class="flizpay-settings__cashback-card"
+            >
+                <sw-container
+                    columns="1fr"
+                    gap="16px"
+                >
                     {% block flizpay_settings_cashback_info %}
                     <div class="flizpay-cashback-info">
                         <sw-alert
                             v-if="hasCashback"
                             variant="info"
-                            class="flizpay-cashback-info__alert">
-                            <strong>{{ $tc('flizpay-config.cashback.currentRates') }}</strong>
+                            class="flizpay-cashback-info__alert"
+                        >
+                            <strong>
+                                {{ $tc('flizpay-config.cashback.currentRates') }}
+                            </strong>
                             <ul class="flizpay-cashback-info__list">
-                                <li v-if="cashbackData.first_purchase_amount > 0">
-                                    {{ $tc('flizpay-config.cashback.firstPurchase') }}: {{ cashbackData.first_purchase_amount }}%
+                                <li
+                                    v-if="cashbackData.first_purchase_amount > 0"
+                                >
+                                    {{ $tc('flizpay-config.cashback.firstPurchase') }}
+                                    :
+                                    {{ cashbackData.first_purchase_amount }}
+                                    %
                                 </li>
                                 <li v-if="cashbackData.standard_amount > 0">
-                                    {{ $tc('flizpay-config.cashback.standard') }}: {{ cashbackData.standard_amount }}%
+                                    {{ $tc('flizpay-config.cashback.standard') }}
+                                    :
+                                    {{ cashbackData.standard_amount }}
+                                    %
                                 </li>
                             </ul>
                         </sw-alert>
-
                         <sw-alert
                             v-else
                             variant="warning"
-                            class="flizpay-cashback-info__no-cashback">
+                            class="flizpay-cashback-info__no-cashback"
+                        >
                             {{ $tc('flizpay-config.cashback.noCashback') }}
                         </sw-alert>
-
-                        <p class="flizpay-cashback-info__configure" v-html="$tc('flizpay-config.cashback.configureLink')"></p>
+                        <p
+                            class="flizpay-cashback-info__configure"
+                            v-html="$tc('flizpay-config.cashback.configureLink')"
+                        ></p>
                     </div>
                     {% endblock %}
                 </sw-container>
             </sw-card>
             {% endblock %}
-
         </sw-card-view>
     </template>
     {% endblock %}
