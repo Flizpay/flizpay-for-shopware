@@ -11,8 +11,8 @@
   ],
   "require": {
     "php": ">=8.2",
-    "shopware/core": "^6.7",
-    "shopware/storefront": "^6.7"
+    "shopware/core": "~6.7.0",
+    "shopware/storefront": "*"
   },
   "autoload": {
     "psr-4": {
