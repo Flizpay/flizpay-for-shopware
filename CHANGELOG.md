@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update the Shopware configuration guide in German and English
 - Match checkout messaging to the merchant's configured cashback scenario
+- Add a shopper information link to the checkout description
 - Replace the outdated Shopware extension icon
 
 ### Fixed
