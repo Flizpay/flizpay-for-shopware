@@ -82,7 +82,11 @@ interface ComponentMethods {
   createNotificationSuccess(config: { message: string }): void;
   createNotificationError(config: { message: string }): void;
   createNotificationWarning(config: { message: string }): void;
-  $tc(key: string): string;
+  $tc(
+    key: string,
+    choice?: number,
+    values?: Record<string, string | number>,
+  ): string;
   $router: { push(location: { name: string }): void };
 }
 
@@ -91,6 +95,7 @@ interface ComponentComputed {
   alertConfig: AlertConfig | null;
   hasCashback: boolean;
   maxCashbackValue: number;
+  previewSubtitle: string;
 }
 
 interface ComponentInstance
@@ -178,6 +183,34 @@ Component.register("flizpay-settings", {
             this.cashbackData.standard_amount ?? 0,
           );
       return value;
+    },
+
+    previewSubtitle(this: ComponentInstance): string {
+      const firstPurchaseAmount =
+        this.cashbackData?.first_purchase_amount ?? 0;
+      const standardAmount = this.cashbackData?.standard_amount ?? 0;
+      const formattedStandardAmount = new Intl.NumberFormat(
+        Shopware.Store.get("session").currentLocale ?? "en-GB",
+        { maximumFractionDigits: 1 },
+      ).format(standardAmount);
+
+      if (firstPurchaseAmount > 0 && standardAmount > 0) {
+        return this.$tc("flizpay-config.checkout.previewSubtitleBoth", 1, {
+          standardAmount: formattedStandardAmount,
+        });
+      }
+
+      if (firstPurchaseAmount > 0) {
+        return this.$tc("flizpay-config.checkout.previewSubtitleFirst");
+      }
+
+      if (standardAmount > 0) {
+        return this.$tc("flizpay-config.checkout.previewSubtitleStandard", 1, {
+          standardAmount: formattedStandardAmount,
+        });
+      }
+
+      return this.$tc("flizpay-config.checkout.previewSubtitleNone");
     },
   },
 

@@ -215,18 +215,24 @@ class FlizpayCashbackHelper
      * @param string $shopName
      * @param string $locale
      * @param string|null $salesChannelId
-     * @return string|null
+     * @return string
      */
     public function getCashbackDescription(
         string $shopName,
         string $locale,
         ?string $salesChannelId = null,
-    ): ?string {
+    ): string {
+        $isGerman = str_contains(strtolower($locale), "de");
+
+        if (!$this->isCashbackAvailable($salesChannelId)) {
+            return $this->getDefaultDescription($isGerman);
+        }
+
         $cashback = $this->getCashbackData($salesChannelId);
         $type = $this->getCashbackType($salesChannelId);
 
         if (!$cashback || !$type) {
-            return null;
+            return $this->getDefaultDescription($isGerman);
         }
 
         $standardAmount = $this->formatForLocale(
@@ -234,31 +240,40 @@ class FlizpayCashbackHelper
             $locale,
         );
 
-        $isGerman = str_contains(strtolower($locale), "de");
-
         switch ($type) {
             case "both":
                 if ($isGerman) {
-                    return "Neukunden erhalten einen einmaligen Willkommensbonus. " .
-                        "Danach erhältst du bei jedem Einkauf bei {$shopName} {$standardAmount}% Cashback!";
+                    return "Sichere Zahlungen in direkter Zusammenarbeit mit deiner Bank. " .
+                        "Ab der zweiten Zahlung bei {$shopName} gibt es dauerhaft {$standardAmount}% Rabatt.";
                 }
-                return "New customers receive a one-time welcome bonus. " .
-                    "After that, you get {$standardAmount}% cashback on every purchase at {$shopName}!";
+                return "Secure payments in direct collaboration with your bank. " .
+                    "After your first FLIZ payment at {$shopName}, you will continue to receive {$standardAmount}% Discount.";
 
             case "first":
                 if ($isGerman) {
-                    return "Neukunden erhalten einen einmaligen Willkommensbonus bei {$shopName}!";
+                    return "Sichere Zahlungen in direkter Zusammenarbeit mit deiner Bank. " .
+                        "Nach deiner ersten FLIZ-Zahlung bei {$shopName} gibt es keinen weiteren Rabatt.";
                 }
-                return "New customers receive a one-time welcome bonus at {$shopName}!";
+                return "Secure payments in direct collaboration with your bank. " .
+                    "No additional discount after your first FLIZ-payment at {$shopName}.";
 
             case "standard":
                 if ($isGerman) {
-                    return "Erhalte {$standardAmount}% Cashback bei jedem Einkauf bei {$shopName}!";
+                    return "Sichere Zahlungen in direkter Zusammenarbeit mit deiner Bank. " .
+                        "{$standardAmount}% Rabatt für jede FLIZ-Zahlung bei {$shopName}.";
                 }
-                return "Get {$standardAmount}% cashback on every purchase at {$shopName}!";
+                return "Secure payments in direct collaboration with your bank. " .
+                    "{$standardAmount}% Discount for every FLIZ-payment at {$shopName}.";
         }
 
-        return null;
+        return $this->getDefaultDescription($isGerman);
+    }
+
+    private function getDefaultDescription(bool $isGerman): string
+    {
+        return $isGerman
+            ? "Sichere Zahlungen in direkter Zusammenarbeit mit deiner Bank, deine Daten bleiben privat und in Deutschland, und du unterstützt mit FLIZpay kleine Unternehmen."
+            : "Secure payments in direct collaboration with your bank. We support small businesses and keep your data private – stored securely in Germany.";
     }
 
     /**

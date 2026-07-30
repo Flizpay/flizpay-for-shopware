@@ -35,6 +35,11 @@
                     <h3 class="flizpay-instructions-title">
                         {{ $tc('flizpay-config.instructions.title') }}
                     </h3>
+                    <p class="flizpay-automatic-installation-note">
+                        <strong>
+                            {{ $tc('flizpay-config.instructions.automaticInstallationNotice') }}
+                        </strong>
+                    </p>
                     <ol class="flizpay-instructions-list">
                         <li v-html="$tc('flizpay-config.instructions.step1')"></li>
                         <li v-html="$tc('flizpay-config.instructions.step2')"></li>
@@ -54,7 +59,9 @@
                                 class="flizpay-link"
                                 @click.prevent="goToPaymentMethods"
                             >
-                                {{ $tc('flizpay-config.instructions.step6Link') }}
+                                <strong>
+                                    {{ $tc('flizpay-config.instructions.step6Link') }}
+                                </strong>
                             </a>
                             {{ $tc('flizpay-config.instructions.step6After') }}
                         </li>
@@ -145,7 +152,7 @@
                             v-if="config.showSubtitle"
                             class="flizpay-checkout-preview__subtitle"
                         >
-                            {{ $tc('flizpay-config.checkout.previewSubtitle') }}
+                            {{ previewSubtitle }}
                         </div>
                     </div>
                     <div class="flizpay-checkout-preview__labels">
