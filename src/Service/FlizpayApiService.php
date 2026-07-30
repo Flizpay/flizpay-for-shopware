@@ -141,18 +141,11 @@ class FlizpayApiService
             "failureUrl" => $returnUrl ?? $this->get_failure_url($order),
             "customer" => $customer,
             "source" => $source,
-            "needsShipping" => $this->needs_shipping($order),
         ];
 
         $response = $this->client->dispatch("create_transaction", $body, false);
 
         return $response["redirectUrl"] ?? null;
-    }
-
-    private function needs_shipping(OrderEntity $order): bool
-    {
-        $deliveries = $order->getDeliveries();
-        return $deliveries !== null && $deliveries->count() > 0;
     }
 
     private function get_success_url(OrderEntity $order): string
