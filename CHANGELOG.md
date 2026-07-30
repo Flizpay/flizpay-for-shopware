@@ -5,6 +5,16 @@ All notable changes to the FLIZpay Payment Gateway for Shopware 6 will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-07-30
+
+### Changed
+- Update the Shopware configuration guide in German and English
+- Match checkout messaging to the merchant's configured cashback scenario
+- Replace the outdated Shopware extension icon
+
+### Fixed
+- Stop sending the obsolete `needsShipping` field when creating transactions
+
 ## [1.0.1] - 2026-07-29
 
 ### Changed
