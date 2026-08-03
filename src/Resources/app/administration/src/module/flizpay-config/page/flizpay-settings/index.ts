@@ -43,7 +43,6 @@ const FLIZ_CONFIG = {
   ENABLE_LOGGING: "FlizpayForShopware.config.enableLogging",
   DISPLAY_CASHBACK_IN_TITLE: "FlizpayForShopware.config.displayCashbackInTitle",
   SHOW_LOGO: "FlizpayForShopware.config.showLogo",
-  SHOW_DESCRIPTION_IN_TITLE: "FlizpayForShopware.config.showDescriptionInTitle",
   SHOW_SUBTITLE: "FlizpayForShopware.config.showSubtitle",
   CASHBACK_DATA: "FlizpayForShopware.config.cashbackData",
 } as const;
@@ -124,7 +123,6 @@ Component.register("flizpay-settings", {
         enableLogging: false,
         displayCashbackInTitle: true,
         showLogo: true,
-        showDescriptionInTitle: true,
         showSubtitle: true,
       },
       connectionState: ConnectionState.IDLE,
@@ -245,8 +243,6 @@ Component.register("flizpay-settings", {
           (values[FLIZ_CONFIG.DISPLAY_CASHBACK_IN_TITLE] as boolean) ?? true;
         this.config.showLogo =
           (values[FLIZ_CONFIG.SHOW_LOGO] as boolean) ?? true;
-        this.config.showDescriptionInTitle =
-          (values[FLIZ_CONFIG.SHOW_DESCRIPTION_IN_TITLE] as boolean) ?? true;
         this.config.showSubtitle =
           (values[FLIZ_CONFIG.SHOW_SUBTITLE] as boolean) ?? true;
 
@@ -311,8 +307,6 @@ Component.register("flizpay-settings", {
             [FLIZ_CONFIG.DISPLAY_CASHBACK_IN_TITLE]:
               this.config.displayCashbackInTitle,
             [FLIZ_CONFIG.SHOW_LOGO]: this.config.showLogo,
-            [FLIZ_CONFIG.SHOW_DESCRIPTION_IN_TITLE]:
-              this.config.showDescriptionInTitle,
             [FLIZ_CONFIG.SHOW_SUBTITLE]: this.config.showSubtitle,
           },
           this.currentSalesChannelId,

@@ -42,9 +42,6 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
 
         // Get display settings
         $showLogo = $this->cashbackHelper->isShowLogoEnabled($salesChannelId);
-        $showDescriptionInTitle = $this->cashbackHelper->isShowDescriptionInTitleEnabled(
-            $salesChannelId,
-        );
         $showSubtitle = $this->cashbackHelper->isShowSubtitleEnabled(
             $salesChannelId,
         );
@@ -64,14 +61,12 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
         // Get cashback display data
         $displayValue = $this->cashbackHelper->getDisplayValue($salesChannelId);
 
-        // Build title based on settings
-        $cashbackTitle =
-            $showDescriptionInTitle && $cashbackAvailable
-                ? $this->cashbackHelper->getCashbackTitle(
-                    $locale,
-                    $salesChannelId,
-                )
-                : "FLIZpay";
+        $cashbackTitle = $cashbackAvailable
+            ? $this->cashbackHelper->getCashbackTitle(
+                $locale,
+                $salesChannelId,
+            )
+            : "FLIZpay";
 
         // Build description based on settings
         $cashbackDescription = $showSubtitle
@@ -102,7 +97,6 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
                     [
                         "title" => $cashbackTitle,
                         "showLogo" => $showLogo,
-                        "showDescriptionInTitle" => $showDescriptionInTitle,
                         "showSubtitle" => $showSubtitle,
                     ],
                 );
@@ -129,7 +123,6 @@ class PaymentMethodCashbackSubscriber implements EventSubscriberInterface
                 ),
                 "locale" => $locale,
                 "showLogo" => $showLogo,
-                "showDescriptionInTitle" => $showDescriptionInTitle,
                 "showSubtitle" => $showSubtitle,
             ]),
         );

@@ -129,7 +129,7 @@
                             <div class="flizpay-checkout-preview__radio"></div>
                             <span class="flizpay-checkout-preview__name">FLIZpay</span>
                             <span
-                                v-if="config.showDescriptionInTitle && hasCashback"
+                                v-if="hasCashback"
                                 class="flizpay-checkout-preview__title"
                             >
                                 -
@@ -157,7 +157,7 @@
                     </div>
                     <div class="flizpay-checkout-preview__labels">
                         <span
-                            v-if="config.showDescriptionInTitle && hasCashback"
+                            v-if="hasCashback"
                             class="flizpay-checkout-preview__label flizpay-checkout-preview__label--title"
                         >
                             {{ $tc('flizpay-config.checkout.labelTitle') }}
@@ -190,24 +190,6 @@
                         <sw-checkbox-field
                             v-model="config.showLogo"
                             :label="$tc('flizpay-config.checkout.logoDescription')"
-                            :disabled="isLoading"
-                            class="settings-checkbox-field"
-                        >
-                        </sw-checkbox-field>
-                    </div>
-                    {% endblock %}
-
-                    {% block flizpay_settings_show_title %}
-                    <div
-                        v-if="hasCashback"
-                        class="flizpay-checkout-settings__option"
-                    >
-                        <span>
-                            {{ $tc('flizpay-config.checkout.titleLabel') }}
-                        </span>
-                        <sw-checkbox-field
-                            v-model="config.showDescriptionInTitle"
-                            :label="$tc('flizpay-config.checkout.titleDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
                         >
