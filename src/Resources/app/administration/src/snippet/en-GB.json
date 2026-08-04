@@ -10,7 +10,7 @@
     },
     "instructions": {
       "title": "Instructions:",
-      "automaticInstallationNotice": "If you chose automatic installation, you can skip the following steps.",
+      "automaticInstallationNotice": "If you chose automatic installation, you can skip steps 1-5.",
       "step1": "If you don’t yet have a FLIZpay business account, please <a href='https://app.flizpay.de/auth/signup' target='_blank' rel='noopener'><strong>click here</strong></a> to create one.",
       "step2": "Once you have created your account, generate a new API key in your FLIZpay business account and paste it into the “API Key” field below. You can find your API keys in the “Installation” section of your account.",
       "step3": "Click “Save”.",
