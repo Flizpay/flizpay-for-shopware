@@ -83,7 +83,6 @@ interface ComponentMethods {
   createNotificationWarning(config: { message: string }): void;
   $tc(
     key: string,
-    choice?: number,
     values?: Record<string, string | number>,
   ): string;
   $router: { push(location: { name: string }): void };
@@ -193,7 +192,7 @@ Component.register("flizpay-settings", {
       ).format(standardAmount);
 
       if (firstPurchaseAmount > 0 && standardAmount > 0) {
-        return this.$tc("flizpay-config.checkout.previewSubtitleBoth", 1, {
+        return this.$tc("flizpay-config.checkout.previewSubtitleBoth", {
           standardAmount: formattedStandardAmount,
         });
       }
@@ -203,7 +202,7 @@ Component.register("flizpay-settings", {
       }
 
       if (standardAmount > 0) {
-        return this.$tc("flizpay-config.checkout.previewSubtitleStandard", 1, {
+        return this.$tc("flizpay-config.checkout.previewSubtitleStandard", {
           standardAmount: formattedStandardAmount,
         });
       }
