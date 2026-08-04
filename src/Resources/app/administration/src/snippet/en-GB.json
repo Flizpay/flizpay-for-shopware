@@ -113,8 +113,6 @@
       "labelSubtitle": "Subtitle",
       "logoLabel": "Logo",
       "logoDescription": "Show FLIZpay logo in checkout",
-      "titleLabel": "Title",
-      "titleDescription": "Show description in title",
       "subtitleLabel": "Subtitle",
       "subtitleDescription": "Show description in subtitle when FLIZpay is selected"
     },

@@ -320,28 +320,6 @@ class FlizpayCashbackHelper
     }
 
     /**
-     * Check if show description in title is enabled
-     *
-     * @param string|null $salesChannelId
-     * @return bool
-     */
-    public function isShowDescriptionInTitleEnabled(
-        ?string $salesChannelId = null,
-    ): bool {
-        $value = $this->systemConfig->get(
-            self::CONFIG_PREFIX . "showDescriptionInTitle",
-            $salesChannelId,
-        );
-
-        // Default to true if not set
-        if ($value === null) {
-            return true;
-        }
-
-        return (bool) $value;
-    }
-
-    /**
      * Check if show subtitle is enabled
      *
      * @param string|null $salesChannelId

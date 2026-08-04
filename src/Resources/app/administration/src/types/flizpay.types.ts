@@ -19,7 +19,6 @@ export interface FlizpayConfig {
   enableLogging: boolean;
   displayCashbackInTitle: boolean;
   showLogo: boolean;
-  showDescriptionInTitle: boolean;
   showSubtitle: boolean;
 }
 
