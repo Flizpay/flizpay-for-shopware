@@ -1,7 +1,7 @@
 {
   "name": "flizpay/flizpay-for-shopware",
   "description": "FLIZpay payment gateway for Shopware",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "shopware-platform-plugin",
   "license": "MIT",
   "authors": [
