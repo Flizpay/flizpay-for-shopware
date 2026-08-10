@@ -217,6 +217,7 @@ class FlizpayConfigController extends AbstractController
 
             // Step 3: Fetch cashback data (non-critical, like WordPress)
             $this->logger->info("STEP 3: Starting cashback data fetch");
+            $cashbackData = null;
             try {
                 $this->logger->debug(
                     "Calling flizpayApiService->fetch_cashback_data()",
@@ -227,21 +228,26 @@ class FlizpayConfigController extends AbstractController
                     "rawData" => $cashbackData,
                 ]);
 
-                if ($cashbackData) {
+                if ($cashbackData !== null) {
                     $this->logger->info("Cashback data received", [
                         "cashbackData" => $cashbackData,
                     ]);
-
-                    $this->systemConfigService->set(
-                        "FlizpayForShopware.config.cashbackData",
-                        json_encode($cashbackData),
-                        $salesChannelId,
-                    );
                 } else {
                     $this->logger->info(
                         "No active cashback data returned from API",
                     );
+
+                    $cashbackData = [
+                        "first_purchase_amount" => 0.0,
+                        "standard_amount" => 0.0,
+                    ];
                 }
+
+                $this->systemConfigService->set(
+                    "FlizpayForShopware.config.cashbackData",
+                    json_encode($cashbackData),
+                    $salesChannelId,
+                );
             } catch (\Exception $e) {
                 $this->logger->warning(
                     "Cashback data fetch failed (non-critical)",
@@ -266,6 +272,7 @@ class FlizpayConfigController extends AbstractController
                     "webhookUrl" => $webhookUrl,
                     "webhookAlive" => false, // Will be set to true by test webhook
                     "requiresWebhookTest" => true,
+                    "cashback" => $cashbackData,
                 ],
             ]);
         } catch (\Exception $e) {

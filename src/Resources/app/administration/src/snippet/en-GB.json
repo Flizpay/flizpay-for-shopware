@@ -19,7 +19,7 @@
       "step6Before": "Add FLIZpay to your online stores and choose where it appears among your payment methods.",
       "step6Link": "Go to Payment Methods",
       "step6After": "to configure its availability and move FLIZpay higher in the list to make it easier for customers to find.",
-      "step7": "We also recommend activating cashback for your customers. Cashback can encourage customers to choose FLIZpay and support conversion and loyalty. You can configure cashback offers in your FLIZpay business account. <a href='https://app.flizpay.de/cashback' target='_blank' rel='noopener'><strong>Click here.</strong></a>"
+      "step7": "We also recommend activating discounts for your customers. Discounts can encourage customers to choose FLIZpay and support conversion and loyalty. You can configure discount offers in your FLIZpay business account. <a href='https://app.flizpay.de/discount' target='_blank' rel='noopener'><strong>Click here.</strong></a>"
     },
     "links": {
       "faq": "Still have questions? <a href='https://flizpay.de/businesses#how-do-i-install-fliz' target='_blank' rel='noopener'>Check out our FAQ page</a>.",
@@ -68,8 +68,8 @@
       "title": "Display Options",
       "displayLogoLabel": "Show FLIZpay Logo",
       "displayLogoHelpText": "Display FLIZpay logo on the payment method in checkout.",
-      "displayHeadlineLabel": "Show Cashback Headline",
-      "displayHeadlineHelpText": "Show cashback percentage in payment method title.",
+      "displayHeadlineLabel": "Show Discount Headline",
+      "displayHeadlineHelpText": "Show discount percentage in payment method title.",
       "displayDescriptionLabel": "Show Description",
       "displayDescriptionHelpText": "Show payment method description in checkout."
     },
@@ -94,11 +94,11 @@
       "themeDark": "Dark"
     },
     "cashbackInfo": {
-      "title": "Cashback Information",
-      "firstPurchaseLabel": "First Purchase Cashback",
-      "standardLabel": "Standard Cashback",
-      "notConfigured": "No cashback configured",
-      "refreshButton": "Refresh Cashback Data"
+      "title": "Discount Information",
+      "firstPurchaseLabel": "First Purchase Discount",
+      "standardLabel": "Standard Discount",
+      "notConfigured": "No discount configured",
+      "refreshButton": "Refresh Discount Data"
     },
     "checkout": {
       "title": "Checkout Settings",
@@ -108,7 +108,6 @@
       "previewSubtitleFirst": "Secure payments in direct collaboration with your bank. No additional discount after your first FLIZ payment.",
       "previewSubtitleStandard": "Secure payments in direct collaboration with your bank. {standardAmount}% Discount for every FLIZ payment.",
       "previewSubtitleNone": "Secure payments in direct collaboration with your bank. We support small businesses and keep your data private – stored securely in Germany.",
-      "labelTitle": "Description in title",
       "labelLogo": "Logo",
       "labelSubtitle": "Subtitle",
       "logoLabel": "Logo",
@@ -117,14 +116,14 @@
       "subtitleDescription": "Show description in subtitle when FLIZpay is selected"
     },
     "cashback": {
-      "title": "Cashback Information",
-      "displayInTitleLabel": "Show Cashback in Payment Method Title",
-      "displayInTitleHelpText": "When enabled, the cashback percentage will be shown in the payment method name at checkout (e.g., 'FLIZpay - Up to 5% Cashback').",
-      "currentRates": "Current Cashback Rates:",
+      "title": "Discount Information",
+      "displayInTitleLabel": "Show Discount in Payment Method Title",
+      "displayInTitleHelpText": "When enabled, the discount percentage will be shown in the payment method name at checkout (e.g., 'FLIZpay – Save up to 5%').",
+      "currentRates": "Current Discount Rates:",
       "firstPurchase": "First Purchase",
       "standard": "Standard",
-      "noCashback": "No cashback is currently configured. Enable cashback in your FLIZpay dashboard to offer rewards to your customers.",
-      "configureLink": "Configure cashback rates in your <a href='https://app.flizpay.de/cashback' target='_blank' rel='noopener'>FLIZpay Dashboard</a>."
+      "noCashback": "No discount is currently configured. Enable discounts in your FLIZpay dashboard to offer savings to your customers.",
+      "configureLink": "Configure discount rates in your <a href='https://app.flizpay.de/cashback' target='_blank' rel='noopener'>FLIZpay Dashboard</a>."
     },
     "reconfiguration": {
       "warning": "You already have an integration set up. By reconfiguring, you will invalidate all current ongoing payment responses. Proceed?",
