@@ -188,25 +188,40 @@ class FlizpayCashbackHelper
         string $locale,
         ?string $salesChannelId = null,
     ): string {
-        $displayValue = $this->getDisplayValue($salesChannelId);
+        $cashback = $this->getCashbackData($salesChannelId);
+        $type = $this->getCashbackType($salesChannelId);
 
-        if ($displayValue === null) {
-            // No cashback - return default title
-            if (str_contains(strtolower($locale), "de")) {
-                return "FLIZpay";
-            }
+        if (!$cashback || !$type) {
             return "FLIZpay";
         }
 
-        $formattedValue = $this->formatForLocale($displayValue, $locale);
+        $isGerman = str_contains(strtolower($locale), "de");
+        $firstPurchaseAmount = $this->formatForLocale(
+            (float) ($cashback["first_purchase_amount"] ?? 0),
+            $locale,
+        );
 
-        // German title
-        if (str_contains(strtolower($locale), "de")) {
-            return "FLIZpay - Bis zu {$formattedValue}% Rabatt";
+        if ($type === "first") {
+            return $isGerman
+                ? "FLIZpay – Spare {$firstPurchaseAmount}% bei deiner ersten Zahlung"
+                : "FLIZpay – Save {$firstPurchaseAmount}% on your first payment";
         }
 
-        // English title
-        return "FLIZpay - Up to {$formattedValue}% Cashback";
+        if ($type === "both") {
+            return $isGerman
+                ? "FLIZpay – Spare bis zu {$firstPurchaseAmount}%"
+                : "FLIZpay – Save up to {$firstPurchaseAmount}%";
+        }
+
+        $displayValue = $this->getDisplayValue($salesChannelId);
+        $formattedValue = $this->formatForLocale(
+            $displayValue ?? 0,
+            $locale,
+        );
+
+        return $isGerman
+            ? "FLIZpay - Bis zu {$formattedValue}% Rabatt"
+            : "FLIZpay - Up to {$formattedValue}% Cashback";
     }
 
     /**
@@ -242,20 +257,28 @@ class FlizpayCashbackHelper
 
         switch ($type) {
             case "both":
+                $firstPurchaseAmount = $this->formatForLocale(
+                    (float) ($cashback["first_purchase_amount"] ?? 0),
+                    $locale,
+                );
+
                 if ($isGerman) {
-                    return "Sichere Zahlungen in direkter Zusammenarbeit mit deiner Bank. " .
-                        "Ab der zweiten Zahlung bei {$shopName} gibt es dauerhaft {$standardAmount}% Rabatt.";
+                    return "Erhalte {$firstPurchaseAmount}% Rabatt auf deine erste Zahlung, " .
+                        "danach {$standardAmount}% auf jede weitere Zahlung bei {$shopName}.";
                 }
-                return "Secure payments in direct collaboration with your bank. " .
-                    "After your first FLIZ payment at {$shopName}, you will continue to receive {$standardAmount}% Discount.";
+                return "Get {$firstPurchaseAmount}% discount on your first payment, " .
+                    "then {$standardAmount}% on every payment after that {$shopName}.";
 
             case "first":
+                $firstPurchaseAmount = $this->formatForLocale(
+                    (float) ($cashback["first_purchase_amount"] ?? 0),
+                    $locale,
+                );
+
                 if ($isGerman) {
-                    return "Sichere Zahlungen in direkter Zusammenarbeit mit deiner Bank. " .
-                        "Nach deiner ersten FLIZ-Zahlung bei {$shopName} gibt es keinen weiteren Rabatt.";
+                    return "Erhalte {$firstPurchaseAmount}% Rabatt auf deine erste Zahlung bei {$shopName}.";
                 }
-                return "Secure payments in direct collaboration with your bank. " .
-                    "No additional discount after your first FLIZ-payment at {$shopName}.";
+                return "Get {$firstPurchaseAmount}% discount on your first payment at {$shopName}.";
 
             case "standard":
                 if ($isGerman) {
@@ -272,8 +295,8 @@ class FlizpayCashbackHelper
     private function getDefaultDescription(bool $isGerman): string
     {
         return $isGerman
-            ? "Sichere Zahlungen in direkter Zusammenarbeit mit deiner Bank, deine Daten bleiben privat und in Deutschland, und du unterstützt mit FLIZpay kleine Unternehmen."
-            : "Secure payments in direct collaboration with your bank. We support small businesses and keep your data private – stored securely in Germany.";
+            ? "Bezahle mit FLIZ. Schluss mit versteckten Kosten. Die europäische Lösung."
+            : "Pay with FLIZ. Stop carrying the hidden cost of payments. The European solution.";
     }
 
     /**
