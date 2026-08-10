@@ -33,10 +33,12 @@
 
                 {# For FLIZpay: show subtitle (description) when selected if enabled #}
                 {% if isFlizpay and payment.id is same as(selectedPaymentMethodId) %}
-                    {% if flizpayCashback and flizpayCashback.showSubtitle and payment.translated.description %}
+                    {% if flizpayCashback %}
                         {% block flizpay_payment_method_description_text %}
                             <p class="mb-0 flizpay-description-text">
-                                {{ payment.translated.description|raw }}
+                                {% if flizpayCashback.showSubtitle and payment.translated.description %}
+                                    {{ payment.translated.description|raw }}
+                                {% endif %}
                                 <a href="https://flizpay.de/shoppers"
                                    target="_blank"
                                    rel="noopener noreferrer">{{ 'flizpay.checkout.moreInfo'|trans|sw_sanitize }}</a>
