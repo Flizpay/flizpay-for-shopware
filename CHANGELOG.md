@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update the checkout payment method title and description in German and English
 - Clarify the discount wording in the administration settings
+- Point shopper information links to the correct FLIZpay discount page
+
+### Fixed
+
+- Fetch and display discount information when initially connecting an API key
+- Refresh discount information immediately in the administration without requiring a page reload
 
 ## [1.0.3] - 2026-08-04
 
