@@ -71,6 +71,7 @@ interface ComponentData {
 
 interface ComponentMethods {
   loadConfig(): Promise<void>;
+  updateCashbackData(values: SystemConfigValues): void;
   saveConfig(): Promise<void>;
   testGatewayConnection(): Promise<void>;
   startWebhookPolling(): void;
@@ -245,15 +246,7 @@ Component.register("flizpay-settings", {
         this.config.showSubtitle =
           (values[FLIZ_CONFIG.SHOW_SUBTITLE] as boolean) ?? true;
 
-        const cashbackDataJson = values[FLIZ_CONFIG.CASHBACK_DATA] as string;
-
-        if (cashbackDataJson) {
-          try {
-            this.cashbackData = JSON.parse(cashbackDataJson);
-          } catch (e) {
-            this.cashbackData = null;
-          }
-        }
+        this.updateCashbackData(values);
 
         this.initialApiKey = this.config.apiKey;
 
@@ -269,6 +262,24 @@ Component.register("flizpay-settings", {
         });
       } finally {
         this.isLoading = false;
+      }
+    },
+
+    updateCashbackData(
+      this: ComponentInstance,
+      values: SystemConfigValues,
+    ): void {
+      const cashbackDataJson = values[FLIZ_CONFIG.CASHBACK_DATA] as string;
+
+      if (!cashbackDataJson) {
+        this.cashbackData = null;
+        return;
+      }
+
+      try {
+        this.cashbackData = JSON.parse(cashbackDataJson);
+      } catch {
+        this.cashbackData = null;
       }
     },
 
@@ -342,6 +353,7 @@ Component.register("flizpay-settings", {
             this.config.webhookUrl =
               response.data.webhookUrl || this.config.webhookUrl;
             this.config.webhookAlive = response.data.webhookAlive || false;
+            this.cashbackData = response.data.cashback;
           }
 
           // Start polling for webhook verification
@@ -382,6 +394,7 @@ Component.register("flizpay-settings", {
             this.stopWebhookPolling();
             this.config.webhookAlive = true;
             this.connectionState = ConnectionState.ESTABLISHED;
+            this.updateCashbackData(values);
 
             this.createNotificationSuccess({
               message: this.$tc("flizpay-config.connection.webhookVerified"),

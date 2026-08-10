@@ -38,7 +38,7 @@ export interface FlizpayTestConnectionResponse {
   data?: {
     webhookUrl: string | null;
     webhookAlive: boolean;
-    hasCashback: boolean;
+    cashback: FlizpayCashbackData | null;
   };
   error?: string;
 }

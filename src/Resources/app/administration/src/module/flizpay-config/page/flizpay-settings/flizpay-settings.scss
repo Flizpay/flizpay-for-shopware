@@ -200,7 +200,6 @@ $radio-button-color: #798490;
                 background: $flizpay-tertiary;
                 border-radius: 4px;
 
-                &--title::before,
                 &--logo::before,
                 &--subtitle::before {
                     content: "↑ ";

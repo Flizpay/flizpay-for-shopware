@@ -79,29 +79,18 @@ class FlizpayApiService
     {
         $response = $this->client->dispatch("fetch_cashback_data", null, false);
 
-        if (
-            isset($response["cashbacks"]) &&
-            count($response["cashbacks"]) > 0
-        ) {
-            foreach ($response["cashbacks"] as $cashback) {
-                $firstPurchaseAmount = floatval(
-                    $cashback["firstPurchaseAmount"],
-                );
-                $amount = floatval($cashback["amount"]);
+        $cashback = $response["cashback"] ?? null;
 
-                if (
-                    $cashback["active"] &&
-                    ($firstPurchaseAmount > 0 || $amount > 0)
-                ) {
-                    return [
-                        "first_purchase_amount" => $firstPurchaseAmount,
-                        "standard_amount" => $amount,
-                    ];
-                }
-            }
+        if (!is_array($cashback) || ($cashback["unit"] ?? null) !== "percentage") {
+            return null;
         }
 
-        return null;
+        return [
+            "first_purchase_amount" => floatval(
+                $cashback["firstPurchaseAmount"] ?? 0,
+            ),
+            "standard_amount" => floatval($cashback["amount"] ?? 0),
+        ];
     }
 
     /**

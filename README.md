@@ -1,6 +1,6 @@
 # FLIZpay Payment Gateway for Shopware 6
 
-Official FLIZpay payment plugin for Shopware 6.7+. Accept payments via FLIZpay and offer cashback rewards to your customers.
+Official FLIZpay payment plugin for Shopware 6.7+. Accept payments via FLIZpay and offer discount rewards to your customers.
 
 ## Table of Contents
 
@@ -9,7 +9,7 @@ Official FLIZpay payment plugin for Shopware 6.7+. Accept payments via FLIZpay a
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Webhook Setup](#webhook-setup)
-- [Cashback Feature](#cashback-feature)
+- [Discount Feature](#discount-feature)
 - [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
 - [Support](#support)
@@ -19,7 +19,7 @@ Official FLIZpay payment plugin for Shopware 6.7+. Accept payments via FLIZpay a
 
 - Seamless FLIZpay payment integration
 - Automatic webhook handling for payment confirmation
-- Configurable cashback display in checkout
+- Configurable discount display in checkout
 - Support for multiple sales channels
 - German and English translations included
 
@@ -94,24 +94,24 @@ https://your-shop.com/api/flizpay/webhook
 - The webhook endpoint must be reachable from the internet
 - Firewall must allow incoming POST requests from FLIZpay servers
 
-## Cashback Feature
+## Discount Feature
 
-FLIZpay offers cashback rewards to customers. The plugin can display cashback information during checkout.
+FLIZpay offers discount rewards to customers. The plugin can display discount information during checkout.
 
-### Cashback Display Options
+### Discount Display Options
 
 Configure in plugin settings:
 
-- **Show Cashback in Checkout**: Display estimated cashback amount
-- **Cashback Display Position**: Choose where to show cashback info
-- **Custom Cashback Text**: Personalize the cashback message
+- **Show Discount in Checkout**: Display estimated discount amount
+- **Discount Display Position**: Choose where to show discount info
+- **Custom Discount Text**: Personalize the discount message
 
 ### How It Works
 
-1. Plugin fetches cashback rates from FLIZpay API
-2. Cashback amount is calculated based on order total
+1. Plugin fetches discount rates from FLIZpay API
+2. Discount amount is calculated based on order total
 3. Information is displayed to customer during checkout
-4. Actual cashback is credited after successful payment
+4. Actual discount is credited after successful payment
 
 ## Testing
 

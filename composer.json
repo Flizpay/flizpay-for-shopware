@@ -26,8 +26,8 @@
       "en-GB": "FLIZpay Payment Gateway"
     },
     "description": {
-      "de-DE": "Akzeptiere Zahlungen mit FLIZpay in deinem Shopware-Shop. Einfache Integration, sichere Transaktionen und Cashback-Belohnungen fuer alle deine Kunden.",
-      "en-GB": "Accept payments with FLIZpay in your Shopware store. Simple and quick integration, secure payment transactions, and automatic cashback rewards for customers."
+      "de-DE": "Akzeptiere Zahlungen mit FLIZpay in deinem Shopware-Shop. Einfache Integration, sichere Transaktionen und Rabatt-Belohnungen fuer alle deine Kunden.",
+      "en-GB": "Accept payments with FLIZpay in your Shopware store. Simple and quick integration, secure payment transactions, and automatic discount rewards for customers."
     },
     "manufacturerLink": {
       "de-DE": "https://flizpay.de",
