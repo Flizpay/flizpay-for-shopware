@@ -209,6 +209,80 @@
             </sw-card>
             {% endblock %}
 
+            {% block flizpay_settings_messaging_card %}
+            <sw-card
+                :title="$tc('flizpay-config.onSiteMessaging.title')"
+                :isLoading="isLoading"
+                class="flizpay-settings__messaging-card"
+            >
+                {% block flizpay_settings_messaging_preview %}
+                <div class="flizpay-placement-preview">
+                    <p
+                        v-if="!placementPreview || !placementPreview.publicId"
+                        class="flizpay-placement-preview__hint"
+                    >
+                        {{ $tc('flizpay-config.onSiteMessaging.previewUnavailable') }}
+                    </p>
+                    <template v-else>
+                        <div
+                            v-for="preview in placementPreviews"
+                            v-show="config[preview.area]"
+                            :key="preview.caption"
+                            class="flizpay-placement-preview__card"
+                        >
+                            <div class="flizpay-placement-preview__caption">
+                                {{ $tc(`flizpay-config.onSiteMessaging.${preview.caption}`) }}
+                            </div>
+                            <template v-for="(line, index) in preview.lines" :key="index">
+                                <fliz-placement
+                                    v-if="line[0] === 'slot'"
+                                    :data-public-id="placementPreview.publicId"
+                                    :data-slot="line[1]"
+                                    :data-locale="previewLocale"
+                                    :data-currency="previewCurrency"
+                                    :data-amount="previewAmount"
+                                ></fliz-placement>
+                                <div
+                                    v-else
+                                    :class="`flizpay-placement-preview__${line[0]}`"
+                                >
+                                    {{ previewLineText(line[0], line[1]) }}
+                                </div>
+                            </template>
+                        </div>
+                        <p class="flizpay-placement-preview__hint">
+                            {{ $tc('flizpay-config.onSiteMessaging.hint') }}
+                        </p>
+                    </template>
+                </div>
+                {% endblock %}
+                <sw-container
+                    columns="1fr"
+                    gap="16px"
+                    class="flizpay-checkout-settings"
+                >
+                    {% block flizpay_settings_placement_areas %}
+                    <div
+                        v-for="area in ['Product', 'Listing', 'Cart', 'MiniCart']"
+                        :key="area"
+                        class="flizpay-checkout-settings__option"
+                    >
+                        <span>
+                            {{ $tc(`flizpay-config.onSiteMessaging.${area.toLowerCase()}Label`) }}
+                        </span>
+                        <sw-checkbox-field
+                            v-model="config[`placement${area}`]"
+                            :label="$tc(`flizpay-config.onSiteMessaging.${area.toLowerCase()}Description`)"
+                            :disabled="isLoading"
+                            class="settings-checkbox-field"
+                        >
+                        </sw-checkbox-field>
+                    </div>
+                    {% endblock %}
+                </sw-container>
+            </sw-card>
+            {% endblock %}
+
             {% block flizpay_settings_options_card %}
             <sw-card
                 :title="$tc('flizpay-config.options.title')"

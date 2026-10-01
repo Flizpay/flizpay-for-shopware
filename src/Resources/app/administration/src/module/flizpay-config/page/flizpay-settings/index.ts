@@ -9,6 +9,7 @@ import "./flizpay-settings.scss";
 
 import type {
   FlizpayConfig,
+  FlizpayPlacementPreview,
   FlizpayTestConnectionResponse,
   PaymentFlowOption,
   SystemConfigValues,
@@ -45,7 +46,19 @@ const FLIZ_CONFIG = {
   SHOW_LOGO: "FlizpayForShopware.config.showLogo",
   SHOW_SUBTITLE: "FlizpayForShopware.config.showSubtitle",
   CASHBACK_DATA: "FlizpayForShopware.config.cashbackData",
+  PLACEMENT_PRODUCT: "FlizpayForShopware.config.placementProduct",
+  PLACEMENT_LISTING: "FlizpayForShopware.config.placementListing",
+  PLACEMENT_CART: "FlizpayForShopware.config.placementCart",
+  PLACEMENT_MINI_CART: "FlizpayForShopware.config.placementMiniCart",
 } as const;
+
+/** Mock lines around each on-site messaging preview; slots are real <fliz-placement> elements. */
+const PLACEMENT_PREVIEWS = [
+  { area: "placementProduct", caption: "previewProductPage", lines: [["title", "previewProduct"], ["price", ""], ["slot", "product-price"], ["button", "previewAddToCart"], ["slot", "product-page"]] },
+  { area: "placementListing", caption: "previewListing", lines: [["title", "previewProduct"], ["price", ""], ["slot", "listing-item"], ["button", "previewAddToCart"]] },
+  { area: "placementCart", caption: "previewCart", lines: [["price", "previewTotal"], ["slot", "cart"], ["button", "previewCheckout"]] },
+  { area: "placementMiniCart", caption: "previewMiniCart", lines: [["price", "previewSubtotal"], ["slot", "mini-cart"], ["button", "previewViewCart"]] },
+] as const;
 
 interface SystemConfigApiService {
   getValues(
@@ -67,10 +80,14 @@ interface ComponentData {
   currentSalesChannelId: string | null;
   pollingInterval: number | null;
   cashbackData: FlizpayCashbackData | null;
+  placementPreview: FlizpayPlacementPreview | null;
+  placementPreviews: typeof PLACEMENT_PREVIEWS;
 }
 
 interface ComponentMethods {
   loadConfig(): Promise<void>;
+  loadPlacementPreview(): Promise<void>;
+  previewLineText(kind: string, key: string): string;
   updateCashbackData(values: SystemConfigValues): void;
   saveConfig(): Promise<void>;
   testGatewayConnection(): Promise<void>;
@@ -95,6 +112,9 @@ interface ComponentComputed {
   hasCashback: boolean;
   maxCashbackValue: number;
   previewSubtitle: string;
+  previewLocale: string;
+  previewAmount: number;
+  previewCurrency: string;
 }
 
 interface ComponentInstance
@@ -124,12 +144,18 @@ Component.register("flizpay-settings", {
         displayCashbackInTitle: true,
         showLogo: true,
         showSubtitle: true,
+        placementProduct: true,
+        placementListing: true,
+        placementCart: true,
+        placementMiniCart: true,
       },
       connectionState: ConnectionState.IDLE,
       initialApiKey: null,
       currentSalesChannelId: null,
       pollingInterval: null,
       cashbackData: null,
+      placementPreview: null,
+      placementPreviews: PLACEMENT_PREVIEWS,
     };
   },
 
@@ -210,10 +236,23 @@ Component.register("flizpay-settings", {
 
       return this.$tc("flizpay-config.checkout.previewSubtitleNone");
     },
+
+    previewLocale(): string {
+      return Shopware.Store.get("session").currentLocale ?? "de-DE";
+    },
+
+    previewAmount(): number {
+      return 1995;
+    },
+
+    previewCurrency(): string {
+      return "EUR";
+    },
   },
 
   created(this: ComponentInstance): void {
     this.loadConfig();
+    this.loadPlacementPreview();
   },
 
   beforeUnmount(this: ComponentInstance): void {
@@ -245,6 +284,14 @@ Component.register("flizpay-settings", {
           (values[FLIZ_CONFIG.SHOW_LOGO] as boolean) ?? true;
         this.config.showSubtitle =
           (values[FLIZ_CONFIG.SHOW_SUBTITLE] as boolean) ?? true;
+        this.config.placementProduct =
+          (values[FLIZ_CONFIG.PLACEMENT_PRODUCT] as boolean) ?? true;
+        this.config.placementListing =
+          (values[FLIZ_CONFIG.PLACEMENT_LISTING] as boolean) ?? true;
+        this.config.placementCart =
+          (values[FLIZ_CONFIG.PLACEMENT_CART] as boolean) ?? true;
+        this.config.placementMiniCart =
+          (values[FLIZ_CONFIG.PLACEMENT_MINI_CART] as boolean) ?? true;
 
         this.updateCashbackData(values);
 
@@ -263,6 +310,40 @@ Component.register("flizpay-settings", {
       } finally {
         this.isLoading = false;
       }
+    },
+
+    /**
+     * Loads the hosted script once; the preview cards then render exactly what FLIZpay
+     * returns for this shop.
+     */
+    async loadPlacementPreview(this: ComponentInstance): Promise<void> {
+      try {
+        this.placementPreview = await this.flizpayApiService.getPlacementPreview(
+          this.currentSalesChannelId,
+        );
+      } catch {
+        this.placementPreview = null;
+        return;
+      }
+
+      const scriptId = "flizpay-placement-script";
+      if (!document.getElementById(scriptId)) {
+        const script = document.createElement("script");
+        script.id = scriptId;
+        script.async = true;
+        script.src = this.placementPreview.scriptUrl;
+        document.head.append(script);
+      }
+    },
+
+    previewLineText(this: ComponentInstance, kind: string, key: string): string {
+      const price = new Intl.NumberFormat(this.previewLocale, {
+        style: "currency",
+        currency: this.previewCurrency,
+      }).format(this.previewAmount / 100);
+      const label = key ? this.$tc(`flizpay-config.onSiteMessaging.${key}`) : "";
+
+      return kind === "price" ? `${label} ${price}`.trim() : label;
     },
 
     updateCashbackData(
@@ -318,6 +399,10 @@ Component.register("flizpay-settings", {
               this.config.displayCashbackInTitle,
             [FLIZ_CONFIG.SHOW_LOGO]: this.config.showLogo,
             [FLIZ_CONFIG.SHOW_SUBTITLE]: this.config.showSubtitle,
+            [FLIZ_CONFIG.PLACEMENT_PRODUCT]: this.config.placementProduct,
+            [FLIZ_CONFIG.PLACEMENT_LISTING]: this.config.placementListing,
+            [FLIZ_CONFIG.PLACEMENT_CART]: this.config.placementCart,
+            [FLIZ_CONFIG.PLACEMENT_MINI_CART]: this.config.placementMiniCart,
           },
           this.currentSalesChannelId,
         );
@@ -354,6 +439,9 @@ Component.register("flizpay-settings", {
               response.data.webhookUrl || this.config.webhookUrl;
             this.config.webhookAlive = response.data.webhookAlive || false;
             this.cashbackData = response.data.cashback;
+            if (this.placementPreview) {
+              this.placementPreview.publicId = response.data.publicId;
+            }
           }
 
           // Start polling for webhook verification
@@ -440,6 +528,7 @@ Component.register("flizpay-settings", {
       this.stopWebhookPolling();
       this.connectionState = ConnectionState.IDLE;
       this.loadConfig();
+      this.loadPlacementPreview();
     },
 
     goToPaymentMethods(this: ComponentInstance): void {

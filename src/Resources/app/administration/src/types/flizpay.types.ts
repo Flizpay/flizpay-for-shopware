@@ -20,6 +20,15 @@ export interface FlizpayConfig {
   displayCashbackInTitle: boolean;
   showLogo: boolean;
   showSubtitle: boolean;
+  placementProduct: boolean;
+  placementListing: boolean;
+  placementCart: boolean;
+  placementMiniCart: boolean;
+}
+
+export interface FlizpayPlacementPreview {
+  scriptUrl: string;
+  publicId: string;
 }
 
 export interface FlizpayCashbackData {
@@ -39,6 +48,7 @@ export interface FlizpayTestConnectionResponse {
     webhookUrl: string | null;
     webhookAlive: boolean;
     cashback: FlizpayCashbackData | null;
+    publicId: string;
   };
   error?: string;
 }
