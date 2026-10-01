@@ -25,6 +25,12 @@ services:
         arguments:
             - '@Shopware\Core\System\SystemConfig\SystemConfigService'
 
+    FLIZpay\FlizpayForShopware\Service\FlizpayPlacementService:
+        arguments:
+            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayApiService'
+            - '@cache.object'
+
     FLIZpay\FlizpayForShopware\Service\FlizpayWebhookService:
         arguments:
             - '@Shopware\Core\System\SystemConfig\SystemConfigService'
@@ -59,6 +65,7 @@ services:
             - '@FLIZpay\FlizpayForShopware\Service\FlizpayApiService'
             - '@monolog.logger'
             - '@FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter'
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayPlacementService'
         calls:
             - [setContainer, ['@service_container']]
         tags:
@@ -75,5 +82,11 @@ services:
         arguments:
             - '@FLIZpay\FlizpayForShopware\Service\FlizpayCashbackHelper'
             - '@monolog.logger'
+        tags:
+            - kernel.event_subscriber
+
+    FLIZpay\FlizpayForShopware\Subscriber\PlacementSubscriber:
+        arguments:
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayPlacementService'
         tags:
             - kernel.event_subscriber

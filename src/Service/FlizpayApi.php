@@ -83,7 +83,8 @@ class FlizpayApi
     private function init(): void
     {
         $this->httpClient = new Client([
-            "base_uri" => self::API_BASE_URL,
+            // FLIZPAY_API_BASE_URL points at a staging API.
+            "base_uri" => getenv("FLIZPAY_API_BASE_URL") ?: self::API_BASE_URL,
             "timeout" => 30,
             "headers" => [
                 "Content-Type" => "application/json",
@@ -144,6 +145,18 @@ class FlizpayApi
                     ],
                 ];
             },
+            "fetch_public_id" => function (?array $body): array {
+                return [
+                    "path" => "/business/public-id",
+                    "method" => "get",
+                    "options" => [
+                        "headers" => [
+                            "Content-type" => "application/json",
+                            "x-api-key" => $this->getApiKey(),
+                        ],
+                    ],
+                ];
+            },
         ];
     }
 
@@ -155,6 +168,7 @@ class FlizpayApi
      * - edit_business: Update business webhook URL
      * - create_transaction: Create a new payment transaction
      * - fetch_cashback_data: Retrieve cashback configuration
+     * - fetch_public_id: Retrieve the public id used by on-site messaging
      *
      * ----
      *
