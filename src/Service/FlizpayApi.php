@@ -2,6 +2,7 @@
 
 namespace FLIZpay\FlizpayForShopware\Service;
 
+use FLIZpay\FlizpayForShopware\FlizpayForShopware;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
@@ -86,7 +87,9 @@ class FlizpayApi
             "timeout" => 30,
             "headers" => [
                 "Content-Type" => "application/json",
-                "User-Agent" => "FlizpayShopware6/1.0.0",
+                "User-Agent" =>
+                    "FlizpayShopware6/" . FlizpayForShopware::getVersion(),
+                "X-FLIZpay-Plugin-Version" => FlizpayForShopware::getVersion(),
             ],
         ]);
 

@@ -116,7 +116,7 @@ class FlizpayForShopware extends Plugin
                 "edit_business",
                 [
                     "isActive" => $isActive,
-                    "pluginVersion" => $this->getVersion(),
+                    "pluginVersion" => self::getVersion(),
                 ],
                 false,
             );
@@ -172,9 +172,9 @@ class FlizpayForShopware extends Plugin
      *
      * @return string
      */
-    private function getVersion(): string
+    public static function getVersion(): string
     {
-        $composerFile = $this->getPath() . "/composer.json";
+        $composerFile = dirname(__DIR__) . "/composer.json";
         if (!file_exists($composerFile)) {
             return "1.0.0";
         }
