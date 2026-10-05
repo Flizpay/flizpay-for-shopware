@@ -35,7 +35,7 @@ Official FLIZpay payment plugin for Shopware 6.7+. Accept payments via FLIZpay a
 ### Via Composer (Recommended)
 
 ```bash
-composer require flizpay/flizpay-payment
+composer require flizpay/flizpay-for-shopware
 bin/console plugin:refresh
 bin/console plugin:install --activate FlizpayForShopware
 bin/console cache:clear
