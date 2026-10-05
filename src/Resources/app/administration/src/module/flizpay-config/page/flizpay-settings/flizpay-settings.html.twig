@@ -181,13 +181,13 @@
                         <span>
                             {{ $tc('flizpay-config.checkout.logoLabel') }}
                         </span>
-                        <sw-checkbox-field
-                            v-model="config.showLogo"
+                        <mt-checkbox
+                            v-model:checked="config.showLogo"
                             :label="$tc('flizpay-config.checkout.logoDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
                         >
-                        </sw-checkbox-field>
+                        </mt-checkbox>
                     </div>
                     {% endblock %}
 
@@ -196,13 +196,13 @@
                         <span>
                             {{ $tc('flizpay-config.checkout.subtitleLabel') }}
                         </span>
-                        <sw-checkbox-field
-                            v-model="config.showSubtitle"
+                        <mt-checkbox
+                            v-model:checked="config.showSubtitle"
                             :label="$tc('flizpay-config.checkout.subtitleDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
                         >
-                        </sw-checkbox-field>
+                        </mt-checkbox>
                     </div>
                     {% endblock %}
                 </sw-container>
@@ -261,22 +261,63 @@
                     gap="16px"
                     class="flizpay-checkout-settings"
                 >
-                    {% block flizpay_settings_placement_areas %}
-                    <div
-                        v-for="area in ['Product', 'Listing', 'Cart', 'MiniCart']"
-                        :key="area"
-                        class="flizpay-checkout-settings__option"
-                    >
+                    {% block flizpay_settings_placementproduct %}
+                    <div class="flizpay-checkout-settings__option">
                         <span>
-                            {{ $tc(`flizpay-config.onSiteMessaging.${area.toLowerCase()}Label`) }}
+                            {{ $tc('flizpay-config.onSiteMessaging.productLabel') }}
                         </span>
-                        <sw-checkbox-field
-                            v-model="config[`placement${area}`]"
-                            :label="$tc(`flizpay-config.onSiteMessaging.${area.toLowerCase()}Description`)"
+                        <mt-checkbox
+                            v-model:checked="config.placementProduct"
+                            :label="$tc('flizpay-config.onSiteMessaging.productDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
                         >
-                        </sw-checkbox-field>
+                        </mt-checkbox>
+                    </div>
+                    {% endblock %}
+
+                    {% block flizpay_settings_placementlisting %}
+                    <div class="flizpay-checkout-settings__option">
+                        <span>
+                            {{ $tc('flizpay-config.onSiteMessaging.listingLabel') }}
+                        </span>
+                        <mt-checkbox
+                            v-model:checked="config.placementListing"
+                            :label="$tc('flizpay-config.onSiteMessaging.listingDescription')"
+                            :disabled="isLoading"
+                            class="settings-checkbox-field"
+                        >
+                        </mt-checkbox>
+                    </div>
+                    {% endblock %}
+
+                    {% block flizpay_settings_placementcart %}
+                    <div class="flizpay-checkout-settings__option">
+                        <span>
+                            {{ $tc('flizpay-config.onSiteMessaging.cartLabel') }}
+                        </span>
+                        <mt-checkbox
+                            v-model:checked="config.placementCart"
+                            :label="$tc('flizpay-config.onSiteMessaging.cartDescription')"
+                            :disabled="isLoading"
+                            class="settings-checkbox-field"
+                        >
+                        </mt-checkbox>
+                    </div>
+                    {% endblock %}
+
+                    {% block flizpay_settings_placementminicart %}
+                    <div class="flizpay-checkout-settings__option">
+                        <span>
+                            {{ $tc('flizpay-config.onSiteMessaging.minicartLabel') }}
+                        </span>
+                        <mt-checkbox
+                            v-model:checked="config.placementMiniCart"
+                            :label="$tc('flizpay-config.onSiteMessaging.minicartDescription')"
+                            :disabled="isLoading"
+                            class="settings-checkbox-field"
+                        >
+                        </mt-checkbox>
                     </div>
                     {% endblock %}
                 </sw-container>
