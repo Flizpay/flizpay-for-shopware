@@ -6,7 +6,7 @@
 import type { AxiosInstance, AxiosResponse } from "axios";
 import type { LoginService } from "src/core/service/login.service";
 import type {
-  FlizpayPlacementPreview,
+  FlizpayWidgetPreview,
   FlizpayTestConnectionRequest,
   FlizpayTestConnectionResponse,
 } from "../types/flizpay.types";
@@ -54,16 +54,16 @@ class FlizpayApiService extends ApiService {
   /**
    * Script URL and public id for the on-site messaging preview
    */
-  public getPlacementPreview(
+  public getWidgetPreview(
     salesChannelId: string | null = null,
-  ): Promise<FlizpayPlacementPreview> {
+  ): Promise<FlizpayWidgetPreview> {
     return this.httpClient
-      .get<FlizpayPlacementPreview>(
-        `_action/${this.getApiBasePath()}/placement-preview`,
+      .get<FlizpayWidgetPreview>(
+        `_action/${this.getApiBasePath()}/widget-preview`,
         { headers: this.getBasicHeaders(), params: { salesChannelId } },
       )
-      .then((response: AxiosResponse<FlizpayPlacementPreview>) => {
-        return ApiService.handleResponse(response) as FlizpayPlacementPreview;
+      .then((response: AxiosResponse<FlizpayWidgetPreview>) => {
+        return ApiService.handleResponse(response) as FlizpayWidgetPreview;
       });
   }
 

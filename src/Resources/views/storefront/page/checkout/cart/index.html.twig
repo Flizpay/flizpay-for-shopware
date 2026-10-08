@@ -1,6 +1,6 @@
 {% sw_extends '@Storefront/storefront/page/checkout/cart/index.html.twig' %}
 
 {% block page_checkout_cart_action_proceed %}
-    {% sw_include '@Storefront/storefront/component/flizpay/placement.html.twig' with { slot: 'cart', amount: page.cart.price.totalPrice } %}
+    {% sw_include '@Storefront/storefront/component/flizpay/widget.html.twig' with { slot: 'cart', amount: page.cart.price.totalPrice } %}
     {{ parent() }}
 {% endblock %}

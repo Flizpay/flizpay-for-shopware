@@ -2,5 +2,5 @@
 
 {% block buy_widget_price %}
     {{ parent() }}
-    {% sw_include '@Storefront/storefront/component/flizpay/placement.html.twig' with { slot: 'product-price', amount: page.product.calculatedPrice.unitPrice } %}
+    {% sw_include '@Storefront/storefront/component/flizpay/widget.html.twig' with { slot: 'product-price', amount: page.product.calculatedPrice.unitPrice } %}
 {% endblock %}

@@ -216,41 +216,41 @@
                 class="flizpay-settings__messaging-card"
             >
                 {% block flizpay_settings_messaging_preview %}
-                <div class="flizpay-placement-preview">
+                <div class="flizpay-widget-preview">
                     <p
-                        v-if="!placementPreview || !placementPreview.publicId"
-                        class="flizpay-placement-preview__hint"
+                        v-if="!widgetPreview || !widgetPreview.publicId"
+                        class="flizpay-widget-preview__hint"
                     >
                         {{ $tc('flizpay-config.onSiteMessaging.previewUnavailable') }}
                     </p>
                     <template v-else>
                         <div
-                            v-for="preview in placementPreviews"
+                            v-for="preview in widgetPreviews"
                             v-show="config[preview.area]"
                             :key="preview.caption"
-                            class="flizpay-placement-preview__card"
+                            class="flizpay-widget-preview__card"
                         >
-                            <div class="flizpay-placement-preview__caption">
+                            <div class="flizpay-widget-preview__caption">
                                 {{ $tc(`flizpay-config.onSiteMessaging.${preview.caption}`) }}
                             </div>
                             <template v-for="(line, index) in preview.lines" :key="index">
-                                <fliz-placement
+                                <fliz-widget
                                     v-if="line[0] === 'slot'"
-                                    :data-public-id="placementPreview.publicId"
+                                    :data-public-id="widgetPreview.publicId"
                                     :data-slot="line[1]"
                                     :data-locale="previewLocale"
                                     :data-currency="previewCurrency"
                                     :data-amount="previewAmount"
-                                ></fliz-placement>
+                                ></fliz-widget>
                                 <div
                                     v-else
-                                    :class="`flizpay-placement-preview__${line[0]}`"
+                                    :class="`flizpay-widget-preview__${line[0]}`"
                                 >
                                     {{ previewLineText(line[0], line[1]) }}
                                 </div>
                             </template>
                         </div>
-                        <p class="flizpay-placement-preview__hint">
+                        <p class="flizpay-widget-preview__hint">
                             {{ $tc('flizpay-config.onSiteMessaging.hint') }}
                         </p>
                     </template>
@@ -261,13 +261,13 @@
                     gap="16px"
                     class="flizpay-checkout-settings"
                 >
-                    {% block flizpay_settings_placementproduct %}
+                    {% block flizpay_settings_widgetproduct %}
                     <div class="flizpay-checkout-settings__option">
                         <span>
                             {{ $tc('flizpay-config.onSiteMessaging.productLabel') }}
                         </span>
                         <mt-checkbox
-                            v-model:checked="config.placementProduct"
+                            v-model:checked="config.widgetProduct"
                             :label="$tc('flizpay-config.onSiteMessaging.productDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
@@ -276,13 +276,13 @@
                     </div>
                     {% endblock %}
 
-                    {% block flizpay_settings_placementlisting %}
+                    {% block flizpay_settings_widgetlisting %}
                     <div class="flizpay-checkout-settings__option">
                         <span>
                             {{ $tc('flizpay-config.onSiteMessaging.listingLabel') }}
                         </span>
                         <mt-checkbox
-                            v-model:checked="config.placementListing"
+                            v-model:checked="config.widgetListing"
                             :label="$tc('flizpay-config.onSiteMessaging.listingDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
@@ -291,13 +291,13 @@
                     </div>
                     {% endblock %}
 
-                    {% block flizpay_settings_placementcart %}
+                    {% block flizpay_settings_widgetcart %}
                     <div class="flizpay-checkout-settings__option">
                         <span>
                             {{ $tc('flizpay-config.onSiteMessaging.cartLabel') }}
                         </span>
                         <mt-checkbox
-                            v-model:checked="config.placementCart"
+                            v-model:checked="config.widgetCart"
                             :label="$tc('flizpay-config.onSiteMessaging.cartDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
@@ -306,13 +306,13 @@
                     </div>
                     {% endblock %}
 
-                    {% block flizpay_settings_placementminicart %}
+                    {% block flizpay_settings_widgetminicart %}
                     <div class="flizpay-checkout-settings__option">
                         <span>
                             {{ $tc('flizpay-config.onSiteMessaging.minicartLabel') }}
                         </span>
                         <mt-checkbox
-                            v-model:checked="config.placementMiniCart"
+                            v-model:checked="config.widgetMiniCart"
                             :label="$tc('flizpay-config.onSiteMessaging.minicartDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"

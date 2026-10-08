@@ -2,16 +2,16 @@
 
 namespace FLIZpay\FlizpayForShopware\Subscriber;
 
-use FLIZpay\FlizpayForShopware\Service\FlizpayPlacementService;
+use FLIZpay\FlizpayForShopware\Service\FlizpayWidgetService;
 use Shopware\Storefront\Event\StorefrontRenderEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Makes `flizpayPlacement` available to every storefront template.
+ * Makes `flizpayWidget` available to every storefront template.
  */
-class PlacementSubscriber implements EventSubscriberInterface
+class WidgetSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly FlizpayPlacementService $placementService)
+    public function __construct(private readonly FlizpayWidgetService $widgetService)
     {
     }
 
@@ -23,8 +23,8 @@ class PlacementSubscriber implements EventSubscriberInterface
     public function onStorefrontRender(StorefrontRenderEvent $event): void
     {
         $event->setParameter(
-            "flizpayPlacement",
-            $this->placementService->getPlacement($event->getSalesChannelContext(), $event->getRequest()),
+            "flizpayWidget",
+            $this->widgetService->getWidget($event->getSalesChannelContext(), $event->getRequest()),
         );
     }
 }

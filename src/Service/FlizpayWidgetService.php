@@ -9,23 +9,23 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * On-site messaging: the storefront only prints <fliz-placement> slots, FLIZpay decides what each one shows.
+ * On-site messaging: the storefront only prints <fliz-widget> slots, FLIZpay decides what each one shows.
  *
  * @since 1.1.0
  */
-class FlizpayPlacementService
+class FlizpayWidgetService
 {
     private const CONFIG_PREFIX = "FlizpayForShopware.config.";
     private const RETRY_CACHE_KEY = "flizpay_public_id_retry";
     private const SCRIPT_URL = "https://app.flizpay.de/web-components/v1/flizpay.js";
 
-    /** Placement slot => the merchant setting that switches it on. Slots not listed follow any enabled area. */
+    /** Widget slot => the merchant setting that switches it on. Slots not listed follow any enabled area. */
     public const SLOT_AREAS = [
-        "listing-item" => "placementListing",
-        "product-price" => "placementProduct",
-        "product-page" => "placementProduct",
-        "cart" => "placementCart",
-        "mini-cart" => "placementMiniCart",
+        "listing-item" => "widgetListing",
+        "product-price" => "widgetProduct",
+        "product-page" => "widgetProduct",
+        "cart" => "widgetCart",
+        "mini-cart" => "widgetMiniCart",
     ];
 
     public const SLOTS = [
@@ -48,7 +48,7 @@ class FlizpayPlacementService
     /**
      * Everything the templates need, or null when nothing should render.
      */
-    public function getPlacement(SalesChannelContext $context, Request $request): ?array
+    public function getWidget(SalesChannelContext $context, Request $request): ?array
     {
         $salesChannelId = $context->getSalesChannelId();
 
@@ -84,10 +84,10 @@ class FlizpayPlacementService
         ];
     }
 
-    /** FLIZPAY_PLACEMENT_SCRIPT_URL points at a staging build. */
+    /** FLIZPAY_WIDGET_SCRIPT_URL points at a staging build. */
     public function getScriptUrl(): string
     {
-        return getenv("FLIZPAY_PLACEMENT_SCRIPT_URL") ?: self::SCRIPT_URL;
+        return getenv("FLIZPAY_WIDGET_SCRIPT_URL") ?: self::SCRIPT_URL;
     }
 
     /**

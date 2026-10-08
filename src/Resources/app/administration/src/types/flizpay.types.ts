@@ -20,13 +20,13 @@ export interface FlizpayConfig {
   displayCashbackInTitle: boolean;
   showLogo: boolean;
   showSubtitle: boolean;
-  placementProduct: boolean;
-  placementListing: boolean;
-  placementCart: boolean;
-  placementMiniCart: boolean;
+  widgetProduct: boolean;
+  widgetListing: boolean;
+  widgetCart: boolean;
+  widgetMiniCart: boolean;
 }
 
-export interface FlizpayPlacementPreview {
+export interface FlizpayWidgetPreview {
   scriptUrl: string;
   publicId: string;
 }
