@@ -1,0 +1,9 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+{% block base_body_script %}
+    {{ parent() }}
+    {% if flizpayWidget is defined and flizpayWidget %}
+        {# Sets no cookies or storage; the attributes keep consent managers from blocking it. #}
+        <script async src="{{ flizpayWidget.scriptUrl }}" data-cookieconsent="ignore" data-borlabs-cookie-script-blocker-ignore></script>
+    {% endif %}
+{% endblock %}

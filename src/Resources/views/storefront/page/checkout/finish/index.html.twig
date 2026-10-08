@@ -1,0 +1,6 @@
+{% sw_extends '@Storefront/storefront/page/checkout/finish/index.html.twig' %}
+
+{% block page_checkout_finish_details %}
+    {{ parent() }}
+    {% sw_include '@Storefront/storefront/component/flizpay/widget.html.twig' with { slot: 'order-received', amount: page.order.amountTotal } %}
+{% endblock %}
