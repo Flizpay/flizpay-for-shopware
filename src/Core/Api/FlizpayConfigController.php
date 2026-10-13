@@ -286,6 +286,7 @@ class FlizpayConfigController extends AbstractController
             // Step 4: Public id for on-site messaging (non-critical). A new key gets a fresh id.
             $this->systemConfigService->set("FlizpayForShopware.config.publicId", "", $salesChannelId);
             $publicId = $this->widgetService->ensurePublicId($salesChannelId);
+            $this->widgetService->reportAreas($salesChannelId);
 
             $this->logger->info("=== SUCCESS: All steps completed ===", [
                 "webhookUrl" => $webhookUrl,

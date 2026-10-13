@@ -121,6 +121,20 @@ class FlizpayWidgetService
         return $publicId;
     }
 
+    /**
+     * Report the enabled areas to FLIZpay. Non-critical: failures only skip the report.
+     */
+    public function reportAreas(?string $salesChannelId): void
+    {
+        $areas = ["widgetProduct" => "product", "widgetListing" => "listing", "widgetCart" => "cart", "widgetMiniCart" => "mini-cart"];
+        $enabled = array_keys(array_filter($areas, fn(string $_, string $key) => $this->areaEnabled($key, $salesChannelId), ARRAY_FILTER_USE_BOTH));
+
+        try {
+            $this->apiService->report_widget_areas(array_map(fn(string $key) => $areas[$key], $enabled));
+        } catch (\Throwable) {
+        }
+    }
+
     /** Areas default to on, like their settings fields. */
     private function areaEnabled(string $area, ?string $salesChannelId): bool
     {
