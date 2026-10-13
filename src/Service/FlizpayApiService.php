@@ -93,14 +93,6 @@ class FlizpayApiService
         ];
     }
 
-    /**
-     * Report which widget areas the merchant enabled (usage analytics).
-     */
-    public function report_widget_areas(array $areas): void
-    {
-        $this->client->dispatch("edit_business", ["pluginWidgetAreas" => $areas], false);
-    }
-
     public function fetch_public_id(): ?string
     {
         $response = $this->client->dispatch("fetch_public_id", null, false);
