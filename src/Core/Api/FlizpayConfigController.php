@@ -3,6 +3,7 @@
 namespace FLIZpay\FlizpayForShopware\Core\Api;
 
 use FLIZpay\FlizpayForShopware\Service\FlizpayApiService;
+use FLIZpay\FlizpayForShopware\Service\FlizpayWidgetService;
 use FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\Context;
@@ -19,17 +20,41 @@ class FlizpayConfigController extends AbstractController
     private FlizpayApiService $flizpayApiService;
     private LoggerInterface $logger;
     private FlizpaySentryReporter $sentryReporter;
+    private FlizpayWidgetService $widgetService;
 
     public function __construct(
         SystemConfigService $systemConfigService,
         FlizpayApiService $flizpayApiService,
         LoggerInterface $logger,
         FlizpaySentryReporter $sentryReporter,
+        FlizpayWidgetService $widgetService,
     ) {
         $this->systemConfigService = $systemConfigService;
         $this->flizpayApiService = $flizpayApiService;
         $this->logger = $logger;
         $this->sentryReporter = $sentryReporter;
+        $this->widgetService = $widgetService;
+    }
+
+    /**
+     * What the settings page needs to preview on-site messages with the real hosted script.
+     */
+    #[
+        Route(
+            path: "/api/_action/flizpay/widget-preview",
+            name: "api.action.flizpay.widget_preview",
+            defaults: ["_routeScope" => ["api"]],
+            methods: ["GET"],
+        ),
+    ]
+    public function widgetPreview(Request $request): JsonResponse
+    {
+        $salesChannelId = $request->query->get("salesChannelId") ?: null;
+
+        return new JsonResponse([
+            "scriptUrl" => $this->widgetService->getScriptUrl(),
+            "publicId" => $this->widgetService->ensurePublicId($salesChannelId, true),
+        ]);
     }
 
     /**
@@ -258,6 +283,10 @@ class FlizpayConfigController extends AbstractController
                 );
             }
 
+            // Step 4: Public id for on-site messaging (non-critical). A new key gets a fresh id.
+            $this->systemConfigService->set("FlizpayForShopware.config.publicId", "", $salesChannelId);
+            $publicId = $this->widgetService->ensurePublicId($salesChannelId);
+
             $this->logger->info("=== SUCCESS: All steps completed ===", [
                 "webhookUrl" => $webhookUrl,
                 "webhookAlive" => false,
@@ -273,6 +302,7 @@ class FlizpayConfigController extends AbstractController
                     "webhookAlive" => false, // Will be set to true by test webhook
                     "requiresWebhookTest" => true,
                     "cashback" => $cashbackData,
+                    "publicId" => $publicId,
                 ],
             ]);
         } catch (\Exception $e) {

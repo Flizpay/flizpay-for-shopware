@@ -1,0 +1,10 @@
+{# On-site messaging slot. What it shows is decided by FLIZpay; the shop only passes what it knows. #}
+{% if flizpayWidget is defined and flizpayWidget and flizpayWidget.slots[slot] %}
+    <fliz-widget data-public-id="{{ flizpayWidget.publicId }}"
+                    data-slot="{{ slot }}"
+                    data-locale="{{ flizpayWidget.locale }}"
+                    data-currency="{{ flizpayWidget.currency }}"
+                    data-platform="{{ flizpayWidget.platform }}"
+                    data-plugin-version="{{ flizpayWidget.pluginVersion }}"
+                    {% if amount is defined and amount is not null %}data-amount="{{ (amount * (10 ** flizpayWidget.decimals))|round }}"{% endif %}></fliz-widget>
+{% endif %}

@@ -1,0 +1,6 @@
+{% sw_extends '@Storefront/storefront/component/checkout/offcanvas-cart-summary.html.twig' %}
+
+{% block component_offcanvas_summary_total %}
+    {{ parent() }}
+    {% sw_include '@Storefront/storefront/component/flizpay/widget.html.twig' with { slot: 'mini-cart', amount: page.cart.price.totalPrice } %}
+{% endblock %}

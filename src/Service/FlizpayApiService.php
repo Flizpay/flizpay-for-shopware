@@ -93,6 +93,13 @@ class FlizpayApiService
         ];
     }
 
+    public function fetch_public_id(): ?string
+    {
+        $response = $this->client->dispatch("fetch_public_id", null, false);
+
+        return !empty($response["publicId"]) ? (string) $response["publicId"] : null;
+    }
+
     /**
      * Create a FLIZpay transaction and return the redirect URL.
      *
