@@ -1,9 +1,15 @@
 {% sw_extends '@Storefront/storefront/component/payment/payment-method.html.twig' %}
 
 {% set isFlizpay = payment.handlerIdentifier == 'FLIZpay\\FlizpayForShopware\\Handler\\FlizpayPaymentHandler' %}
-{% set flizpayCashback = page.extensions.flizpayCashback %}
+{% set flizpayCheckout = page.extensions.flizpayCheckout|default(null) %}
+{# Without a public id the element has nothing to fetch, so the plain label stays. #}
+{% set flizpayCheckoutReady = isFlizpay and flizpayCheckout and flizpayCheckout.publicId %}
 
 {% block component_payment_method_label %}
+    {# The extended template defines `selectedPaymentMethodId` in its own body, which Twig runs
+       after this file's top-level code. Resolving it here keeps it in scope for the nested blocks. #}
+    {% set isSelectedPaymentMethod = payment.id is same as(selectedPaymentMethodId is defined ? selectedPaymentMethodId : context.paymentMethod.id) %}
+
     <label class="form-check-label payment-method-label{% if isFlizpay %} flizpay-payment-method-label{% endif %}"
            for="paymentMethod{{ payment.id }}">
 
@@ -28,24 +34,25 @@
                 {% set paymentName = payment.translated.name %}
 
                 {% block component_payment_method_name %}
-                    <strong>{{ paymentName }}</strong>
+                    <strong>
+                        {%- if flizpayCheckoutReady and flizpayCheckout.showHeadline -%}
+                            {% sw_include '@Storefront/storefront/component/flizpay/checkout.html.twig' with { surface: 'title' } %}
+                        {%- else -%}
+                            {{ paymentName }}
+                        {%- endif -%}
+                    </strong>
                 {% endblock %}
 
-                {# For FLIZpay: show subtitle (description) when selected if enabled #}
-                {% if isFlizpay and payment.id is same as(selectedPaymentMethodId) %}
-                    {% if flizpayCashback %}
+                {# FLIZpay: the offer text replaces the stored description, and only while selected. #}
+                {% if isFlizpay %}
+                    {% if flizpayCheckoutReady and flizpayCheckout.showDescription and isSelectedPaymentMethod %}
                         {% block flizpay_payment_method_description_text %}
-                            <p class="mb-0 flizpay-description-text">
-                                {% if flizpayCashback.showSubtitle and payment.translated.description %}
-                                    {{ payment.translated.description|raw }}
-                                {% endif %}
-                                <a href="https://flizpay.de/shoppers"
-                                   target="_blank"
-                                   rel="noopener noreferrer">{{ 'flizpay.checkout.moreInfo'|trans|sw_sanitize }}</a>
-                            </p>
+                            <div class="flizpay-description-text">
+                                {% sw_include '@Storefront/storefront/component/flizpay/checkout.html.twig' with { surface: 'description' } %}
+                            </div>
                         {% endblock %}
                     {% endif %}
-                {% elseif payment.translated.description and payment.id is same as(selectedPaymentMethodId) %}
+                {% elseif payment.translated.description and isSelectedPaymentMethod %}
                     {% set paymentDescription = payment.translated.description|raw %}
                     {% set paymentDescriptionTitle = payment.translated.description|striptags|raw %}
                     {% set paymentDescription = (paymentDescription|length > 75 ? paymentDescription[:75] ~ ' ...' : paymentDescription) %}
@@ -58,7 +65,7 @@
         {% endblock %}
 
         {# FLIZpay logo badge on the right - controlled by showLogo setting #}
-        {% if isFlizpay and flizpayCashback and flizpayCashback.showLogo %}
+        {% if isFlizpay and flizpayCheckout and flizpayCheckout.showLogo %}
             {% block flizpay_logo_badge %}
                <img src="{{ asset('bundles/flizpayforshopware/fliz-checkout-logo.svg', 'asset') }}" alt="FLIZpay Logo">
             {% endblock %}

@@ -9,7 +9,8 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * On-site messaging: the storefront only prints <fliz-widget> slots, FLIZpay decides what each one shows.
+ * One hosted bundle registers both <fliz-widget> and <fliz-checkout>. The storefront only prints the
+ * elements and what it already knows; FLIZpay decides what each one shows.
  *
  * @since 1.1.0
  */
@@ -46,28 +47,23 @@ class FlizpayWidgetService
     }
 
     /**
-     * Everything the templates need, or null when nothing should render.
+     * Everything the on-site messaging templates need, or null when nothing should render.
+     *
+     * Areas being switched off no longer stops this: the same script powers the checkout text.
      */
     public function getWidget(SalesChannelContext $context, Request $request): ?array
     {
         $salesChannelId = $context->getSalesChannelId();
+        $publicId = $this->resolvePublicId($salesChannelId);
 
-        if (
-            $this->systemConfig->getString(self::CONFIG_PREFIX . "apiKey", $salesChannelId) === "" ||
-            !$this->anyAreaEnabled($salesChannelId)
-        ) {
-            return null;
-        }
-
-        $publicId = $this->ensurePublicId($salesChannelId, true);
-        if ($publicId === "") {
+        if ($publicId === null) {
             return null;
         }
 
         $slots = [];
         foreach (self::SLOTS as $slot) {
             $area = self::SLOT_AREAS[$slot] ?? null;
-            $slots[$slot] = $area === null || $this->areaEnabled($area, $salesChannelId);
+            $slots[$slot] = $area === null || $this->settingEnabled($area, $salesChannelId);
         }
 
         $currency = $context->getCurrency();
@@ -81,6 +77,29 @@ class FlizpayWidgetService
             "platform" => "shopware",
             "pluginVersion" => FlizpayForShopware::getVersion(),
             "slots" => $slots,
+        ];
+    }
+
+    /**
+     * Everything the checkout templates need. The display toggles are always present; an empty
+     * `publicId` means the element cannot render and the templates keep the plain label.
+     *
+     * Carries no credentials and no locally stored discount rules; <fliz-checkout> owns the offer text.
+     *
+     * @param float|null $total Gross total of the cart or order being paid, in the sales channel currency.
+     */
+    public function getCheckout(SalesChannelContext $context, Request $request, ?float $total): array
+    {
+        $salesChannelId = $context->getSalesChannelId();
+
+        return [
+            "publicId" => $this->resolvePublicId($salesChannelId) ?? "",
+            "locale" => $request->getLocale(),
+            "amount" => $this->toMinorUnits($total, $context->getCurrency()->getIsoCode()),
+            "showHeadline" => $this->settingEnabled("showHeadline", $salesChannelId),
+            // Still stored as `showSubtitle`, so merchants who switched it off keep that choice.
+            "showDescription" => $this->settingEnabled("showSubtitle", $salesChannelId),
+            "showLogo" => $this->settingEnabled("showLogo", $salesChannelId),
         ];
     }
 
@@ -121,22 +140,38 @@ class FlizpayWidgetService
         return $publicId;
     }
 
-    /** Areas default to on, like their settings fields. */
-    private function areaEnabled(string $area, ?string $salesChannelId): bool
+    /** The public id both components need, or null when this sales channel has nothing to show. */
+    private function resolvePublicId(?string $salesChannelId): ?string
     {
-        $value = $this->systemConfig->get(self::CONFIG_PREFIX . $area, $salesChannelId);
-
-        return $value === null || (bool) $value;
-    }
-
-    private function anyAreaEnabled(?string $salesChannelId): bool
-    {
-        foreach (array_unique(self::SLOT_AREAS) as $area) {
-            if ($this->areaEnabled($area, $salesChannelId)) {
-                return true;
-            }
+        if ($this->systemConfig->getString(self::CONFIG_PREFIX . "apiKey", $salesChannelId) === "") {
+            return null;
         }
 
-        return false;
+        $publicId = $this->ensurePublicId($salesChannelId, true);
+
+        return $publicId === "" ? null : $publicId;
+    }
+
+    /**
+     * <fliz-checkout> takes integer cents and formats them as euros, so other currencies send no
+     * amount at all and get the offer text without a sample saving.
+     */
+    private function toMinorUnits(?float $total, string $currencyIso): ?int
+    {
+        if ($total === null || $currencyIso !== "EUR" || !is_finite($total)) {
+            return null;
+        }
+
+        $cents = round($total * 100);
+
+        return $cents >= 0 && $cents <= 9007199254740991 ? (int) $cents : null;
+    }
+
+    /** Display settings default to on, like their settings fields. */
+    private function settingEnabled(string $setting, ?string $salesChannelId): bool
+    {
+        $value = $this->systemConfig->get(self::CONFIG_PREFIX . $setting, $salesChannelId);
+
+        return $value === null || (bool) $value;
     }
 }

@@ -102,14 +102,13 @@
     },
     "checkout": {
       "title": "Checkout Settings",
-      "previewUpTo": "Up to",
-      "previewOff": "off",
-      "previewSubtitleBoth": "Secure payments in direct collaboration with your bank. After your first FLIZ payment, you will continue to receive {standardAmount}% Discount.",
-      "previewSubtitleFirst": "Secure payments in direct collaboration with your bank. No additional discount after your first FLIZ payment.",
-      "previewSubtitleStandard": "Secure payments in direct collaboration with your bank. {standardAmount}% Discount for every FLIZ payment.",
-      "previewSubtitleNone": "Secure payments in direct collaboration with your bank. We support small businesses and keep your data private – stored securely in Germany.",
+      "previewUnavailable": "Save your API key to load the preview.",
+      "previewHint": "Preview for a €100 basket. The text comes straight from FLIZpay and follows your active discount programs.",
+      "labelTitle": "Title",
       "labelLogo": "Logo",
       "labelSubtitle": "Subtitle",
+      "titleLabel": "Title",
+      "titleDescription": "Show description in title",
       "logoLabel": "Logo",
       "logoDescription": "Show FLIZpay logo in checkout",
       "subtitleLabel": "Subtitle",
@@ -138,15 +137,9 @@
       "previewCheckout": "Proceed to checkout",
       "previewViewCart": "View cart"
     },
-    "cashback": {
+    "discount": {
       "title": "Discount Information",
-      "displayInTitleLabel": "Show Discount in Payment Method Title",
-      "displayInTitleHelpText": "When enabled, the discount percentage will be shown in the payment method name at checkout (e.g., 'FLIZpay – Save up to 5%').",
-      "currentRates": "Current Discount Rates:",
-      "firstPurchase": "First Purchase",
-      "standard": "Standard",
-      "noCashback": "No discount is currently configured. Enable discounts in your FLIZpay dashboard to offer savings to your customers.",
-      "configureLink": "Configure discount rates in your <a href='https://app.flizpay.de/cashback' target='_blank' rel='noopener'>FLIZpay Dashboard</a>."
+      "configureLink": "Your discount programs are managed in your <a href='https://app.flizpay.de/discount' target='_blank' rel='noopener'>FLIZpay Dashboard</a> and appear at checkout right away."
     },
     "reconfiguration": {
       "warning": "You already have an integration set up. By reconfiguring, you will invalidate all current ongoing payment responses. Proceed?",

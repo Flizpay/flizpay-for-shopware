@@ -124,51 +124,72 @@
             >
                 {% block flizpay_settings_checkout_preview %}
                 <div class="flizpay-checkout-preview">
-                    <div class="flizpay-checkout-preview__box">
-                        <div class="flizpay-checkout-preview__row">
-                            <div class="flizpay-checkout-preview__radio"></div>
-                            <span class="flizpay-checkout-preview__name">FLIZpay</span>
-                            <span
-                                v-if="hasCashback"
-                                class="flizpay-checkout-preview__title"
+                    <p
+                        v-if="!widgetPreview || !widgetPreview.publicId"
+                        class="flizpay-checkout-preview__hint"
+                    >
+                        {{ $tc('flizpay-config.checkout.previewUnavailable') }}
+                    </p>
+                    <template v-else>
+                        <div class="flizpay-checkout-preview__box">
+                            <div class="flizpay-checkout-preview__row">
+                                <div class="flizpay-checkout-preview__radio"></div>
+                                <span class="flizpay-checkout-preview__name">
+                                    <fliz-checkout
+                                        v-if="config.showHeadline"
+                                        :data-public-id="widgetPreview.publicId"
+                                        data-surface="title"
+                                        :data-locale="previewLocale"
+                                        :data-amount="previewCheckoutAmount"
+                                    >FLIZpay</fliz-checkout>
+                                    <template v-else>FLIZpay</template>
+                                </span>
+                                <span
+                                    v-if="config.showLogo"
+                                    class="flizpay-checkout-preview__logo"
+                                >
+                                    <img
+                                        :src="assetFilter('flizpayforshopware/administration/static/fliz-checkout-logo.svg')"
+                                        alt="FLIZpay Logo"
+                                    />
+                                </span>
+                            </div>
+                            <div
+                                v-if="config.showSubtitle"
+                                class="flizpay-checkout-preview__subtitle"
                             >
-                                -
-                                {{ $tc('flizpay-config.checkout.previewUpTo') }}
-                                {{ maxCashbackValue }}
-                                %
-                                {{ $tc('flizpay-config.checkout.previewOff') }}
+                                <fliz-checkout
+                                    :data-public-id="widgetPreview.publicId"
+                                    data-surface="description"
+                                    :data-locale="previewLocale"
+                                    :data-amount="previewCheckoutAmount"
+                                ></fliz-checkout>
+                            </div>
+                        </div>
+                        <div class="flizpay-checkout-preview__labels">
+                            <span
+                                v-if="config.showHeadline"
+                                class="flizpay-checkout-preview__label flizpay-checkout-preview__label--title"
+                            >
+                                {{ $tc('flizpay-config.checkout.labelTitle') }}
                             </span>
                             <span
                                 v-if="config.showLogo"
-                                class="flizpay-checkout-preview__logo"
+                                class="flizpay-checkout-preview__label flizpay-checkout-preview__label--logo"
                             >
-                                <img
-                                    :src="assetFilter('flizpayforshopware/administration/static/fliz-checkout-logo.svg')"
-                                    alt="FLIZpay Logo"
-                                />
+                                {{ $tc('flizpay-config.checkout.labelLogo') }}
+                            </span>
+                            <span
+                                v-if="config.showSubtitle"
+                                class="flizpay-checkout-preview__label flizpay-checkout-preview__label--subtitle"
+                            >
+                                {{ $tc('flizpay-config.checkout.labelSubtitle') }}
                             </span>
                         </div>
-                        <div
-                            v-if="config.showSubtitle"
-                            class="flizpay-checkout-preview__subtitle"
-                        >
-                            {{ previewSubtitle }}
-                        </div>
-                    </div>
-                    <div class="flizpay-checkout-preview__labels">
-                        <span
-                            v-if="config.showLogo"
-                            class="flizpay-checkout-preview__label flizpay-checkout-preview__label--logo"
-                        >
-                            {{ $tc('flizpay-config.checkout.labelLogo') }}
-                        </span>
-                        <span
-                            v-if="config.showSubtitle"
-                            class="flizpay-checkout-preview__label flizpay-checkout-preview__label--subtitle"
-                        >
-                            {{ $tc('flizpay-config.checkout.labelSubtitle') }}
-                        </span>
-                    </div>
+                        <p class="flizpay-checkout-preview__hint">
+                            {{ $tc('flizpay-config.checkout.previewHint') }}
+                        </p>
+                    </template>
                 </div>
                 {% endblock %}
                 <sw-container
@@ -184,6 +205,21 @@
                         <mt-checkbox
                             v-model:checked="config.showLogo"
                             :label="$tc('flizpay-config.checkout.logoDescription')"
+                            :disabled="isLoading"
+                            class="settings-checkbox-field"
+                        >
+                        </mt-checkbox>
+                    </div>
+                    {% endblock %}
+
+                    {% block flizpay_settings_show_headline %}
+                    <div class="flizpay-checkout-settings__option">
+                        <span>
+                            {{ $tc('flizpay-config.checkout.titleLabel') }}
+                        </span>
+                        <mt-checkbox
+                            v-model:checked="config.showHeadline"
+                            :label="$tc('flizpay-config.checkout.titleDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
                         >
@@ -347,55 +383,22 @@
             </sw-card>
             {% endblock %}
 
-            {% block flizpay_settings_cashback_card %}
+            {% block flizpay_settings_discount_card %}
             <sw-card
-                :title="$tc('flizpay-config.cashback.title')"
+                :title="$tc('flizpay-config.discount.title')"
                 :isLoading="isLoading"
-                class="flizpay-settings__cashback-card"
+                class="flizpay-settings__discount-card"
             >
                 <sw-container
                     columns="1fr"
                     gap="16px"
                 >
-                    {% block flizpay_settings_cashback_info %}
-                    <div class="flizpay-cashback-info">
-                        <sw-alert
-                            v-if="hasCashback"
-                            variant="info"
-                            class="flizpay-cashback-info__alert"
-                        >
-                            <strong>
-                                {{ $tc('flizpay-config.cashback.currentRates') }}
-                            </strong>
-                            <ul class="flizpay-cashback-info__list">
-                                <li
-                                    v-if="cashbackData.first_purchase_amount > 0"
-                                >
-                                    {{ $tc('flizpay-config.cashback.firstPurchase') }}
-                                    :
-                                    {{ cashbackData.first_purchase_amount }}
-                                    %
-                                </li>
-                                <li v-if="cashbackData.standard_amount > 0">
-                                    {{ $tc('flizpay-config.cashback.standard') }}
-                                    :
-                                    {{ cashbackData.standard_amount }}
-                                    %
-                                </li>
-                            </ul>
-                        </sw-alert>
-                        <sw-alert
-                            v-else
-                            variant="warning"
-                            class="flizpay-cashback-info__no-cashback"
-                        >
-                            {{ $tc('flizpay-config.cashback.noCashback') }}
-                        </sw-alert>
-                        <p
-                            class="flizpay-cashback-info__configure"
-                            v-html="$tc('flizpay-config.cashback.configureLink')"
-                        ></p>
-                    </div>
+                    {% block flizpay_settings_discount_info %}
+                    {# Programs live in the FLIZpay dashboard; the shop never stores a copy. #}
+                    <p
+                        class="flizpay-discount-info__configure"
+                        v-html="$tc('flizpay-config.discount.configureLink')"
+                    ></p>
                     {% endblock %}
                 </sw-container>
             </sw-card>
