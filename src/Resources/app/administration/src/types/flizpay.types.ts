@@ -17,6 +17,7 @@ export interface FlizpayConfig {
   webhookKey: string;
   paymentFlow: "redirect" | "embedded";
   enableLogging: boolean;
+  /** Stored as `displayCashbackInTitle`; switches the <fliz-checkout> title surface on. */
   showHeadline: boolean;
   showLogo: boolean;
   /** Stored as `showSubtitle`; switches the <fliz-checkout> description surface on. */

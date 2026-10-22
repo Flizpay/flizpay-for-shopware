@@ -63,12 +63,27 @@ class PaymentMethodInstaller
         $criteria->addFilter(
             new EqualsFilter("handlerIdentifier", FlizpayPaymentHandler::class),
         );
+        $criteria->addAssociation("translations");
+        $criteria->setLimit(1);
 
         $paymentMethod = $this->paymentMethodRepository
             ->search($criteria, $context)
             ->first();
 
-        if (!$paymentMethod || $paymentMethod->getDescription() !== self::LEGACY_DESCRIPTION) {
+        if (!$paymentMethod) {
+            return;
+        }
+
+        $translations = [];
+        foreach ($paymentMethod->getTranslations() ?? [] as $translation) {
+            if ($translation->getDescription() === self::LEGACY_DESCRIPTION) {
+                $translations[$translation->getLanguageId()] = [
+                    "description" => "",
+                ];
+            }
+        }
+
+        if (!$translations) {
             return;
         }
 
@@ -76,7 +91,7 @@ class PaymentMethodInstaller
             [
                 [
                     "id" => $paymentMethod->getId(),
-                    "description" => "",
+                    "translations" => $translations,
                 ],
             ],
             $context,

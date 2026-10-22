@@ -41,7 +41,8 @@ const FLIZ_CONFIG = {
   WEBHOOK_URL: "FlizpayForShopware.config.webhookUrl",
   WEBHOOK_ALIVE: "FlizpayForShopware.config.webhookAlive",
   ENABLE_LOGGING: "FlizpayForShopware.config.enableLogging",
-  SHOW_HEADLINE: "FlizpayForShopware.config.showHeadline",
+  // Still stored as `displayCashbackInTitle`, so merchants who switched it off keep that choice.
+  SHOW_HEADLINE: "FlizpayForShopware.config.displayCashbackInTitle",
   SHOW_LOGO: "FlizpayForShopware.config.showLogo",
   SHOW_SUBTITLE: "FlizpayForShopware.config.showSubtitle",
   WIDGET_PRODUCT: "FlizpayForShopware.config.widgetProduct",
@@ -108,6 +109,7 @@ interface ComponentComputed {
   previewLocale: string;
   previewAmount: number;
   previewCheckoutAmount: number;
+  previewCheckoutAmountLabel: string;
   previewCurrency: string;
 }
 
@@ -195,6 +197,15 @@ Component.register("flizpay-settings", {
     /** A round sample basket, so the preview shows what a real saving looks like. */
     previewCheckoutAmount(): number {
       return 10000;
+    },
+
+    /** The same basket as `previewCheckoutAmount`, for the hint that explains the preview. */
+    previewCheckoutAmountLabel(this: ComponentInstance): string {
+      return new Intl.NumberFormat(this.previewLocale, {
+        style: "currency",
+        currency: this.previewCurrency,
+        maximumFractionDigits: 0,
+      }).format(this.previewCheckoutAmount / 100);
     },
 
     previewCurrency(): string {

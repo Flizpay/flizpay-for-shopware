@@ -11,28 +11,13 @@
         flex: 1;
     }
 
-    // <fliz-checkout> renders into a shadow root, so its text is styled through its parts.
+    // <fliz-checkout> sets `font: inherit; color: inherit` on its shadow root, so the container
+    // styles below reach its text. Everything inside is FLIZpay's to style.
     .flizpay-description-text {
         margin-top: 0.5rem;
         font-size: 0.9rem;
         color: $flizpay-navy-blue;
         line-height: 1.5;
-
-        fliz-checkout::part(headline) {
-            font-weight: 600;
-        }
-
-        fliz-checkout::part(detail),
-        fliz-checkout::part(progress) {
-            margin-top: 0.25rem;
-        }
-
-        fliz-checkout::part(more-info) {
-            display: inline-block;
-            margin-top: 0.25rem;
-            color: inherit;
-            text-decoration: underline;
-        }
     }
 }
 

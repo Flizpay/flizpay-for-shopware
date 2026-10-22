@@ -43,16 +43,17 @@ class FlizpayWidgetService
         private readonly SystemConfigService $systemConfig,
         private readonly FlizpayApiService $apiService,
         private readonly CacheItemPoolInterface $cache,
-    ) {
-    }
+    ) {}
 
     /**
      * Everything the on-site messaging templates need, or null when nothing should render.
      *
      * Areas being switched off no longer stops this: the same script powers the checkout text.
      */
-    public function getWidget(SalesChannelContext $context, Request $request): ?array
-    {
+    public function getWidget(
+        SalesChannelContext $context,
+        Request $request,
+    ): ?array {
         $salesChannelId = $context->getSalesChannelId();
         $publicId = $this->resolvePublicId($salesChannelId);
 
@@ -63,7 +64,8 @@ class FlizpayWidgetService
         $slots = [];
         foreach (self::SLOTS as $slot) {
             $area = self::SLOT_AREAS[$slot] ?? null;
-            $slots[$slot] = $area === null || $this->settingEnabled($area, $salesChannelId);
+            $slots[$slot] =
+                $area === null || $this->settingEnabled($area, $salesChannelId);
         }
 
         $currency = $context->getCurrency();
@@ -88,17 +90,29 @@ class FlizpayWidgetService
      *
      * @param float|null $total Gross total of the cart or order being paid, in the sales channel currency.
      */
-    public function getCheckout(SalesChannelContext $context, Request $request, ?float $total): array
-    {
+    public function getCheckout(
+        SalesChannelContext $context,
+        Request $request,
+        ?float $total,
+    ): array {
         $salesChannelId = $context->getSalesChannelId();
 
         return [
             "publicId" => $this->resolvePublicId($salesChannelId) ?? "",
             "locale" => $request->getLocale(),
-            "amount" => $this->toMinorUnits($total, $context->getCurrency()->getIsoCode()),
-            "showHeadline" => $this->settingEnabled("showHeadline", $salesChannelId),
+            "amount" => $this->toMinorUnits(
+                $total,
+                $context->getCurrency()->getIsoCode(),
+            ),
+            "showHeadline" => $this->settingEnabled(
+                "displayCashbackInTitle",
+                $salesChannelId,
+            ),
             // Still stored as `showSubtitle`, so merchants who switched it off keep that choice.
-            "showDescription" => $this->settingEnabled("showSubtitle", $salesChannelId),
+            "showDescription" => $this->settingEnabled(
+                "showSubtitle",
+                $salesChannelId,
+            ),
             "showLogo" => $this->settingEnabled("showLogo", $salesChannelId),
         ];
     }
@@ -112,9 +126,14 @@ class FlizpayWidgetService
     /**
      * Fetch and store the public id when missing. Throttled callers back off for an hour after a failure.
      */
-    public function ensurePublicId(?string $salesChannelId, bool $throttled = false): string
-    {
-        $publicId = $this->systemConfig->getString(self::CONFIG_PREFIX . "publicId", $salesChannelId);
+    public function ensurePublicId(
+        ?string $salesChannelId,
+        bool $throttled = false,
+    ): string {
+        $publicId = $this->systemConfig->getString(
+            self::CONFIG_PREFIX . "publicId",
+            $salesChannelId,
+        );
         if ($publicId !== "") {
             return $publicId;
         }
@@ -135,7 +154,11 @@ class FlizpayWidgetService
             return "";
         }
 
-        $this->systemConfig->set(self::CONFIG_PREFIX . "publicId", $publicId, $salesChannelId);
+        $this->systemConfig->set(
+            self::CONFIG_PREFIX . "publicId",
+            $publicId,
+            $salesChannelId,
+        );
 
         return $publicId;
     }
@@ -143,7 +166,12 @@ class FlizpayWidgetService
     /** The public id both components need, or null when this sales channel has nothing to show. */
     private function resolvePublicId(?string $salesChannelId): ?string
     {
-        if ($this->systemConfig->getString(self::CONFIG_PREFIX . "apiKey", $salesChannelId) === "") {
+        if (
+            $this->systemConfig->getString(
+                self::CONFIG_PREFIX . "apiKey",
+                $salesChannelId,
+            ) === ""
+        ) {
             return null;
         }
 
@@ -168,9 +196,14 @@ class FlizpayWidgetService
     }
 
     /** Display settings default to on, like their settings fields. */
-    private function settingEnabled(string $setting, ?string $salesChannelId): bool
-    {
-        $value = $this->systemConfig->get(self::CONFIG_PREFIX . $setting, $salesChannelId);
+    private function settingEnabled(
+        string $setting,
+        ?string $salesChannelId,
+    ): bool {
+        $value = $this->systemConfig->get(
+            self::CONFIG_PREFIX . $setting,
+            $salesChannelId,
+        );
 
         return $value === null || (bool) $value;
     }

@@ -179,23 +179,6 @@ $radio-button-color: #798490;
                 font-size: 13px;
                 color: $flizpay-navy-blue;
                 line-height: 1.5;
-
-                // <fliz-checkout> renders into a shadow root, so its text is styled through its parts.
-                fliz-checkout::part(headline) {
-                    font-weight: 600;
-                }
-
-                fliz-checkout::part(detail),
-                fliz-checkout::part(progress) {
-                    margin-top: 2px;
-                }
-
-                fliz-checkout::part(more-info) {
-                    display: inline-block;
-                    margin-top: 4px;
-                    color: inherit;
-                    text-decoration: underline;
-                }
             }
 
             &__labels {

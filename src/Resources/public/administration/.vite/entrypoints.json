@@ -3,11 +3,11 @@
   "entryPoints": {
     "flizpay-for-shopware": {
       "css": [
-        "/bundles/flizpayforshopware/administration/assets/flizpay-for-shopware-CL0UEIRl.css"
+        "/bundles/flizpayforshopware/administration/assets/flizpay-for-shopware-DFuqm5Cz.css"
       ],
       "dynamic": [],
       "js": [
-        "/bundles/flizpayforshopware/administration/assets/flizpay-for-shopware-C4ogly45.js"
+        "/bundles/flizpayforshopware/administration/assets/flizpay-for-shopware-BZcBxJYk.js"
       ],
       "legacy": false,
       "preload": []

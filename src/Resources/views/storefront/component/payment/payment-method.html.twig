@@ -6,10 +6,6 @@
 {% set flizpayCheckoutReady = isFlizpay and flizpayCheckout and flizpayCheckout.publicId %}
 
 {% block component_payment_method_label %}
-    {# The extended template defines `selectedPaymentMethodId` in its own body, which Twig runs
-       after this file's top-level code. Resolving it here keeps it in scope for the nested blocks. #}
-    {% set isSelectedPaymentMethod = payment.id is same as(selectedPaymentMethodId is defined ? selectedPaymentMethodId : context.paymentMethod.id) %}
-
     <label class="form-check-label payment-method-label{% if isFlizpay %} flizpay-payment-method-label{% endif %}"
            for="paymentMethod{{ payment.id }}">
 
@@ -45,14 +41,14 @@
 
                 {# FLIZpay: the offer text replaces the stored description, and only while selected. #}
                 {% if isFlizpay %}
-                    {% if flizpayCheckoutReady and flizpayCheckout.showDescription and isSelectedPaymentMethod %}
+                    {% if flizpayCheckoutReady and flizpayCheckout.showDescription and payment.id is same as(selectedPaymentMethodId) %}
                         {% block flizpay_payment_method_description_text %}
                             <div class="flizpay-description-text">
                                 {% sw_include '@Storefront/storefront/component/flizpay/checkout.html.twig' with { surface: 'description' } %}
                             </div>
                         {% endblock %}
                     {% endif %}
-                {% elseif payment.translated.description and isSelectedPaymentMethod %}
+                {% elseif payment.translated.description and payment.id is same as(selectedPaymentMethodId) %}
                     {% set paymentDescription = payment.translated.description|raw %}
                     {% set paymentDescriptionTitle = payment.translated.description|striptags|raw %}
                     {% set paymentDescription = (paymentDescription|length > 75 ? paymentDescription[:75] ~ ' ...' : paymentDescription) %}
