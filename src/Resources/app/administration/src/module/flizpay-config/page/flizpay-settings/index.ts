@@ -11,7 +11,6 @@ import type {
   FlizpayConfig,
   FlizpayWidgetPreview,
   FlizpayTestConnectionResponse,
-  PaymentFlowOption,
   SystemConfigValues,
 } from "FlizpayForShopware/types/flizpay.types";
 import type FlizpayApiService from "FlizpayForShopware/service/flizpay-api.service";
@@ -41,10 +40,9 @@ const FLIZ_CONFIG = {
   WEBHOOK_URL: "FlizpayForShopware.config.webhookUrl",
   WEBHOOK_ALIVE: "FlizpayForShopware.config.webhookAlive",
   ENABLE_LOGGING: "FlizpayForShopware.config.enableLogging",
-  // Still stored as `displayCashbackInTitle`, so merchants who switched it off keep that choice.
-  SHOW_HEADLINE: "FlizpayForShopware.config.displayCashbackInTitle",
+  SHOW_HEADLINE: "FlizpayForShopware.config.showHeadline",
   SHOW_LOGO: "FlizpayForShopware.config.showLogo",
-  SHOW_SUBTITLE: "FlizpayForShopware.config.showSubtitle",
+  SHOW_DESCRIPTION: "FlizpayForShopware.config.showDescription",
   WIDGET_PRODUCT: "FlizpayForShopware.config.widgetProduct",
   WIDGET_LISTING: "FlizpayForShopware.config.widgetListing",
   WIDGET_CART: "FlizpayForShopware.config.widgetCart",
@@ -104,7 +102,6 @@ interface ComponentMethods {
 }
 
 interface ComponentComputed {
-  paymentFlowOptions: PaymentFlowOption[];
   alertConfig: AlertConfig | null;
   previewLocale: string;
   previewAmount: number;
@@ -134,12 +131,10 @@ Component.register("flizpay-settings", {
         apiKey: "",
         webhookUrl: "",
         webhookAlive: false,
-        webhookKey: "",
-        paymentFlow: "redirect",
         enableLogging: false,
         showHeadline: true,
         showLogo: true,
-        showSubtitle: true,
+        showDescription: true,
         widgetProduct: true,
         widgetListing: true,
         widgetCart: true,
@@ -245,8 +240,8 @@ Component.register("flizpay-settings", {
           (values[FLIZ_CONFIG.SHOW_HEADLINE] as boolean) ?? true;
         this.config.showLogo =
           (values[FLIZ_CONFIG.SHOW_LOGO] as boolean) ?? true;
-        this.config.showSubtitle =
-          (values[FLIZ_CONFIG.SHOW_SUBTITLE] as boolean) ?? true;
+        this.config.showDescription =
+          (values[FLIZ_CONFIG.SHOW_DESCRIPTION] as boolean) ?? true;
         this.config.widgetProduct =
           (values[FLIZ_CONFIG.WIDGET_PRODUCT] as boolean) ?? true;
         this.config.widgetListing =
@@ -340,7 +335,7 @@ Component.register("flizpay-settings", {
             [FLIZ_CONFIG.ENABLE_LOGGING]: this.config.enableLogging,
             [FLIZ_CONFIG.SHOW_HEADLINE]: this.config.showHeadline,
             [FLIZ_CONFIG.SHOW_LOGO]: this.config.showLogo,
-            [FLIZ_CONFIG.SHOW_SUBTITLE]: this.config.showSubtitle,
+            [FLIZ_CONFIG.SHOW_DESCRIPTION]: this.config.showDescription,
             [FLIZ_CONFIG.WIDGET_PRODUCT]: this.config.widgetProduct,
             [FLIZ_CONFIG.WIDGET_LISTING]: this.config.widgetListing,
             [FLIZ_CONFIG.WIDGET_CART]: this.config.widgetCart,

@@ -5,7 +5,6 @@ namespace FLIZpay\FlizpayForShopware;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
-use Shopware\Core\Framework\Plugin\Context\UpdateContext;
 use Shopware\Core\Framework\Plugin\Context\ActivateContext;
 use Shopware\Core\Framework\Plugin\Context\DeactivateContext;
 use Shopware\Core\Framework\Plugin\Util\PluginIdProvider;
@@ -29,13 +28,6 @@ class FlizpayForShopware extends Plugin
         $this->getPaymentMethodInstaller()->install(
             $installContext->getContext(),
         );
-    }
-
-    public function update(UpdateContext $updateContext): void
-    {
-        parent::update($updateContext);
-
-        $this->getPaymentMethodInstaller()->update($updateContext->getContext());
     }
 
     public function uninstall(UninstallContext $uninstallContext): void

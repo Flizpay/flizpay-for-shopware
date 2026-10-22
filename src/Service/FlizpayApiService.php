@@ -75,24 +75,6 @@ class FlizpayApiService
         ];
     }
 
-    public function fetch_cashback_data(): ?array
-    {
-        $response = $this->client->dispatch("fetch_cashback_data", null, false);
-
-        $cashback = $response["cashback"] ?? null;
-
-        if (!is_array($cashback) || ($cashback["unit"] ?? null) !== "percentage") {
-            return null;
-        }
-
-        return [
-            "first_purchase_amount" => floatval(
-                $cashback["firstPurchaseAmount"] ?? 0,
-            ),
-            "standard_amount" => floatval($cashback["amount"] ?? 0),
-        ];
-    }
-
     public function fetch_public_id(): ?string
     {
         $response = $this->client->dispatch("fetch_public_id", null, false);

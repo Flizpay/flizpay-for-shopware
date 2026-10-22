@@ -29,33 +29,15 @@
       "title": "API-Konfiguration",
       "apiKeyLabel": "API-Schlüssel",
       "apiKeyPlaceholder": "Gib deinen FLIZpay API-Schlüssel ein...",
-      "apiKeyHelpText": "Dein FLIZpay API-Schlüssel zur Authentifizierung. Erhalte diesen in deinem FLIZpay-Händler-Dashboard.",
-      "apiBaseUrlLabel": "API-Basis-URL",
-      "apiBaseUrlPlaceholder": "https://api.flizpay.de",
-      "apiBaseUrlHelpText": "Leer lassen für Produktions-URL. Für Tests, benutzerdefinierte Endpunkt eingeben.",
-      "sandboxModeLabel": "Sandbox-Modus",
-      "sandboxModeHelpText": "Aktiviere dies, um die Zahlungsabwicklung in der Sandbox-Umgebung zu testen.",
-      "webhookUrlLabel": "Webhook-URL",
-      "webhookUrlHelpText": "Automatisch konfigurierte Webhook-URL (nur lesen).",
-      "webhookAliveLabel": "Verbindungsstatus",
-      "webhookAliveYes": "✓ Webhook-Verbindung verifiziert - Zahlungsmethode ist aktiv",
-      "webhookAliveNo": "⚠ Warte auf Webhook-Verifizierung - Zahlungsmethode ist deaktiviert",
-      "webhookAliveHelpText": "FLIZpay muss erfolgreich einen Test-Webhook senden, bevor Zahlungen verarbeitet werden können."
+      "apiKeyHelpText": "Dein FLIZpay API-Schlüssel zur Authentifizierung. Erhalte diesen in deinem FLIZpay-Händler-Dashboard."
     },
     "options": {
       "title": "Zahlungsoptionen",
-      "paymentFlowLabel": "Zahlungsablauf",
-      "paymentFlowHelpText": "Wähle aus, wie Kunden mit dem Zahlungsprozess interagieren.",
       "enableLoggingLabel": "Debug-Protokollierung aktivieren",
       "enableLoggingHelpText": "Aktiviere detaillierte Protokollierung zur Fehlerbehebung (in Produktion deaktivieren)."
     },
-    "paymentFlow": {
-      "redirect": "Weiterleitung zu FLIZpay",
-      "embedded": "Eingebettete Kasse"
-    },
     "actions": {
-      "save": "Speichern",
-      "testConnection": "Verbindung testen"
+      "save": "Speichern"
     },
     "connection": {
       "failed": "Verbindung fehlgeschlagen. Bitte überprüfe deinen API-Schlüssel und versuche es erneut.",
@@ -63,42 +45,6 @@
       "webhookVerified": "Webhook verifiziert! Zahlungsmethode ist jetzt aktiv.",
       "webhookTimeout": "Zeitüberschreitung bei der Webhook-Verifizierung. Bitte überprüfe deine Serverkonfiguration oder versuche es erneut.",
       "webhookTimeoutNotification": "Webhook wurde nicht innerhalb von 30 Sekunden verifiziert. Die Verbindung funktioniert möglicherweise trotzdem - bitte überprüfe deine Server-Logs."
-    },
-    "displayOptions": {
-      "title": "Anzeige-Optionen",
-      "displayLogoLabel": "FLIZpay-Logo anzeigen",
-      "displayLogoHelpText": "FLIZpay-Logo bei der Zahlungsmethode im Checkout anzeigen.",
-      "displayHeadlineLabel": "Rabattüberschrift anzeigen",
-      "displayHeadlineHelpText": "Rabattprozentsatz im Titel der Zahlungsmethode anzeigen.",
-      "displayDescriptionLabel": "Beschreibung anzeigen",
-      "displayDescriptionHelpText": "Zahlungsmethoden-Beschreibung im Checkout anzeigen."
-    },
-    "advancedSettings": {
-      "title": "Erweiterte Einstellungen",
-      "orderStatusLabel": "Anfänglicher Bestellstatus",
-      "orderStatusPending": "Ausstehend",
-      "orderStatusDraft": "Entwurf",
-      "orderStatusHelpText": "Anfänglicher Bestellstatus beim Erstellen der Zahlung.",
-      "sentryEnabledLabel": "Fehlerberichterstattung",
-      "sentryEnabledHelpText": "Anonyme Fehlerberichte senden, um die Plugin-Qualität zu verbessern."
-    },
-    "expressCheckout": {
-      "title": "Express-Checkout",
-      "enabledLabel": "Express-Checkout aktivieren",
-      "enabledHelpText": "Kunden ermöglichen, den Warenkorb zu überspringen und direkt von Produktseiten zur Kasse zu gehen.",
-      "pagesLabel": "Anzeigen auf Seiten",
-      "pageProduct": "Produktseite",
-      "pageCart": "Warenkorbseite",
-      "themeLabel": "Button-Design",
-      "themeLight": "Hell",
-      "themeDark": "Dunkel"
-    },
-    "cashbackInfo": {
-      "title": "Rabattinformationen",
-      "firstPurchaseLabel": "Erstkaufrabatt",
-      "standardLabel": "Standardrabatt",
-      "notConfigured": "Kein Rabatt konfiguriert",
-      "refreshButton": "Rabattdaten aktualisieren"
     },
     "checkout": {
       "title": "Checkout-Einstellungen",
@@ -137,17 +83,11 @@
       "previewCheckout": "Zur Kasse",
       "previewViewCart": "Warenkorb ansehen"
     },
-    "discount": {
-      "title": "Rabattinformationen",
-      "configureLink": "Deine Rabattprogramme verwaltest du im <a href='https://app.flizpay.de/discount' target='_blank' rel='noopener'>FLIZpay-Dashboard</a>; sie erscheinen sofort im Checkout."
-    },
     "reconfiguration": {
-      "warning": "Du hast bereits eine Integration eingerichtet. Durch die Neukonfiguration werden alle aktuellen laufenden Zahlungsantworten ungültig. Fortfahren?",
-      "title": "Neukonfiguration bestätigen"
+      "warning": "Du hast bereits eine Integration eingerichtet. Durch die Neukonfiguration werden alle aktuellen laufenden Zahlungsantworten ungültig. Fortfahren?"
     },
     "notifications": {
-      "saveSuccess": "Einstellungen erfolgreich gespeichert.",
-      "connectionSuccess": "Erfolgreich mit FLIZpay API verbunden."
+      "saveSuccess": "Einstellungen erfolgreich gespeichert."
     },
     "errors": {
       "loadFailed": "Einstellungen konnten nicht geladen werden.",

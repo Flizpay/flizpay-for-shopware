@@ -1,0 +1,7 @@
+{
+  "flizpay": {
+    "order": {
+      "discountLineItem": "FLIZpay Discount (%percent%%)"
+    }
+  }
+}

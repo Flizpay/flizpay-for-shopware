@@ -14,14 +14,12 @@ export interface FlizpayConfig {
   apiKey: string;
   webhookUrl: string;
   webhookAlive: boolean;
-  webhookKey: string;
-  paymentFlow: "redirect" | "embedded";
   enableLogging: boolean;
-  /** Stored as `displayCashbackInTitle`; switches the <fliz-checkout> title surface on. */
+  /** Switches the <fliz-checkout> title surface on. */
   showHeadline: boolean;
   showLogo: boolean;
-  /** Stored as `showSubtitle`; switches the <fliz-checkout> description surface on. */
-  showSubtitle: boolean;
+  /** Switches the <fliz-checkout> description surface on. */
+  showDescription: boolean;
   widgetProduct: boolean;
   widgetListing: boolean;
   widgetCart: boolean;
@@ -31,11 +29,6 @@ export interface FlizpayConfig {
 export interface FlizpayWidgetPreview {
   scriptUrl: string;
   publicId: string;
-}
-
-export interface FlizpayCashbackData {
-  first_purchase_amount: number;
-  standard_amount: number;
 }
 
 export interface FlizpayTestConnectionRequest {
@@ -49,20 +42,9 @@ export interface FlizpayTestConnectionResponse {
   data?: {
     webhookUrl: string | null;
     webhookAlive: boolean;
-    cashback: FlizpayCashbackData | null;
     publicId: string;
   };
   error?: string;
-}
-
-export interface FlizpayConnectionTestResult {
-  type: "success" | "error" | "info" | "warning";
-  message: string;
-}
-
-export interface PaymentFlowOption {
-  value: "redirect" | "embedded";
-  label: string;
 }
 
 export type SystemConfigValue = string | boolean | number | null | undefined;

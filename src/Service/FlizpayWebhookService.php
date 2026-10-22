@@ -16,24 +16,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Handles FLIZpay webhook events including payment completion and cashback application.
+ * Handles FLIZpay webhook events including payment completion and discount application.
  *
- * The cashback implementation follows below approach:
+ * The discount implementation follows below approach:
  * 1. Add a credit line item to show the discount (like WooCommerce's "Rabatt" row)
  * 2. Update the order total to reflect the final amount paid
  *
  * This ensures the customer sees a clear breakdown:
  * - Original product price (unchanged)
- * - FLIZpay Cashback discount (negative line item)
- * - Final total (reduced by cashback)
+ * - FLIZpay discount (negative line item)
+ * - Final total (reduced by the discount)
  */
 
 class FlizpayWebhookService
 {
     private const FLIZ_SIGNATURE_HEADER = "X-FLIZ-SIGNATURE";
-    private const CONFIG_PREFIX = "FlizpayForShopware.config.";
 
     private SystemConfigService $systemConfig;
     private EntityRepository $orderRepository;
@@ -41,6 +41,7 @@ class FlizpayWebhookService
     private OrderTransactionStateHandler $transactionStateHandler;
     private LoggerInterface $logger;
     private FlizpaySentryReporter $sentryReporter;
+    private TranslatorInterface $translator;
 
     /**
      * Initialize webhook service
@@ -51,6 +52,7 @@ class FlizpayWebhookService
      * @param $transactionStateHandler
      * @param $logger
      * @param $sentryReporter
+     * @param $translator
      *
      * @since 1.0.0
      */
@@ -61,6 +63,7 @@ class FlizpayWebhookService
         OrderTransactionStateHandler $transactionStateHandler,
         LoggerInterface $logger,
         FlizpaySentryReporter $sentryReporter,
+        TranslatorInterface $translator,
     ) {
         $this->systemConfig = $systemConfig;
         $this->orderRepository = $orderRepository;
@@ -68,6 +71,7 @@ class FlizpayWebhookService
         $this->transactionStateHandler = $transactionStateHandler;
         $this->logger = $logger;
         $this->sentryReporter = $sentryReporter;
+        $this->translator = $translator;
     }
 
     /**
@@ -175,50 +179,37 @@ class FlizpayWebhookService
             return $this->handleTest($data);
         }
 
+        // `updateCashbackInfo` is FLIZpay's own field name for this event, so it stays as sent.
         if (isset($data["updateCashbackInfo"])) {
-            return $this->handleCashbackUpdate($data);
+            return $this->handleDiscountInfo($data);
         }
 
         return $this->handlePaymentComplete($data, $context);
     }
 
     /**
-     * Handle cashback update webhook
-     * Updates stored cashback data from FLIZpay
+     * Handle the legacy discount notification webhook.
+     *
+     * The shop no longer keeps a copy of the discount programs: <fliz-checkout> owns the offer
+     * text and the webhook payload carries the applied discount per payment. The event is still
+     * acknowledged so FLIZpay does not retry it, but nothing is persisted and it never reaches
+     * payment settlement.
      *
      * @param array $data
      * @return JsonResponse
      *
      * @since 1.1.0
      */
-    private function handleCashbackUpdate(array $data): JsonResponse
+    private function handleDiscountInfo(array $data): JsonResponse
     {
-        $this->logger->info("Cashback update webhook received", [
+        $this->logger->info("Legacy discount notification received", [
             "data" => $data,
-        ]);
-
-        $firstPurchaseAmount = (float) ($data["firstPurchaseAmount"] ?? 0);
-        $standardAmount = (float) ($data["amount"] ?? 0);
-
-        $cashbackData = json_encode([
-            "first_purchase_amount" => $firstPurchaseAmount,
-            "standard_amount" => $standardAmount,
-        ]);
-
-        $this->systemConfig->set(
-            self::CONFIG_PREFIX . "cashbackData",
-            $cashbackData,
-        );
-
-        $this->logger->info("Cashback data updated", [
-            "first_purchase_amount" => $firstPurchaseAmount,
-            "standard_amount" => $standardAmount,
         ]);
 
         return new JsonResponse(
             [
                 "success" => true,
-                "message" => "Cashback information updated",
+                "message" => "Discount information acknowledged",
             ],
             Response::HTTP_OK,
         );
@@ -294,6 +285,8 @@ class FlizpayWebhookService
             $criteria = new Criteria([$orderId]);
             $criteria->addAssociation("transactions");
             $criteria->addAssociation("lineItems");
+            // The discount line is labelled in the language the order was placed in.
+            $criteria->addAssociation("language.locale");
 
             /** @var OrderEntity|null $order */
             $order = $this->orderRepository
@@ -354,28 +347,28 @@ class FlizpayWebhookService
                 return new JsonResponse(["success" => true], Response::HTTP_OK);
             }
 
-            // Idempotency guard: if cashback was already applied, this is a duplicate webhook
+            // Idempotency guard: if the discount was already applied, this is a duplicate webhook
             $customFields = $order->getCustomFields() ?? [];
-            if (!empty($customFields["flizpay_cashback_applied"])) {
+            if (!empty($customFields["flizpay_discount_applied"])) {
                 $this->logger->info(
-                    "Duplicate webhook detected, cashback already applied",
+                    "Duplicate webhook detected, discount already applied",
                     [
                         "orderId" => $orderId,
-                        "previousCashback" =>
-                            $customFields["flizpay_cashback_applied"],
+                        "previousDiscount" =>
+                            $customFields["flizpay_discount_applied"],
                     ],
                 );
                 return new JsonResponse(["success" => true], Response::HTTP_OK);
             }
 
-            // Apply cashback BEFORE marking as paid, because the paid state
+            // Apply the discount BEFORE marking as paid, because the paid state
             // transition triggers Shopware's order confirmation email.
-            // The email must include the updated totals with cashback applied.
+            // The email must include the updated totals with the discount applied.
             if (isset($data["originalAmount"]) && isset($data["amount"])) {
                 $discount =
                     (float) $data["originalAmount"] - (float) $data["amount"];
 
-                $this->logger->info("Cashback fields present in webhook", [
+                $this->logger->info("Discount fields present in webhook", [
                     "orderId" => $orderId,
                     "originalAmount" => $data["originalAmount"],
                     "amount" => $data["amount"],
@@ -383,19 +376,19 @@ class FlizpayWebhookService
                 ]);
 
                 if ($discount > 0) {
-                    $this->logger->info("Applying cashback to order", [
+                    $this->logger->info("Applying discount to order", [
                         "orderId" => $orderId,
                         "discount" => $discount,
                     ]);
 
-                    $this->applyCashbackToOrder(
+                    $this->applyDiscountToOrder(
                         $order,
                         $data,
                         $discount,
                         $context,
                     );
                 } else {
-                    $this->logger->warning("No cashback discount detected", [
+                    $this->logger->warning("No discount detected", [
                         "orderId" => $orderId,
                         "originalAmount" => $data["originalAmount"],
                         "amount" => $data["amount"],
@@ -404,7 +397,7 @@ class FlizpayWebhookService
                 }
             } else {
                 $this->logger->warning(
-                    "Cashback fields missing from webhook payload",
+                    "Discount fields missing from webhook payload",
                     [
                         "orderId" => $orderId,
                         "hasOriginalAmount" => isset($data["originalAmount"]),
@@ -414,7 +407,7 @@ class FlizpayWebhookService
                 );
             }
 
-            // Mark as paid AFTER cashback is applied so the confirmation
+            // Mark as paid AFTER the discount is applied so the confirmation
             // email (triggered by this state change) reflects the correct total
             try {
                 $this->transactionStateHandler->paid(
@@ -461,9 +454,9 @@ class FlizpayWebhookService
     }
 
     /**
-     * Apply cashback discount to order (matching WooCommerce behavior)
+     * Apply the FLIZpay discount to an order (matching WooCommerce behavior)
      *
-     * This adds a credit/discount line item to show the FLIZ cashback as a separate row
+     * This adds a credit/discount line item to show the FLIZ discount as a separate row
      * (like WooCommerce's "Rabatt" line), and updates the order total accordingly.
      * The original product prices remain unchanged - only a discount line is added.
      *
@@ -474,7 +467,7 @@ class FlizpayWebhookService
      *
      * @since 1.1.0
      */
-    private function applyCashbackToOrder(
+    private function applyDiscountToOrder(
         OrderEntity $order,
         array $data,
         float $discount,
@@ -484,8 +477,8 @@ class FlizpayWebhookService
         $finalAmount = (float) $data["amount"];
         $currency = $data["currency"] ?? "EUR";
 
-        // Calculate cashback percentage
-        $cashbackPercent = ($discount / $originalAmount) * 100;
+        // Calculate discount percentage
+        $discountPercent = ($discount / $originalAmount) * 100;
 
         // Get the original price object to preserve tax information
         $originalPrice = $order->getPrice();
@@ -542,7 +535,7 @@ class FlizpayWebhookService
 
             if ($residual !== 0.0) {
                 $this->logger->info(
-                    "Rounding residual detected in cashback distribution",
+                    "Rounding residual detected in discount distribution",
                     [
                         "orderId" => $order->getId(),
                         "discount" => $discount,
@@ -587,14 +580,14 @@ class FlizpayWebhookService
             }
         }
 
-        $this->logger->info("Applying cashback to order", [
+        $this->logger->info("Applying discount to order", [
             "orderId" => $order->getId(),
             "originalAmount" => $originalAmount,
             "finalAmount" => $finalAmount,
             "discount" => $discount,
             "totalDiscountNet" => $totalDiscountNet,
             "totalDiscountTax" => $totalDiscountTax,
-            "cashbackPercent" => $cashbackPercent,
+            "discountPercent" => $discountPercent,
             "perRateDiscounts" => $perRateDiscounts,
             "taxStatus" => $taxStatus,
         ]);
@@ -642,17 +635,17 @@ class FlizpayWebhookService
             }
         }
 
-        // Create a credit line item for the cashback discount (negative amount)
+        // Create a credit line item for the discount (negative amount)
         // This matches WooCommerce's "Rabatt" display
         $creditLineItemId = Uuid::randomHex();
         $creditLineItem = [
             "id" => $creditLineItemId,
             "orderId" => $order->getId(),
-            "identifier" => "flizpay-cashback-" . $order->getId(),
+            "identifier" => "flizpay-discount-" . $order->getId(),
             "referencedId" => null,
             "productId" => null,
             "quantity" => 1,
-            "label" => "FLIZpay Cashback (" . round($cashbackPercent, 0) . "%)",
+            "label" => $this->getDiscountLabel($order, $discountPercent),
             "type" => LineItem::CREDIT_LINE_ITEM_TYPE,
             "good" => false,
             "removable" => false,
@@ -675,8 +668,8 @@ class FlizpayWebhookService
                 "taxRules" => $creditTaxRules,
             ],
             "payload" => [
-                "flizpay_cashback" => true,
-                "cashback_percent" => round($cashbackPercent, 2),
+                "flizpay_discount" => true,
+                "discount_percent" => round($discountPercent, 2),
                 "original_amount" => $originalAmount,
             ],
         ];
@@ -745,9 +738,9 @@ class FlizpayWebhookService
                 "id" => $order->getId(),
                 "price" => $newPriceData,
                 "customFields" => [
-                    "flizpay_cashback_applied" => $discount,
-                    "flizpay_cashback_percent" => round($cashbackPercent, 2),
-                    "flizpay_cashback_currency" => $currency,
+                    "flizpay_discount_applied" => $discount,
+                    "flizpay_discount_percent" => round($discountPercent, 2),
+                    "flizpay_discount_currency" => $currency,
                     "flizpay_original_amount" => $originalAmount,
                     "flizpay_credit_line_item_id" => $creditLineItemId,
                 ],
@@ -756,7 +749,7 @@ class FlizpayWebhookService
 
         $this->orderRepository->update($orderUpdateData, $context);
 
-        $this->logger->info("FLIZ Cashback Applied", [
+        $this->logger->info("FLIZ Discount Applied", [
             "orderId" => $order->getId(),
             "creditLineItemId" => $creditLineItemId,
             "originalAmount" => $originalAmount,
@@ -764,8 +757,28 @@ class FlizpayWebhookService
             "newTotal" => $newTotal,
             "newNet" => $newNet,
             "discount" => $discount,
-            "cashbackPercent" => round($cashbackPercent, 2),
+            "discountPercent" => round($discountPercent, 2),
             "currency" => $currency,
         ]);
+    }
+
+    /**
+     * The customer-facing label of the discount line, in the language the order was placed in.
+     *
+     * A locale without its own snippet set falls back to the shop's, which is how Shopware
+     * resolves any other storefront snippet.
+     *
+     * @since 1.1.0
+     */
+    private function getDiscountLabel(
+        OrderEntity $order,
+        float $discountPercent,
+    ): string {
+        return $this->translator->trans(
+            "flizpay.order.discountLineItem",
+            ["%percent%" => (string) round($discountPercent)],
+            null,
+            $order->getLanguage()?->getLocale()?->getCode(),
+        );
     }
 }

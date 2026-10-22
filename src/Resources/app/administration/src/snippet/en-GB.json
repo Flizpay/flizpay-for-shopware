@@ -29,33 +29,15 @@
       "title": "API Configuration",
       "apiKeyLabel": "API Key",
       "apiKeyPlaceholder": "Enter your FLIZpay API key...",
-      "apiKeyHelpText": "Your FLIZpay API key for authentication. Get this from your FLIZpay merchant dashboard.",
-      "apiBaseUrlLabel": "API Base URL",
-      "apiBaseUrlPlaceholder": "https://api.flizpay.de",
-      "apiBaseUrlHelpText": "Leave empty to use production URL. For testing, enter custom endpoint.",
-      "sandboxModeLabel": "Sandbox Mode",
-      "sandboxModeHelpText": "Enable this to test payment processing in the sandbox environment.",
-      "webhookUrlLabel": "Webhook URL",
-      "webhookUrlHelpText": "Automatically configured webhook URL (read-only).",
-      "webhookAliveLabel": "Connection Status",
-      "webhookAliveYes": "✓ Webhook connection verified - Payment method is active",
-      "webhookAliveNo": "⚠ Waiting for webhook verification - Payment method is disabled",
-      "webhookAliveHelpText": "FLIZpay must successfully send a test webhook before payments can be processed."
+      "apiKeyHelpText": "Your FLIZpay API key for authentication. Get this from your FLIZpay merchant dashboard."
     },
     "options": {
       "title": "Payment Options",
-      "paymentFlowLabel": "Payment Flow",
-      "paymentFlowHelpText": "Choose how customers interact with the payment process.",
       "enableLoggingLabel": "Enable Debug Logging",
       "enableLoggingHelpText": "Enable detailed logging for troubleshooting (disable in production)."
     },
-    "paymentFlow": {
-      "redirect": "Redirect to FLIZpay",
-      "embedded": "Embedded Checkout"
-    },
     "actions": {
-      "save": "Save",
-      "testConnection": "Test Connection"
+      "save": "Save"
     },
     "connection": {
       "failed": "Connection failed. Please check your API key and try again.",
@@ -63,42 +45,6 @@
       "webhookVerified": "Webhook verified! Payment method is now active.",
       "webhookTimeout": "Webhook verification timeout. Please check your server configuration or try again.",
       "webhookTimeoutNotification": "Webhook not verified within 30 seconds. Connection may still work - please check your server logs."
-    },
-    "displayOptions": {
-      "title": "Display Options",
-      "displayLogoLabel": "Show FLIZpay Logo",
-      "displayLogoHelpText": "Display FLIZpay logo on the payment method in checkout.",
-      "displayHeadlineLabel": "Show Discount Headline",
-      "displayHeadlineHelpText": "Show discount percentage in payment method title.",
-      "displayDescriptionLabel": "Show Description",
-      "displayDescriptionHelpText": "Show payment method description in checkout."
-    },
-    "advancedSettings": {
-      "title": "Advanced Settings",
-      "orderStatusLabel": "Initial Order Status",
-      "orderStatusPending": "Pending",
-      "orderStatusDraft": "Draft",
-      "orderStatusHelpText": "Initial order status when payment is created.",
-      "sentryEnabledLabel": "Error Reporting",
-      "sentryEnabledHelpText": "Send anonymous error reports to help improve plugin quality."
-    },
-    "expressCheckout": {
-      "title": "Express Checkout",
-      "enabledLabel": "Enable Express Checkout",
-      "enabledHelpText": "Allow customers to skip the cart and checkout directly from product pages.",
-      "pagesLabel": "Show on Pages",
-      "pageProduct": "Product Page",
-      "pageCart": "Cart Page",
-      "themeLabel": "Button Theme",
-      "themeLight": "Light",
-      "themeDark": "Dark"
-    },
-    "cashbackInfo": {
-      "title": "Discount Information",
-      "firstPurchaseLabel": "First Purchase Discount",
-      "standardLabel": "Standard Discount",
-      "notConfigured": "No discount configured",
-      "refreshButton": "Refresh Discount Data"
     },
     "checkout": {
       "title": "Checkout Settings",
@@ -137,17 +83,11 @@
       "previewCheckout": "Proceed to checkout",
       "previewViewCart": "View cart"
     },
-    "discount": {
-      "title": "Discount Information",
-      "configureLink": "Your discount programs are managed in your <a href='https://app.flizpay.de/discount' target='_blank' rel='noopener'>FLIZpay Dashboard</a> and appear at checkout right away."
-    },
     "reconfiguration": {
-      "warning": "You already have an integration set up. By reconfiguring, you will invalidate all current ongoing payment responses. Proceed?",
-      "title": "Confirm Reconfiguration"
+      "warning": "You already have an integration set up. By reconfiguring, you will invalidate all current ongoing payment responses. Proceed?"
     },
     "notifications": {
-      "saveSuccess": "Settings saved successfully.",
-      "connectionSuccess": "Successfully connected to FLIZpay API."
+      "saveSuccess": "Settings saved successfully."
     },
     "errors": {
       "loadFailed": "Failed to load settings.",
