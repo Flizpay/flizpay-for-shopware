@@ -20,7 +20,7 @@ class PaymentMethodFilterSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            // Priority 200: run BEFORE PaymentMethodCashbackSubscriber (default 0)
+            // Priority 200: drop the unconfigured method before CheckoutSubscriber (default 0) runs
             CheckoutConfirmPageLoadedEvent::class => ['onCheckoutConfirmLoaded', 200],
         ];
     }

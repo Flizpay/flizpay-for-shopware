@@ -13,7 +13,6 @@ import type {
   FlizpayTestConnectionResponse,
   PaymentFlowOption,
   SystemConfigValues,
-  FlizpayCashbackData,
 } from "FlizpayForShopware/types/flizpay.types";
 import type FlizpayApiService from "FlizpayForShopware/service/flizpay-api.service";
 
@@ -42,10 +41,10 @@ const FLIZ_CONFIG = {
   WEBHOOK_URL: "FlizpayForShopware.config.webhookUrl",
   WEBHOOK_ALIVE: "FlizpayForShopware.config.webhookAlive",
   ENABLE_LOGGING: "FlizpayForShopware.config.enableLogging",
-  DISPLAY_CASHBACK_IN_TITLE: "FlizpayForShopware.config.displayCashbackInTitle",
+  // Still stored as `displayCashbackInTitle`, so merchants who switched it off keep that choice.
+  SHOW_HEADLINE: "FlizpayForShopware.config.displayCashbackInTitle",
   SHOW_LOGO: "FlizpayForShopware.config.showLogo",
   SHOW_SUBTITLE: "FlizpayForShopware.config.showSubtitle",
-  CASHBACK_DATA: "FlizpayForShopware.config.cashbackData",
   WIDGET_PRODUCT: "FlizpayForShopware.config.widgetProduct",
   WIDGET_LISTING: "FlizpayForShopware.config.widgetListing",
   WIDGET_CART: "FlizpayForShopware.config.widgetCart",
@@ -79,7 +78,6 @@ interface ComponentData {
   initialApiKey: string | null;
   currentSalesChannelId: string | null;
   pollingInterval: number | null;
-  cashbackData: FlizpayCashbackData | null;
   widgetPreview: FlizpayWidgetPreview | null;
   widgetPreviews: typeof WIDGET_PREVIEWS;
 }
@@ -88,7 +86,6 @@ interface ComponentMethods {
   loadConfig(): Promise<void>;
   loadWidgetPreview(): Promise<void>;
   previewLineText(kind: string, key: string): string;
-  updateCashbackData(values: SystemConfigValues): void;
   saveConfig(): Promise<void>;
   testGatewayConnection(): Promise<void>;
   startWebhookPolling(): void;
@@ -109,11 +106,10 @@ interface ComponentMethods {
 interface ComponentComputed {
   paymentFlowOptions: PaymentFlowOption[];
   alertConfig: AlertConfig | null;
-  hasCashback: boolean;
-  maxCashbackValue: number;
-  previewSubtitle: string;
   previewLocale: string;
   previewAmount: number;
+  previewCheckoutAmount: number;
+  previewCheckoutAmountLabel: string;
   previewCurrency: string;
 }
 
@@ -141,7 +137,7 @@ Component.register("flizpay-settings", {
         webhookKey: "",
         paymentFlow: "redirect",
         enableLogging: false,
-        displayCashbackInTitle: true,
+        showHeadline: true,
         showLogo: true,
         showSubtitle: true,
         widgetProduct: true,
@@ -153,7 +149,6 @@ Component.register("flizpay-settings", {
       initialApiKey: null,
       currentSalesChannelId: null,
       pollingInterval: null,
-      cashbackData: null,
       widgetPreview: null,
       widgetPreviews: WIDGET_PREVIEWS,
     };
@@ -191,58 +186,26 @@ Component.register("flizpay-settings", {
       }
     },
 
-    hasCashback(this: ComponentInstance): boolean {
-      if (!this.cashbackData) return false;
-      return (
-        (this.cashbackData.first_purchase_amount ?? 0) > 0 ||
-        (this.cashbackData.standard_amount ?? 0) > 0
-      );
-    },
-
-    maxCashbackValue(this: ComponentInstance): number {
-      const value = !this.cashbackData
-        ? 0
-        : Math.max(
-            this.cashbackData.first_purchase_amount ?? 0,
-            this.cashbackData.standard_amount ?? 0,
-          );
-      return value;
-    },
-
-    previewSubtitle(this: ComponentInstance): string {
-      const firstPurchaseAmount =
-        this.cashbackData?.first_purchase_amount ?? 0;
-      const standardAmount = this.cashbackData?.standard_amount ?? 0;
-      const formattedStandardAmount = new Intl.NumberFormat(
-        Shopware.Store.get("session").currentLocale ?? "en-GB",
-        { maximumFractionDigits: 1 },
-      ).format(standardAmount);
-
-      if (firstPurchaseAmount > 0 && standardAmount > 0) {
-        return this.$tc("flizpay-config.checkout.previewSubtitleBoth", {
-          standardAmount: formattedStandardAmount,
-        });
-      }
-
-      if (firstPurchaseAmount > 0) {
-        return this.$tc("flizpay-config.checkout.previewSubtitleFirst");
-      }
-
-      if (standardAmount > 0) {
-        return this.$tc("flizpay-config.checkout.previewSubtitleStandard", {
-          standardAmount: formattedStandardAmount,
-        });
-      }
-
-      return this.$tc("flizpay-config.checkout.previewSubtitleNone");
-    },
-
     previewLocale(): string {
       return Shopware.Store.get("session").currentLocale ?? "de-DE";
     },
 
     previewAmount(): number {
       return 1995;
+    },
+
+    /** A round sample basket, so the preview shows what a real saving looks like. */
+    previewCheckoutAmount(): number {
+      return 10000;
+    },
+
+    /** The same basket as `previewCheckoutAmount`, for the hint that explains the preview. */
+    previewCheckoutAmountLabel(this: ComponentInstance): string {
+      return new Intl.NumberFormat(this.previewLocale, {
+        style: "currency",
+        currency: this.previewCurrency,
+        maximumFractionDigits: 0,
+      }).format(this.previewCheckoutAmount / 100);
     },
 
     previewCurrency(): string {
@@ -278,8 +241,8 @@ Component.register("flizpay-settings", {
           (values[FLIZ_CONFIG.WEBHOOK_ALIVE] as boolean) || false;
         this.config.enableLogging =
           (values[FLIZ_CONFIG.ENABLE_LOGGING] as boolean) || false;
-        this.config.displayCashbackInTitle =
-          (values[FLIZ_CONFIG.DISPLAY_CASHBACK_IN_TITLE] as boolean) ?? true;
+        this.config.showHeadline =
+          (values[FLIZ_CONFIG.SHOW_HEADLINE] as boolean) ?? true;
         this.config.showLogo =
           (values[FLIZ_CONFIG.SHOW_LOGO] as boolean) ?? true;
         this.config.showSubtitle =
@@ -292,8 +255,6 @@ Component.register("flizpay-settings", {
           (values[FLIZ_CONFIG.WIDGET_CART] as boolean) ?? true;
         this.config.widgetMiniCart =
           (values[FLIZ_CONFIG.WIDGET_MINI_CART] as boolean) ?? true;
-
-        this.updateCashbackData(values);
 
         this.initialApiKey = this.config.apiKey;
 
@@ -346,24 +307,6 @@ Component.register("flizpay-settings", {
       return kind === "price" ? `${label} ${price}`.trim() : label;
     },
 
-    updateCashbackData(
-      this: ComponentInstance,
-      values: SystemConfigValues,
-    ): void {
-      const cashbackDataJson = values[FLIZ_CONFIG.CASHBACK_DATA] as string;
-
-      if (!cashbackDataJson) {
-        this.cashbackData = null;
-        return;
-      }
-
-      try {
-        this.cashbackData = JSON.parse(cashbackDataJson);
-      } catch {
-        this.cashbackData = null;
-      }
-    },
-
     async saveConfig(this: ComponentInstance): Promise<void> {
       // Reset connection state before saving
       this.stopWebhookPolling();
@@ -395,8 +338,7 @@ Component.register("flizpay-settings", {
           {
             [FLIZ_CONFIG.API_KEY]: this.config.apiKey,
             [FLIZ_CONFIG.ENABLE_LOGGING]: this.config.enableLogging,
-            [FLIZ_CONFIG.DISPLAY_CASHBACK_IN_TITLE]:
-              this.config.displayCashbackInTitle,
+            [FLIZ_CONFIG.SHOW_HEADLINE]: this.config.showHeadline,
             [FLIZ_CONFIG.SHOW_LOGO]: this.config.showLogo,
             [FLIZ_CONFIG.SHOW_SUBTITLE]: this.config.showSubtitle,
             [FLIZ_CONFIG.WIDGET_PRODUCT]: this.config.widgetProduct,
@@ -438,7 +380,6 @@ Component.register("flizpay-settings", {
             this.config.webhookUrl =
               response.data.webhookUrl || this.config.webhookUrl;
             this.config.webhookAlive = response.data.webhookAlive || false;
-            this.cashbackData = response.data.cashback;
             if (this.widgetPreview) {
               this.widgetPreview.publicId = response.data.publicId;
             }
@@ -482,7 +423,6 @@ Component.register("flizpay-settings", {
             this.stopWebhookPolling();
             this.config.webhookAlive = true;
             this.connectionState = ConnectionState.ESTABLISHED;
-            this.updateCashbackData(values);
 
             this.createNotificationSuccess({
               message: this.$tc("flizpay-config.connection.webhookVerified"),

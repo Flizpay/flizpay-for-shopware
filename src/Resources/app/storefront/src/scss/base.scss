@@ -11,6 +11,8 @@
         flex: 1;
     }
 
+    // <fliz-checkout> sets `font: inherit; color: inherit` on its shadow root, so the container
+    // styles below reach its text. Everything inside is FLIZpay's to style.
     .flizpay-description-text {
         margin-top: 0.5rem;
         font-size: 0.9rem;

@@ -1,0 +1,12 @@
+{# Checkout offer text. What it shows is decided by FLIZpay; the shop only passes what it knows. #}
+{% set flizpayCheckout = page.extensions.flizpayCheckout|default(null) %}
+
+{% if flizpayCheckout and flizpayCheckout.publicId %}
+    <fliz-checkout data-public-id="{{ flizpayCheckout.publicId }}"
+                   data-surface="{{ surface }}"
+                   data-locale="{{ flizpayCheckout.locale }}"
+                   {% if flizpayCheckout.amount is not null %}data-amount="{{ flizpayCheckout.amount }}"{% endif %}>
+        {#- The shop's own name shows until the hosted script upgrades the element. -#}
+        {%- if surface == 'title' %}FLIZpay{% endif -%}
+    </fliz-checkout>
+{% endif %}

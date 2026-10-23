@@ -78,10 +78,9 @@ services:
         tags:
             - kernel.event_subscriber
 
-    FLIZpay\FlizpayForShopware\Subscriber\PaymentMethodCashbackSubscriber:
+    FLIZpay\FlizpayForShopware\Subscriber\CheckoutSubscriber:
         arguments:
-            - '@FLIZpay\FlizpayForShopware\Service\FlizpayCashbackHelper'
-            - '@monolog.logger'
+            - '@FLIZpay\FlizpayForShopware\Service\FlizpayWidgetService'
         tags:
             - kernel.event_subscriber
 
