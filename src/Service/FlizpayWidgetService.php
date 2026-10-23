@@ -105,12 +105,11 @@ class FlizpayWidgetService
                 $context->getCurrency()->getIsoCode(),
             ),
             "showHeadline" => $this->settingEnabled(
-                "displayCashbackInTitle",
+                "showHeadline",
                 $salesChannelId,
             ),
-            // Still stored as `showSubtitle`, so merchants who switched it off keep that choice.
             "showDescription" => $this->settingEnabled(
-                "showSubtitle",
+                "showDescription",
                 $salesChannelId,
             ),
             "showLogo" => $this->settingEnabled("showLogo", $salesChannelId),

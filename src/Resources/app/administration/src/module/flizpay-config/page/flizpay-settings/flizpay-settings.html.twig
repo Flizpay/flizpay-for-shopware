@@ -155,7 +155,7 @@
                                 </span>
                             </div>
                             <div
-                                v-if="config.showSubtitle"
+                                v-if="config.showDescription"
                                 class="flizpay-checkout-preview__subtitle"
                             >
                                 <fliz-checkout
@@ -180,7 +180,7 @@
                                 {{ $tc('flizpay-config.checkout.labelLogo') }}
                             </span>
                             <span
-                                v-if="config.showSubtitle"
+                                v-if="config.showDescription"
                                 class="flizpay-checkout-preview__label flizpay-checkout-preview__label--subtitle"
                             >
                                 {{ $tc('flizpay-config.checkout.labelSubtitle') }}
@@ -233,7 +233,7 @@
                             {{ $tc('flizpay-config.checkout.subtitleLabel') }}
                         </span>
                         <mt-checkbox
-                            v-model:checked="config.showSubtitle"
+                            v-model:checked="config.showDescription"
                             :label="$tc('flizpay-config.checkout.subtitleDescription')"
                             :disabled="isLoading"
                             class="settings-checkbox-field"
@@ -378,27 +378,6 @@
                         :disabled="isLoading"
                     >
                     </sw-switch-field>
-                    {% endblock %}
-                </sw-container>
-            </sw-card>
-            {% endblock %}
-
-            {% block flizpay_settings_discount_card %}
-            <sw-card
-                :title="$tc('flizpay-config.discount.title')"
-                :isLoading="isLoading"
-                class="flizpay-settings__discount-card"
-            >
-                <sw-container
-                    columns="1fr"
-                    gap="16px"
-                >
-                    {% block flizpay_settings_discount_info %}
-                    {# Programs live in the FLIZpay dashboard; the shop never stores a copy. #}
-                    <p
-                        class="flizpay-discount-info__configure"
-                        v-html="$tc('flizpay-config.discount.configureLink')"
-                    ></p>
                     {% endblock %}
                 </sw-container>
             </sw-card>

@@ -133,18 +133,6 @@ class FlizpayApi
                     ],
                 ];
             },
-            "fetch_cashback_data" => function (?array $body): array {
-                return [
-                    "path" => "/business/cashback",
-                    "method" => "get",
-                    "options" => [
-                        "headers" => [
-                            "Content-type" => "application/json",
-                            "x-api-key" => $this->getApiKey(),
-                        ],
-                    ],
-                ];
-            },
             "fetch_public_id" => function (?array $body): array {
                 return [
                     "path" => "/business/public-id",
@@ -167,7 +155,6 @@ class FlizpayApi
      * - generate_webhook_key: Generate webhook authentication key
      * - edit_business: Update business webhook URL
      * - create_transaction: Create a new payment transaction
-     * - fetch_cashback_data: Retrieve cashback configuration
      * - fetch_public_id: Retrieve the public id used by on-site messaging
      *
      * ----

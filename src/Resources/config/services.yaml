@@ -21,10 +21,6 @@ services:
         arguments:
             - '@Shopware\Core\System\SystemConfig\SystemConfigService'
 
-    FLIZpay\FlizpayForShopware\Service\FlizpayCashbackHelper:
-        arguments:
-            - '@Shopware\Core\System\SystemConfig\SystemConfigService'
-
     FLIZpay\FlizpayForShopware\Service\FlizpayWidgetService:
         arguments:
             - '@Shopware\Core\System\SystemConfig\SystemConfigService'
@@ -39,6 +35,7 @@ services:
             - '@Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler'
             - '@monolog.logger'
             - '@FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter'
+            - '@translator'
 
     FLIZpay\FlizpayForShopware\Storefront\Controller\FlizpayWebhookController:
         public: true

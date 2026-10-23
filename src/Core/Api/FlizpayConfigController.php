@@ -59,7 +59,7 @@ class FlizpayConfigController extends AbstractController
 
     /**
      * Configure payment gateway - called when admin saves settings
-     * Follows WooCommerce plugin flow: generate_webhook_url -> get_webhook_key -> fetch_cashback
+     * Follows WooCommerce plugin flow: generate_webhook_url -> get_webhook_key -> fetch_public_id
      */
     #[
         Route(
@@ -240,50 +240,7 @@ class FlizpayConfigController extends AbstractController
                 );
             }
 
-            // Step 3: Fetch cashback data (non-critical, like WordPress)
-            $this->logger->info("STEP 3: Starting cashback data fetch");
-            $cashbackData = null;
-            try {
-                $this->logger->debug(
-                    "Calling flizpayApiService->fetch_cashback_data()",
-                );
-                $cashbackData = $this->flizpayApiService->fetch_cashback_data();
-                $this->logger->debug("fetch_cashback_data() returned", [
-                    "hasCashbackData" => !empty($cashbackData),
-                    "rawData" => $cashbackData,
-                ]);
-
-                if ($cashbackData !== null) {
-                    $this->logger->info("Cashback data received", [
-                        "cashbackData" => $cashbackData,
-                    ]);
-                } else {
-                    $this->logger->info(
-                        "No active cashback data returned from API",
-                    );
-
-                    $cashbackData = [
-                        "first_purchase_amount" => 0.0,
-                        "standard_amount" => 0.0,
-                    ];
-                }
-
-                $this->systemConfigService->set(
-                    "FlizpayForShopware.config.cashbackData",
-                    json_encode($cashbackData),
-                    $salesChannelId,
-                );
-            } catch (\Exception $e) {
-                $this->logger->warning(
-                    "Cashback data fetch failed (non-critical)",
-                    [
-                        "error" => $e->getMessage(),
-                        "trace" => $e->getTraceAsString(),
-                    ],
-                );
-            }
-
-            // Step 4: Public id for on-site messaging (non-critical). A new key gets a fresh id.
+            // Step 3: Public id for on-site messaging (non-critical). A new key gets a fresh id.
             $this->systemConfigService->set("FlizpayForShopware.config.publicId", "", $salesChannelId);
             $publicId = $this->widgetService->ensurePublicId($salesChannelId);
 
@@ -301,7 +258,6 @@ class FlizpayConfigController extends AbstractController
                     "webhookUrl" => $webhookUrl,
                     "webhookAlive" => false, // Will be set to true by test webhook
                     "requiresWebhookTest" => true,
-                    "cashback" => $cashbackData,
                     "publicId" => $publicId,
                 ],
             ]);
