@@ -11,6 +11,7 @@ services:
             - '@Shopware\Core\System\SystemConfig\SystemConfigService'
             - '@monolog.logger'
             - '@FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter'
+            - '%kernel.shopware_version%'
 
     FLIZpay\FlizpayForShopware\Service\FlizpayApiService:
         arguments:
@@ -36,6 +37,7 @@ services:
             - '@monolog.logger'
             - '@FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter'
             - '@translator'
+            - '%kernel.shopware_version%'
 
     FLIZpay\FlizpayForShopware\Storefront\Controller\FlizpayWebhookController:
         public: true
