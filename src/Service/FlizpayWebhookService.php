@@ -14,6 +14,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use FLIZpay\FlizpayForShopware\FlizpayForShopware;
 use FLIZpay\FlizpayForShopware\Service\FlizpaySentryReporter;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -42,6 +43,7 @@ class FlizpayWebhookService
     private LoggerInterface $logger;
     private FlizpaySentryReporter $sentryReporter;
     private TranslatorInterface $translator;
+    private string $shopwareVersion;
 
     /**
      * Initialize webhook service
@@ -53,6 +55,7 @@ class FlizpayWebhookService
      * @param $logger
      * @param $sentryReporter
      * @param $translator
+     * @param $shopwareVersion
      *
      * @since 1.0.0
      */
@@ -64,6 +67,7 @@ class FlizpayWebhookService
         LoggerInterface $logger,
         FlizpaySentryReporter $sentryReporter,
         TranslatorInterface $translator,
+        string $shopwareVersion,
     ) {
         $this->systemConfig = $systemConfig;
         $this->orderRepository = $orderRepository;
@@ -72,6 +76,7 @@ class FlizpayWebhookService
         $this->logger = $logger;
         $this->sentryReporter = $sentryReporter;
         $this->translator = $translator;
+        $this->shopwareVersion = $shopwareVersion;
     }
 
     /**
@@ -241,6 +246,8 @@ class FlizpayWebhookService
             [
                 "success" => true,
                 "alive" => true,
+                "pluginVersion" => FlizpayForShopware::getVersion(),
+                "platformVersion" => $this->shopwareVersion,
                 "message" => "Test webhook received successfully",
                 "timestamp" => time(),
             ],
